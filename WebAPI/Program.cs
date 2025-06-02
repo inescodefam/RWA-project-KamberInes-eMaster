@@ -60,7 +60,7 @@ builder.Services
     });
 
 
-builder.Services.AddDbContext<EMasterDbContext>(options =>
+builder.Services.AddDbContext<EMasterContext>(options =>
 {
     options.UseSqlServer("name=ConnectionString:ConnStr");
 });

@@ -26,22 +26,17 @@ namespace WebAPI.Controllers
                 if (_context.Users.Any(x => x.Email == userAuthDto.Email))
                     return BadRequest($"Email {userAuthDto.Email} is already in use.");
 
-                // Hash the password
                 var b64salt = HashPwd.GetSalt();
                 var b64hash = HashPwd.GetHash(userAuthDto.Password, b64salt);
 
-                //var username = userAuthDto.FirstName[0] + userAuthDto.LastName;
                 var user = new User
                 {
                     PasswordHash = b64hash,
                     PasswordSalt = b64salt,
-                    //FirstName = userAuthDto.FirstName,
-                    //LastName = userAuthDto.LastName,
                     Email = userAuthDto.Email,
-                    Username = userAuthDto.Email.Split('@')[1],
+                    Username = userAuthDto.Email.Split('@')[0],
                 };
 
-                // Add user and save changes to database
                 _context.Add(user);
                 _context.SaveChanges();
 
@@ -64,17 +59,14 @@ namespace WebAPI.Controllers
             {
                 var genericLoginFail = "Incorrect username or password";
 
-                // Try to get a user from database
                 var existingUser = _context.Users.FirstOrDefault(x => x.Email == userAuthDto.Email);
                 if (existingUser == null)
                     return BadRequest(genericLoginFail);
 
-                // Check is password hash matches
                 var b64hash = HashPwd.GetHash(userAuthDto.Password, existingUser.PasswordSalt);
                 if (b64hash != existingUser.PasswordHash)
                     return BadRequest(genericLoginFail);
 
-                // Create and return JWT token
                 var secureKey = _configuration["JWT:SecureKey"];
 
                 return Ok(JwtTokenProvider.CreateToken(secureKey, 120, userAuthDto.Email));

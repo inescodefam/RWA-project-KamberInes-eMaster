@@ -41,7 +41,7 @@ namespace WebAPI.Controllers
             {
                 return Ok(_context.Users.FirstOrDefault(x => x.Email == userDto.Email)?.Username ?? "User not found");
             }
-            catch (Exception ex)
+            catch
             {
                 return NotFound();
             }
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
                     _context.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 NotFound();
             }
@@ -125,7 +125,7 @@ namespace WebAPI.Controllers
                     _context.SaveChanges();
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 NotFound();
             }
