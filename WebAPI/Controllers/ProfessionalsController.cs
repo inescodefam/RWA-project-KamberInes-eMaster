@@ -12,9 +12,9 @@ namespace WebAPI.Controllers
     public class ProfessionalsController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly EMasterDbContext _context;
+        private readonly EMasterContext _context;
         private readonly IMapper _mapper;
-        public ProfessionalsController(IConfiguration configuration, EMasterDbContext context, IMapper mapper)
+        public ProfessionalsController(IConfiguration configuration, EMasterContext context, IMapper mapper)
         {
             _configuration = configuration;
             _context = context;
@@ -23,17 +23,17 @@ namespace WebAPI.Controllers
 
         // GET: api/<ProfessionalsController>
         [HttpGet]
-        public ActionResult<IEnumerable<Professional>> Get()
+        public ActionResult<IEnumerable<Professional>> GetAllProfessionals()
         {
             try
             {
-                var result = _context.Professionals.ToList();
-                if (result == null || result.Count == 0)
+                var professionals = _context.Professionals.ToList();
+                if (professionals == null || professionals.Count == 0)
                 {
                     return NotFound("No professionals found");
                 }
 
-                var professionalDto = _mapper.Map<List<ProfessionalDto>>(result);
+                var professionalDto = _mapper.Map<List<ProfessionalDto>>(professionals);
                 return Ok(professionalDto);
             }
             catch (Exception ex)
@@ -45,15 +45,35 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<ProfessionalDto> GetSingleProfessional(int id)
         {
-            return "value";
+            var professional = _context.Professionals.Find(id);
+            if (professional == null)
+                return NotFound();
+
+            var professionalDto = _mapper.Map<ProfessionalDto>(professional);
+            return Ok(professionalDto);
         }
 
         // POST api/<ProfessionalsController>
         [HttpPost]
         public void Post([FromBody] string value)
         {
+            if (!ModelState.IsValid)
+            {
+                BadRequest(ModelState);
+            }
+            var professional = _mapper.Map<Professional>(value);
+            try
+            {
+                _context.Professionals.Add(professional);
+                _context.SaveChanges();
+                Ok("Professional added successfully");
+            }
+            catch (Exception ex)
+            {
+                StatusCode(500, ex.Message);
+            }
         }
 
         // PUT api/<ProfessionalsController>/5
@@ -66,6 +86,22 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            var professional = _context.Professionals.Find(id);
+            if (professional == null)
+            {
+                NotFound();
+                return;
+            }
+            try
+            {
+                _context.Professionals.Remove(professional);
+                _context.SaveChanges();
+                Ok("Professional deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                StatusCode(500, ex.Message);
+            }
         }
     }
 }

@@ -12,9 +12,9 @@ namespace WebAPI.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly EMasterDbContext _context;
+        private readonly EMasterContext _context;
 
-        public UserController(EMasterDbContext context)
+        public UserController(EMasterContext context)
         {
             _context = context;
         }
@@ -71,9 +71,8 @@ namespace WebAPI.Controllers
                     Phone = userDto.PhoneNumber,
                     PasswordHash = userDto.Password,
                     PasswordSalt = userDto.Password,
-                    Address = userDto.Address,
+                    MemberAddress = userDto.Address,
                     CreatedAt = DateTime.Now,
-                    Role = userDto.Role
                 };
                 _context.Users.Add(user);
                 _context.SaveChanges();
@@ -103,7 +102,7 @@ namespace WebAPI.Controllers
                     user.LastName = userDto.LastName;
                     user.Email = userDto.Email;
                     user.Phone = userDto.PhoneNumber;
-                    user.Address = userDto.Address;
+                    user.MemberAddress = userDto.Address;
                     _context.SaveChanges();
                 }
             }

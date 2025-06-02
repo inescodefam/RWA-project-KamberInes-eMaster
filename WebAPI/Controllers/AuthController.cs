@@ -10,9 +10,9 @@ namespace WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly EMasterDbContext _context;
+        private readonly EMasterContext _context;
 
-        public AuthController(IConfiguration configuration, EMasterDbContext context)
+        public AuthController(IConfiguration configuration, EMasterContext context)
         {
             _configuration = configuration;
             _context = context;
@@ -38,7 +38,6 @@ namespace WebAPI.Controllers
                     //FirstName = userAuthDto.FirstName,
                     //LastName = userAuthDto.LastName,
                     Email = userAuthDto.Email,
-                    Role = "User",
                     Username = userAuthDto.Email.Split('@')[1],
                 };
 
@@ -78,7 +77,7 @@ namespace WebAPI.Controllers
                 // Create and return JWT token
                 var secureKey = _configuration["JWT:SecureKey"];
 
-                return Ok(JwtTokenProvider.CreateToken(secureKey, 120, userAuthDto.Email, existingUser.Role));
+                return Ok(JwtTokenProvider.CreateToken(secureKey, 120, userAuthDto.Email));
             }
             catch (Exception ex)
             {

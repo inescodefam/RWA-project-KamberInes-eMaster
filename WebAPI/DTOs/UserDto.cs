@@ -19,6 +19,5 @@ namespace WebAPI.DTOs
         [StringLength(256, MinimumLength = 8, ErrorMessage = "Password should be at least 8 characters long")]
         public required string Password { get; set; }
         public string? Address { get; set; }
-        public string? Role { get; set; }
     }
 }

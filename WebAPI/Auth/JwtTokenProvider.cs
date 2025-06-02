@@ -7,7 +7,7 @@ namespace WebAPI.Auth
 {
     public class JwtTokenProvider
     {
-        public static string CreateToken(string secureKey, int expiration, string email = null, string role = null)
+        public static string CreateToken(string secureKey, int expiration, string email = null)
         {
             var tokenKey = Encoding.UTF8.GetBytes(secureKey);
 
@@ -17,7 +17,6 @@ namespace WebAPI.Auth
             {
                 new Claim(ClaimTypes.Name, email),
                 new Claim(JwtRegisteredClaimNames.Sub, email),
-                new Claim(ClaimTypes.Role, role)
             }),
                 Expires = DateTime.UtcNow.AddMinutes(expiration),
                 SigningCredentials = new SigningCredentials(
