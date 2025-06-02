@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.Models;
 
 [Table("User")]
-[Index("Username", Name = "UQ_User_Username", IsUnique = true)]
-[Index("Email", Name = "UQ__User__AB6E6164B8D4FB09", IsUnique = true)]
-[Index("Email", Name = "idxMembersEmail")]
+[Index("Email", Name = "UQ__User__AB6E61645D4812AE", IsUnique = true)]
 public partial class User
 {
     [Key]
@@ -34,23 +34,20 @@ public partial class User
     [StringLength(15)]
     public string? Phone { get; set; }
 
-    [Column("address")]
+    [Column("memberAddress")]
     [StringLength(255)]
-    public string? Address { get; set; }
+    public string? MemberAddress { get; set; }
 
     [Column("createdAt")]
     public DateTime? CreatedAt { get; set; }
 
-    [Column("firstname")]
+    [Column("firstName")]
     [StringLength(50)]
     public string? FirstName { get; set; }
 
-    [Column("lastname")]
+    [Column("lastName")]
     [StringLength(50)]
     public string? LastName { get; set; }
-
-    [StringLength(50)]
-    public string Role { get; set; } = "User"!;
 
     [InverseProperty("User")]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
@@ -59,5 +56,11 @@ public partial class User
     public virtual ICollection<Professional> Professionals { get; set; } = new List<Professional>();
 
     [InverseProperty("User")]
+    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+
+    [InverseProperty("User")]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
 }

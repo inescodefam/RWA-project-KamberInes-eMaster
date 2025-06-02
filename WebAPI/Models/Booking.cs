@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Models;
 
 [Table("Booking")]
-[Index("UserId", Name = "idxBookingsUser")]
 public partial class Booking
 {
     [Key]

@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Models;
 
 [Table("Service")]
-[Index("ProfessionalId", Name = "idxServicesProfessional")]
 public partial class Service
 {
     [Key]

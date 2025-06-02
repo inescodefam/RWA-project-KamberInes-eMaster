@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Models;
 
 [Table("Review")]
-[Index("ProfessionalId", Name = "idxReviewsProfessional")]
 public partial class Review
 {
     [Key]
@@ -19,9 +18,6 @@ public partial class Review
 
     [Column("professionalId")]
     public int? ProfessionalId { get; set; }
-
-    [Column("rating")]
-    public int? Rating { get; set; }
 
     [Column("comment")]
     [StringLength(255)]

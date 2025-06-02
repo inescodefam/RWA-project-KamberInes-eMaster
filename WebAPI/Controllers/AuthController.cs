@@ -30,17 +30,16 @@ namespace WebAPI.Controllers
                 var b64salt = HashPwd.GetSalt();
                 var b64hash = HashPwd.GetHash(userAuthDto.Password, b64salt);
 
-                var username = userAuthDto.FirstName[0] + userAuthDto.LastName;
-                // Create user from DTO and hashed password
+                //var username = userAuthDto.FirstName[0] + userAuthDto.LastName;
                 var user = new User
                 {
-                    Username = username,
                     PasswordHash = b64hash,
                     PasswordSalt = b64salt,
                     //FirstName = userAuthDto.FirstName,
                     //LastName = userAuthDto.LastName,
                     Email = userAuthDto.Email,
-                    Role = "User"
+                    Role = "User",
+                    Username = userAuthDto.Email.Split('@')[1],
                 };
 
                 // Add user and save changes to database

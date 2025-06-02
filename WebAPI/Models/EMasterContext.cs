@@ -1,14 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebAPI.Models;
 
-public partial class EMasterDbContext : DbContext
+public partial class EMasterContext : DbContext
 {
-    public EMasterDbContext()
+    public EMasterContext()
     {
     }
 
-    public EMasterDbContext(DbContextOptions<EMasterDbContext> options)
+    public EMasterContext(DbContextOptions<EMasterContext> options)
         : base(options)
     {
     }
@@ -17,7 +19,11 @@ public partial class EMasterDbContext : DbContext
 
     public virtual DbSet<Professional> Professionals { get; set; }
 
+    public virtual DbSet<Rating> Ratings { get; set; }
+
     public virtual DbSet<Review> Reviews { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
 
@@ -30,7 +36,7 @@ public partial class EMasterDbContext : DbContext
     {
         modelBuilder.Entity<Booking>(entity =>
         {
-            entity.HasKey(e => e.IdBooking).HasName("PK__Booking__3A710F7F2D4DC1BC");
+            entity.HasKey(e => e.IdBooking).HasName("PK__Booking__3A710F7F8A2FC5A1");
 
             entity.Property(e => e.BookingStatus).HasDefaultValue("Pending");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
@@ -44,16 +50,27 @@ public partial class EMasterDbContext : DbContext
 
         modelBuilder.Entity<Professional>(entity =>
         {
-            entity.HasKey(e => e.IdProfessional).HasName("PK__Professi__0C78023040E10AC1");
+            entity.HasKey(e => e.IdProfessional).HasName("PK__Professi__0C7802302660FD4E");
 
             entity.HasOne(d => d.User).WithMany(p => p.Professionals)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_User");
         });
 
+        modelBuilder.Entity<Rating>(entity =>
+        {
+            entity.HasOne(d => d.Professional).WithMany(p => p.Ratings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ProfessionalRating");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Ratings)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserRating");
+        });
+
         modelBuilder.Entity<Review>(entity =>
         {
-            entity.HasKey(e => e.IdReview).HasName("PK__Review__04F7FE103B43A98A");
+            entity.HasKey(e => e.IdReview).HasName("PK__Review__04F7FE1059B6B3E0");
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
 
@@ -62,9 +79,18 @@ public partial class EMasterDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.Reviews).HasConstraintName("FK_User_Review");
         });
 
+        modelBuilder.Entity<Role>(entity =>
+        {
+            entity.HasKey(e => e.Idrole).HasName("PK__Role__A1BA16C4397B56A4");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Roles)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK_userId");
+        });
+
         modelBuilder.Entity<Service>(entity =>
         {
-            entity.HasKey(e => e.IdService).HasName("PK__Service__0E3EA45B4B84437C");
+            entity.HasKey(e => e.IdService).HasName("PK__Service__0E3EA45BB6D56C45");
 
             entity.HasOne(d => d.Professional).WithMany(p => p.Services)
                 .OnDelete(DeleteBehavior.Cascade)
@@ -73,10 +99,9 @@ public partial class EMasterDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Iduser).HasName("PK__User__EAE6D9DF1B05A0E5");
+            entity.HasKey(e => e.Iduser).HasName("PK__User__EAE6D9DF7278BDCD");
 
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("(getdate())");
-            entity.Property(e => e.Role).HasDefaultValue("User");
         });
 
         OnModelCreatingPartial(modelBuilder);

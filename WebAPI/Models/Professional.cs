@@ -19,11 +19,11 @@ public partial class Professional
     [Column("experienceYears")]
     public int? ExperienceYears { get; set; }
 
-    [Column("rating")]
-    public double? Rating { get; set; }
-
     [InverseProperty("Professional")]
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
+    [InverseProperty("Professional")]
+    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
     [InverseProperty("Professional")]
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();

@@ -35,11 +35,11 @@ namespace WebAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public ActionResult<User> Get(int id)
+        public ActionResult<User> Get(UserDto userDto)
         {
             try
             {
-                return Ok(_context.Users.FirstOrDefault(x => x.Iduser == id)?.Username ?? "User not found");
+                return Ok(_context.Users.FirstOrDefault(x => x.Email == userDto.Email)?.Username ?? "User not found");
             }
             catch (Exception ex)
             {
@@ -73,6 +73,7 @@ namespace WebAPI.Controllers
                     PasswordSalt = userDto.Password,
                     Address = userDto.Address,
                     CreatedAt = DateTime.Now,
+                    Role = userDto.Role
                 };
                 _context.Users.Add(user);
                 _context.SaveChanges();
@@ -85,7 +86,7 @@ namespace WebAPI.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] UserDto userDto)
+        public void Put([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +95,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Iduser == id);
+                var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
                 if (user != null)
                 {
                     user.Username = userDto.Username;
@@ -114,11 +115,11 @@ namespace WebAPI.Controllers
 
         // DELETE api/<UserController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(UserDto userDto)
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Iduser == id);
+                var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
                 if (user != null)
                 {
                     _context.Users.Remove(user);
