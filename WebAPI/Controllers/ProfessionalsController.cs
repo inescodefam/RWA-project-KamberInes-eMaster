@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
         // GET: api/<ProfessionalsController>
         [HttpGet]
-        public ActionResult<IEnumerable<Professional>> GetAllProfessionals()
+        public ActionResult<IEnumerable<ProfessionalDto>> GetAllProfessionals()
         {
             try
             {
@@ -57,13 +57,13 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
                 BadRequest(ModelState);
             }
-            var professional = _mapper.Map<Professional>(value);
+            var professional = _mapper.Map<Professional>(professionalDto);
             try
             {
                 _context.Professionals.Add(professional);
@@ -78,8 +78,29 @@ namespace WebAPI.Controllers
 
         // PUT api/<ProfessionalsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] ProfessionalDto professionalDto)
         {
+            if (!ModelState.IsValid)
+            {
+                BadRequest(ModelState);
+            }
+            var professional = _context.Professionals.Find(id);
+            if (professional == null)
+            {
+                NotFound();
+                return;
+            }
+            try
+            {
+                professional = _mapper.Map(professionalDto, professional);
+                _context.Professionals.Update(professional);
+                _context.SaveChanges();
+                Ok("Professional updated successfully");
+            }
+            catch (Exception ex)
+            {
+                StatusCode(500, ex.Message);
+            }
         }
 
         // DELETE api/<ProfessionalsController>/5

@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using WebAPI.Models;
-
-namespace WebAPI.DTOs
+﻿namespace WebAPI.DTOs
 {
     public class ServiceDto
     {
@@ -11,8 +7,5 @@ namespace WebAPI.DTOs
 
         public string? Description { get; set; }
         public decimal? Price { get; set; }
-        public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
-        public virtual Professional? Professional { get; set; }
     }
 }
