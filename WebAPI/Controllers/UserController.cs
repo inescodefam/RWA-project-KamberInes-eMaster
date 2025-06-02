@@ -113,7 +113,8 @@ namespace WebAPI.Controllers
         }
 
         // DELETE api/<UserController>/5
-        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("delete/{id}")]
         public void Delete(UserDto userDto)
         {
             try
@@ -131,12 +132,6 @@ namespace WebAPI.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
-        //[HttpGet("admin-resource")]
-        //public IActionResult GetAdminResource()
-        //{
-        //    return Ok("This is a protected admin resource.");
-        //}
     }
 
 }
