@@ -13,20 +13,17 @@ public partial class Professional
     [Column("idProfessional")]
     public int IdProfessional { get; set; }
 
+    public int? CityId { get; set; }
+
     [Column("UserID")]
     public int? UserId { get; set; }
 
     [Column("experienceYears")]
     public int? ExperienceYears { get; set; }
 
-    [InverseProperty("Professional")]
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
-    [InverseProperty("Professional")]
-    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
-
-    [InverseProperty("Professional")]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+    [ForeignKey("CityId")]
+    [InverseProperty("Professionals")]
+    public virtual City? City { get; set; }
 
     [InverseProperty("Professional")]
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();

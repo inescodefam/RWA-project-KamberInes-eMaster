@@ -8,9 +8,9 @@ namespace WebAPI.Controllers
     [ApiController]
     public class LogController : ControllerBase
     {
-        private readonly EMasterContext _context;
+        private readonly EProfessionalContext _context;
 
-        public LogController(EMasterContext context)
+        public LogController(EProfessionalContext context)
         {
             _context = context;
         }

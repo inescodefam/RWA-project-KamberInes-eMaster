@@ -13,12 +13,12 @@ namespace WebAPI.DTOs
             CreateMap<ProfessionalDto, Professional>();
             CreateMap<Service, ServiceDto>();
             CreateMap<ServiceDto, Service>();
-            CreateMap<Booking, BookingDto>();
-            CreateMap<BookingDto, Booking>();
-            CreateMap<Rating, RatingDto>();
-            CreateMap<RatingDto, Rating>();
-            CreateMap<Review, ReviewDto>();
-            CreateMap<ReviewDto, Review>();
+            CreateMap<Role, RoleDto>();
+            CreateMap<RoleDto, Role>();
+            CreateMap<City, CityDto>();
+            CreateMap<CityDto, City>();
+            CreateMap<ServiceType, ServiceTypeDto>();
+            CreateMap<ServiceTypeDto, ServiceType>();
         }
     }
 }

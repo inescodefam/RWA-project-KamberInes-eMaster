@@ -10,9 +10,9 @@ namespace WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly EMasterContext _context;
+        private readonly EProfessionalContext _context;
 
-        public AuthController(IConfiguration configuration, EMasterContext context)
+        public AuthController(IConfiguration configuration, EProfessionalContext context)
         {
             _configuration = configuration;
             _context = context;
@@ -35,13 +35,11 @@ namespace WebAPI.Controllers
                     PasswordSalt = b64salt,
                     Email = userAuthDto.Email,
                     Username = userAuthDto.Email.Split('@')[0],
+                    CreatedAt = DateTime.Now,
                 };
 
                 _context.Add(user);
                 _context.SaveChanges();
-
-                // Update DTO Id to return it to the client
-                //userAuthDto.Id = user.Iduser;
 
                 return Ok(userAuthDto);
 

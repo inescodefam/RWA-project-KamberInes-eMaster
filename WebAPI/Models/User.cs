@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace WebAPI.Models;
 
 [Table("User")]
-[Index("Email", Name = "UQ__User__AB6E61645D4812AE", IsUnique = true)]
+[Index("Email", Name = "UQ__User__AB6E6164A44889B9", IsUnique = true)]
 public partial class User
 {
     [Key]
@@ -34,10 +34,6 @@ public partial class User
     [StringLength(15)]
     public string? Phone { get; set; }
 
-    [Column("memberAddress")]
-    [StringLength(255)]
-    public string? MemberAddress { get; set; }
-
     [Column("createdAt")]
     public DateTime? CreatedAt { get; set; }
 
@@ -50,16 +46,7 @@ public partial class User
     public string? LastName { get; set; }
 
     [InverseProperty("User")]
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
-    [InverseProperty("User")]
     public virtual ICollection<Professional> Professionals { get; set; } = new List<Professional>();
-
-    [InverseProperty("User")]
-    public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
-
-    [InverseProperty("User")]
-    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     [InverseProperty("User")]
     public virtual ICollection<Role> Roles { get; set; } = new List<Role>();

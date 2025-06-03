@@ -16,9 +16,8 @@ public partial class Service
     [Column("professionalId")]
     public int? ProfessionalId { get; set; }
 
-    [Column("serviceName")]
-    [StringLength(100)]
-    public string ServiceName { get; set; } = null!;
+    [Column("serviceTypeID")]
+    public int? ServiceTypeId { get; set; }
 
     [Column("description")]
     [StringLength(255)]
@@ -27,10 +26,11 @@ public partial class Service
     [Column("price", TypeName = "decimal(10, 2)")]
     public decimal? Price { get; set; }
 
-    [InverseProperty("Service")]
-    public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-
     [ForeignKey("ProfessionalId")]
     [InverseProperty("Services")]
     public virtual Professional? Professional { get; set; }
+
+    [ForeignKey("ServiceTypeId")]
+    [InverseProperty("Services")]
+    public virtual ServiceType? ServiceType { get; set; }
 }

@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using WebAPI.Models;
+using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,10 +61,12 @@ builder.Services
     });
 
 
-builder.Services.AddDbContext<EMasterContext>(options =>
+builder.Services.AddDbContext<EProfessionalContext>(options =>
 {
     options.UseSqlServer("name=ConnectionString:ConnStr");
 });
+builder.Services.AddScoped<LogService>();
+
 
 var app = builder.Build();
 

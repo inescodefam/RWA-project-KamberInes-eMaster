@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace WebAPI.Models;
+
+[Table("City")]
+public partial class City
+{
+    [Key]
+    [Column("IDCity")]
+    public int Idcity { get; set; }
+
+    [Column("City")]
+    [StringLength(100)]
+    public string? City1 { get; set; }
+
+    [InverseProperty("City")]
+    public virtual ICollection<Professional> Professionals { get; set; } = new List<Professional>();
+}

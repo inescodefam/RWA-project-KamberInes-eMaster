@@ -4,14 +4,14 @@ namespace WebAPI.Services
 {
     public class LogService
     {
-        private readonly EMasterContext _context;
+        private readonly EProfessionalContext _context;
 
-        public LogService(EMasterContext context)
+        public LogService(EProfessionalContext context)
         {
             _context = context;
         }
 
-        public async Task LogAsync(string level, string message)
+        public void Log(string level, string message)
         {
             var log = new Log
             {
@@ -21,7 +21,7 @@ namespace WebAPI.Services
             };
 
             _context.Logs.Add(log);
-            await _context.SaveChangesAsync();
+            _context.SaveChangesAsync();
         }
     }
 }

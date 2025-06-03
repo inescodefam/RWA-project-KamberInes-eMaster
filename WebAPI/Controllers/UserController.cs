@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Auth;
 using WebAPI.DTOs;
 using WebAPI.Models;
 
@@ -12,15 +13,15 @@ namespace WebAPI.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly EMasterContext _context;
+        private readonly EProfessionalContext _context;
 
-        public UserController(EMasterContext context)
+        public UserController(EProfessionalContext context)
         {
             _context = context;
         }
         // GET: api/<UserController>
         [HttpGet]
-        public ActionResult<List<User>> Get(int start = 0, int count = 10)
+        public ActionResult<List<User>> Get(int count, int start = 0)
         {
             try
             {
@@ -35,11 +36,11 @@ namespace WebAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public ActionResult<User> Get(UserDto userDto)
+        public ActionResult<User> GetUserById(int id)
         {
             try
             {
-                return Ok(_context.Users.FirstOrDefault(x => x.Email == userDto.Email)?.Username ?? "User not found");
+                return Ok(_context.Users.FirstOrDefault(x => x.Iduser == id));
             }
             catch
             {
@@ -47,62 +48,30 @@ namespace WebAPI.Controllers
             }
         }
 
-        // POST api/<UserController>
-        [HttpPost]
-        public void Post([FromBody] UserDto userDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                BadRequest(ModelState);
-            }
-            if (_context.Users.Any(x => x.Username == userDto.Username) || _context.Users.Any(x => x.Email == userDto.Email))
-            {
-                BadRequest("Username already exists");
-            }
-
-            try
-            {
-                var user = new User
-                {
-                    Username = userDto.Username,
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    Email = userDto.Email,
-                    Phone = userDto.PhoneNumber,
-                    PasswordHash = userDto.Password,
-                    PasswordSalt = userDto.Password,
-                    MemberAddress = userDto.Address,
-                    CreatedAt = DateTime.Now,
-                };
-                _context.Users.Add(user);
-                _context.SaveChanges();
-            }
-            catch
-            {
-                NotFound();
-            }
-        }
-
-        // PUT api/<UserController>/5
-        [HttpPut("{id}")]
+        [HttpPut]
         public void Put([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
                 BadRequest(ModelState);
+                return;
             }
 
             try
             {
                 var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
+
+                var b64salt = HashPwd.GetSalt();
+                var b64hash = HashPwd.GetHash(userDto.Password, b64salt);
                 if (user != null)
                 {
-                    user.Username = userDto.Username;
-                    user.FirstName = userDto.FirstName;
-                    user.LastName = userDto.LastName;
+                    user.Username = userDto.Username ?? user.Username;
+                    user.FirstName = userDto.FirstName ?? user.FirstName;
+                    user.LastName = userDto.LastName ?? user.LastName;
                     user.Email = userDto.Email;
-                    user.Phone = userDto.PhoneNumber;
-                    user.MemberAddress = userDto.Address;
+                    user.Phone = userDto.PhoneNumber ?? user.Phone;
+                    user.PasswordHash = b64hash;
+                    user.PasswordSalt = b64salt;
                     _context.SaveChanges();
                 }
             }
