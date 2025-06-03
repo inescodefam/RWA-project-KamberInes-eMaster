@@ -17,6 +17,8 @@ public partial class EMasterContext : DbContext
 
     public virtual DbSet<Booking> Bookings { get; set; }
 
+    public virtual DbSet<Log> Logs { get; set; }
+
     public virtual DbSet<Professional> Professionals { get; set; }
 
     public virtual DbSet<Rating> Ratings { get; set; }
@@ -46,6 +48,11 @@ public partial class EMasterContext : DbContext
             entity.HasOne(d => d.Service).WithMany(p => p.Bookings).HasConstraintName("FK_Service_Booking");
 
             entity.HasOne(d => d.User).WithMany(p => p.Bookings).HasConstraintName("FK_User_Booking");
+        });
+
+        modelBuilder.Entity<Log>(entity =>
+        {
+            entity.HasKey(e => e.IdLog).HasName("PK__LOG__0C54DBC6A4AD9BC3");
         });
 
         modelBuilder.Entity<Professional>(entity =>

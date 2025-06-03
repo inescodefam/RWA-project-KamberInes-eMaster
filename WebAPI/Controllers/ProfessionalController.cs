@@ -9,12 +9,12 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProfessionalsController : ControllerBase
+    public class ProfessionalController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly EMasterContext _context;
         private readonly IMapper _mapper;
-        public ProfessionalsController(IConfiguration configuration, EMasterContext context, IMapper mapper)
+        public ProfessionalController(IConfiguration configuration, EMasterContext context, IMapper mapper)
         {
             _configuration = configuration;
             _context = context;
