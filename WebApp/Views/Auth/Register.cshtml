@@ -1,0 +1,7 @@
+﻿@model WebApp.Models.AuthVM
+
+<form asp-action="Register" method="post">
+    <input asp-for="Email" placeholder="Email" />
+    <input asp-for="Password" type="password" placeholder="Password" />
+    <button type="submit">Register</button>
+</form>

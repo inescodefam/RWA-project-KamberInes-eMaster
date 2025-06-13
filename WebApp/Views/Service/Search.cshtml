@@ -1,0 +1,61 @@
+﻿@model WebApp.Models.ServiceSearchVM
+@{
+    ViewBag.Title = "Service Search";
+}
+
+<h2>Search for Professional Services</h2>
+
+@using (Html.BeginForm("Search", "Service", FormMethod.Get))
+{
+    <div>
+        <label>City:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedCityId,
+                new SelectList(Model.Cities, "id", "Name", Model.SelectedCityId),
+                "-- Select City --"
+                )
+    </div>
+    <div>
+        <label>Service Type:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedServiceTypeName,
+                new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
+                "-- Select Service Type --"
+                )
+    </div>
+    <div>
+        <button type="submit">Search</button>
+    </div>
+}
+
+@if (Model.Services != null && Model.Services.Any())
+{
+    <h3>Results</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Professional</th>
+                <th>City</th>
+                <th>Service Type</th>
+                <th>Description</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var service in Model.Services)
+            {
+                <tr>
+                    <td>@service.ProfessionalName</td>
+                    <td>@service.CityName</td>
+                    <td>@service.ServiceTypeName</td>
+                    <td>@service.Description</td>
+                    <td>@service.Price</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No services found for the selected criteria.</p>
+}

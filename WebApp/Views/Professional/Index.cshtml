@@ -1,0 +1,29 @@
+﻿@model List<WebApp.Models.ProfessionalVM>
+
+@{
+    ViewData["Title"] = "User List";
+
+}
+@if (Model == null || !Model.Any())
+{
+    <div>No users found or you are not authorized.</div>
+}
+
+<h2>Professionals List</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>City</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.UserName</td>
+                <td>@p.CityName</td>
+            </tr>
+        }
+    </tbody>
+</table>

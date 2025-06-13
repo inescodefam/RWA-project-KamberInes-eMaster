@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.DTOs;
+using Shared.BL.DTOs;
+using Shared.BL.Models;
 using WebAPI.Models;
 using WebAPI.Services;
 

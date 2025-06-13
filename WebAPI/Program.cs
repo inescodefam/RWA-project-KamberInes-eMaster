@@ -67,6 +67,17 @@ builder.Services.AddDbContext<EProfessionalContext>(options =>
 });
 builder.Services.AddScoped<LogService>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+
 
 var app = builder.Build();
 
@@ -76,6 +87,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+// enable cors so my webapp and web api can listenon different ports
+app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();

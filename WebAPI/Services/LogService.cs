@@ -1,4 +1,5 @@
-﻿using WebAPI.Models;
+﻿using Shared.BL.Models;
+using WebAPI.Models;
 
 namespace WebAPI.Services
 {

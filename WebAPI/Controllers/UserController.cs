@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.BL.DTOs;
 using WebAPI.Auth;
-using WebAPI.DTOs;
 using WebAPI.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -14,18 +15,24 @@ namespace WebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly EProfessionalContext _context;
+        private readonly IMapper _mapper;
 
-        public UserController(EProfessionalContext context)
+        public UserController(EProfessionalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
         // GET: api/<UserController>
         [HttpGet]
-        public ActionResult<List<User>> Get(int count, int start = 0)
+        public ActionResult<List<UserDto>> Get(int count, int start = 0)
         {
             try
             {
-                return Ok(_context.Users.Skip(start * count).Take(count));
+                var users = _context.Users.Skip(start * count).Take(count);
+                var userDtos = _mapper.Map<List<UserDto>>(users);
+
+                return Ok(userDtos);
             }
             catch (Exception ex)
             {
@@ -36,11 +43,13 @@ namespace WebAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public ActionResult<User> GetUserById(int id)
+        public ActionResult<UserDto> GetUserById(int id)
         {
             try
             {
-                return Ok(_context.Users.FirstOrDefault(x => x.Iduser == id));
+                var user = _context.Users.FirstOrDefault(x => x.Iduser == id);
+                var userDto = _mapper.Map<UserDto>(user);
+                return Ok(userDto);
             }
             catch
             {

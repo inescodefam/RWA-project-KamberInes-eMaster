@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Shared.BL.Models;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
