@@ -11,18 +11,21 @@ namespace WebAPI.Auth
         {
             var tokenKey = Encoding.UTF8.GetBytes(secureKey);
 
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, email),
+                    new Claim(JwtRegisteredClaimNames.Sub, email),
+
+                };
+
             foreach (var role in roles)
             {
-                new Claim(ClaimTypes.Role, role);
+                claims.Add(new Claim("role", role));
             }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(ClaimTypes.Name, email),
-                new Claim(JwtRegisteredClaimNames.Sub, email),
-            }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddMinutes(expiration),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(tokenKey),

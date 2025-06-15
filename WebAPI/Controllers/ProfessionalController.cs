@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
@@ -104,7 +105,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public void Post([FromBody] ProfessionalDto professionalDto)
+        public IActionResult Post([FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
@@ -120,12 +121,12 @@ namespace WebAPI.Controllers
                 _context.Professionals.Add(professional);
                 _context.SaveChanges();
                 _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
-                Ok("Professional added successfully");
+                return Ok("Professional added successfully");
             }
             catch (Exception ex)
             {
                 _loggingService.Log($"Error adding professional: {ex.Message}", "error");
-                StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -160,6 +161,7 @@ namespace WebAPI.Controllers
         }
 
         // DELETE api/<ProfessionalsController>/5
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

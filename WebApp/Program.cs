@@ -23,49 +23,6 @@ builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("http://localhost:5020/")
 ).AddHttpMessageHandler<JwtAuthorizationHandler>();
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//})
-//.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-//{
-//    options.LoginPath = "/Auth/Login";
-//    options.LogoutPath = "/Auth/Logout";
-//    options.ExpireTimeSpan = TimeSpan.FromHours(1);
-//});
-
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-//})
-//.AddJwtBearer(options =>
-//{
-//    options.TokenValidationParameters = new TokenValidationParameters
-//    {
-//        ValidateIssuer = true,
-//        ValidateAudience = true,
-//        ValidateLifetime = true,
-//        ValidateIssuerSigningKey = true,
-//        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mineSuperSecretKey"))
-//    };
-
-//    options.Events = new JwtBearerEvents
-//    {
-//        OnMessageReceived = context =>
-//        {
-//            var token = context.Request.Cookies["jwt"];
-//            if (!string.IsNullOrEmpty(token))
-//            {
-//                context.Token = token;
-//            }
-//            return Task.CompletedTask;
-//        }
-//    };
-//});
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = "JWT_OR_COOKIE";

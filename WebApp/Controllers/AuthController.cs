@@ -40,7 +40,6 @@ namespace WebApp.Controllers
                 var json = await response.Content.ReadAsStringAsync();
                 var token = JsonDocument.Parse(json).RootElement.GetProperty("token").GetString();
 
-                // Parse JWT and create claims
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
 
@@ -50,7 +49,8 @@ namespace WebApp.Controllers
                         : c)
                     .ToList();
 
-                var identity = new ClaimsIdentity(claims,
+                var identity = new ClaimsIdentity(
+                    claims,
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     ClaimTypes.Name,
                     ClaimTypes.Role);

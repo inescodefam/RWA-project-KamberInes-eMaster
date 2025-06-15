@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
+using System.Security.Claims;
 using WebApp.Models;
 using WebApp.Services;
 
 namespace WebApp.Controllers
-{    public class ProfessionalController : Controller
+{
+    public class ProfessionalController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
@@ -66,23 +67,46 @@ namespace WebApp.Controllers
         }
 
         // GET: ProfessionalController/Create
-        public ActionResult Create()
+        // BecomeProfessional
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
+            var vm = new BecomeProfessionalVM { Cities = cities };
+            return View(vm);
         }
 
         // POST: ProfessionalController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Create(BecomeProfessionalVM model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (!ModelState.IsValid)
+                {
+                    model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
+                    return View(model);
+                }
+
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+                var response = await _httpClient.PostAsJsonAsync("api/professional", new { UserId = userId, CityId = model.CityId });
+
+                if (response.IsSuccessStatusCode)
+                {
+
+                    return RedirectToAction("Index", "Service");
+                }
+
+                ModelState.AddModelError("", "Could not become professional.");
+                model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
+                return View(model);
             }
             catch
             {
-                return View();
+
+                model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
+                return View(model);
             }
         }
 
