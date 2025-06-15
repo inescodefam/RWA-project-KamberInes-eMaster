@@ -7,9 +7,14 @@ namespace WebAPI.Auth
 {
     public class JwtTokenProvider
     {
-        public static string CreateToken(string secureKey, int expiration, string email = null)
+        public static string CreateToken(string secureKey, int expiration, string email = null, List<string?> roles = null)
         {
             var tokenKey = Encoding.UTF8.GetBytes(secureKey);
+
+            foreach (var role in roles)
+            {
+                new Claim(ClaimTypes.Role, role);
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

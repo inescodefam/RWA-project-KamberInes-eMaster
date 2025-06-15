@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 using WebAPI.Models;
 using WebAPI.Services;
@@ -56,6 +57,7 @@ builder.Services
         {
             ValidateIssuer = false,
             ValidateAudience = false,
+            RoleClaimType = ClaimTypes.Role,
             IssuerSigningKey = new SymmetricSecurityKey(Key)
         };
     });
@@ -66,6 +68,8 @@ builder.Services.AddDbContext<EProfessionalContext>(options =>
     options.UseSqlServer("name=ConnectionString:ConnStr");
 });
 builder.Services.AddScoped<LogService>();
+builder.Services.AddScoped<ServicesService>();
+
 
 builder.Services.AddCors(options =>
 {

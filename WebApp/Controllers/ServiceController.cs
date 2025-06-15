@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using WebApp.Models;
+using WebApp.Services;
 
 namespace WebApp.Controllers
 {
@@ -10,11 +11,21 @@ namespace WebApp.Controllers
 
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly ApiFetchService _apiFetchService;
 
-        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper)
+
+        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
+            _apiFetchService = apiFetchService;
+        }
+
+        public async Task<IActionResult> Index(int count, int start = 0)
+        {
+            // coment when ui is done
+            count = 50;
+            return await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}", this);
         }
 
         public async Task<ActionResult> Search(int? cityId, string serviceTypeName)

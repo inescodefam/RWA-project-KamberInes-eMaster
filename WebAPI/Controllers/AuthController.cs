@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using WebAPI.Auth;
@@ -68,7 +69,13 @@ namespace WebAPI.Controllers
 
                 var secureKey = _configuration["JWT:SecureKey"];
 
-                var token = JwtTokenProvider.CreateToken(secureKey, 120, userAuthDto.Email);
+
+                var roles = _context.Roles
+                    .Where(r => r.UserId == existingUser.Iduser)
+                    .Select(r => r.RoleName)
+                    .ToList();
+
+                var token = JwtTokenProvider.CreateToken(secureKey, 120, userAuthDto.Email, roles);
                 return Ok(new { token });
             }
             catch (Exception ex)

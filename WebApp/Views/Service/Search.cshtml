@@ -7,14 +7,7 @@
 
 @using (Html.BeginForm("Search", "Service", FormMethod.Get))
 {
-    <div>
-        <label>City:</label>
-        @Html.DropDownListFor(
-                m => m.SelectedCityId,
-                new SelectList(Model.Cities, "id", "Name", Model.SelectedCityId),
-                "-- Select City --"
-                )
-    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
     <div>
         <label>Service Type:</label>
         @Html.DropDownListFor(
@@ -24,7 +17,16 @@
                 )
     </div>
     <div>
+        <label>City:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedCityId,
+                new SelectList(Model.Cities, "id", "Name", Model.SelectedCityId),
+                "-- Select City --"
+                )
+    </div>
+    <div>
         <button type="submit">Search</button>
+        </div>
     </div>
 }
 

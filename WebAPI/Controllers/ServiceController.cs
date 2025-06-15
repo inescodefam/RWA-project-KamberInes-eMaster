@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.Models;
-using WebAPI.Models;
+using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
@@ -10,11 +10,11 @@ namespace WebAPI.Controllers
     [Authorize]
     public class ServiceController : Controller
     {
-        private readonly EProfessionalContext _context;
+        private readonly ServicesService _servicesService;
 
-        public ServiceController(EProfessionalContext context)
+        public ServiceController(ServicesService servicesService)
         {
-            _context = context;
+            _servicesService = servicesService;
         }
 
         [HttpGet]
@@ -22,10 +22,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var services = _context.Services
-                    .Skip(start * count)
-                    .Take(count)
-                    .ToList();
+                var services = _servicesService.GetServices(count, start);
                 return Ok(services);
             }
             catch (Exception)
@@ -33,5 +30,72 @@ namespace WebAPI.Controllers
                 return StatusCode(500, "An error occurred while retrieving the services.");
             }
         }
+
+        [HttpGet("{type}")]
+        public ActionResult<Service> GetServiceByServiceType(string type)
+        {
+            try
+            {
+                return Ok(_servicesService.GetServiceByServiceType(type));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the service.");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult<Service> CreateService(Service service)
+        {
+            try
+            {
+                if (service == null)
+                {
+                    return BadRequest("Service cannot be null.");
+                }
+                _servicesService.CreateService(service);
+                return CreatedAtAction(nameof(GetServiceByServiceType), new { type = service.ServiceTypeId }, service);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult UpdateService(int id, Service service)
+        {
+            if (id != service.IdService)
+            {
+                return BadRequest("Service ID mismatch.");
+            }
+            try
+            {
+
+                _servicesService.UpdateService(id, service);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public ActionResult DeleteService(int id)
+        {
+            try
+            {
+                _servicesService.DeleteService(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
     }
 }

@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using WebApp.Models;
 using WebApp.Services;
 
 namespace WebApp.Controllers
-{
-    public class ProfessionalController : Controller
+{    public class ProfessionalController : Controller
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
