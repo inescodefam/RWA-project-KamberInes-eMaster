@@ -23,7 +23,7 @@ namespace WebApp.Controllers
 
         public async Task<IActionResult> Index(int count, int start = 0)
         {
-            // coment when ui is done
+            // coment when ui is done todo implement pagination
             count = 50;
             return await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}", this);
         }

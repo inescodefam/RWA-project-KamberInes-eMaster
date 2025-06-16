@@ -24,6 +24,11 @@
                      "-- Select Service Type --"
                      )
     </div>
+        <div style="align-self: flex-end;">
+            <a asp-action="CreateServiceType" asp-controller="ServiceType" class="btn btn-success" style="margin-left: 10px;">
+                + Add Service Type
+            </a>
+        </div>
     <div>
         <label>City:</label>
             @Html.DropDownListFor(

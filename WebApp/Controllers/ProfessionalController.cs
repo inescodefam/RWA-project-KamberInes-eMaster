@@ -24,6 +24,7 @@ namespace WebApp.Controllers
 
 
         // GET: ProfessionalController
+        [HttpGet]
         public async Task<IActionResult> Index(int count, int start = 0)
         {
             // coment when ui is done todo create pagination
@@ -67,7 +68,8 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalController/Create
         // BecomeProfessional
-        public async Task<IActionResult> CreateCity()
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
             var cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
             var vm = new BecomeProfessionalVM { Cities = cities };
