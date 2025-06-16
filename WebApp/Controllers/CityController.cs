@@ -13,14 +13,21 @@ namespace WebApp.Controllers
         private readonly ApiFetchService _apiFetchService;
         public CityController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
             _httpClient.BaseAddress = new Uri("http://localhost:5020/");
+
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string searchTerm, int page = 1, int pageSize = 10)
         {
-            var response = await _httpClient.GetAsync("api/city?...");
+            int start = (page - 1) * pageSize;
+            string url = $"api/city?count={pageSize}&start={start}";
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                url += $"&searchTerm={searchTerm}";
+            }
+            var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -35,13 +42,13 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddCity(CityIndexVM model)
         {
-
             var response = await _httpClient.PostAsJsonAsync("api/city", model.NewCityName);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
             }
-            ModelState.AddModelError("", "Failed to add city.");
+            var error = await response.Content.ReadAsStringAsync();
+            ModelState.AddModelError("", $"Failed to add city. API says: {error}");
             return RedirectToAction("Index");
         }
 

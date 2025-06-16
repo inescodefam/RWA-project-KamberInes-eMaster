@@ -40,7 +40,7 @@ namespace WebApp.Controllers
                 var cityList = (cities as ViewResult)?.Model as List<CityVM> ?? new List<CityVM>();
 
                 var userDict = userList.ToDictionary(u => u.Id, u => u.Username);
-                var cityDict = cityList.ToDictionary(c => c.Id, c => c.Name);
+                var cityDict = cityList.ToDictionary(c => c.Id, c => c.City1);
 
                 foreach (var p in professionals)
                 {

@@ -27,7 +27,7 @@ namespace WebAPI.Controllers
                     .Take(count)
                     .Select(st => new ServiceTypeDto
                     {
-                        Id = st.IdserviceType,
+                        IdserviceType = st.IdserviceType,
                         ServiceTypeName = st.ServiceTypeName
                     })
                     .ToList();

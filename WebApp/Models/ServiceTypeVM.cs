@@ -2,7 +2,7 @@
 {
     public class ServiceTypeVM
     {
-        public int Id { get; set; }
+        public int IdserviceType { get; set; }
         public string? ServiceTypeName { get; set; }
     }
 }

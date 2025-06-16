@@ -30,18 +30,22 @@ namespace WebApp.Controllers
 
         public async Task<ActionResult> Search(int? cityId, string serviceTypeName)
         {
-            var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>("api/city?count=1000&start=0");
-            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>("api/servicetype?count=1000&start=0");
-            var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>("api/service?count=1000&start=0");
+            var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>("api/city?count=1000&start=0") ?? new List<CityDto>();
+            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeDto>();
+            var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>("api/service?count=1000&start=0") ?? new List<ServiceDto>();
 
-            var cities = _mapper.Map<List<CityVM>>(cityDtos);
-            var serviceTypes = _mapper.Map<List<ServiceTypeVM>>(serviceTypeDtos);
+            var cities = _mapper.Map<List<CityVM>>(cityDtos)?
+              .Where(c => c != null && !string.IsNullOrEmpty(c.City1))
+              .ToList() ?? new List<CityVM>();
+            var serviceTypes = _mapper.Map<List<ServiceTypeVM>>(serviceTypeDtos)?
+               .Where(st => st != null && !string.IsNullOrEmpty(st.ServiceTypeName))
+               .ToList() ?? new List<ServiceTypeVM>();
             var allServices = _mapper.Map<List<ServiceResultVM>>(serviceDtos);
 
             var filteredServices = allServices?
               .Where(s =>
                   (!cityId.HasValue ||
-                   (cities?.Any(c => c.Id == cityId && c.Name == s.CityName) ?? false)) &&
+                   (cities?.Any(c => c.Id == cityId && c.City1 == s.CityName) ?? false)) &&
                   (string.IsNullOrEmpty(serviceTypeName) ||
                    s.ServiceTypeName == serviceTypeName)
               )
@@ -50,11 +54,11 @@ namespace WebApp.Controllers
 
             var vm = new ServiceSearchVM
             {
-                Cities = cities,
-                ServiceTypes = serviceTypes,
+                Cities = cities ?? new List<CityVM>(),
+                ServiceTypes = serviceTypes ?? new List<ServiceTypeVM>(),
                 SelectedCityId = cityId,
                 SelectedServiceTypeName = serviceTypeName,
-                Services = filteredServices
+                Services = filteredServices ?? new List<ServiceResultVM>()
 
             };
 

@@ -22,11 +22,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CityDto>> GetCities(int count, int start = 0)
+        public ActionResult<List<CityDto>> GetCities(int count, int start = 0, string searchTerm = "")
         {
             try
             {
-                return Ok(_context.Cities.Skip(start * count).Take(count));
+                var query = _context.Cities.AsQueryable();
+                if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    query = query.Where(c => c.City1.Contains(searchTerm));
+                }
+                var result = query.Skip(start).Take(count).ToList();
+                return Ok(result);
             }
             catch (Exception)
             {
@@ -37,6 +43,7 @@ namespace WebAPI.Controllers
         [HttpPost]
         public ActionResult<CityDto> CreateCity([FromBody] string cityName)
         {
+            System.Diagnostics.Debug.WriteLine($"Received cityName: {cityName}");
             if (cityName == null)
             {
                 return BadRequest("City data is required.");

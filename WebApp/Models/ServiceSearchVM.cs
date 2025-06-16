@@ -5,8 +5,11 @@
         public int? SelectedCityId { get; set; }
         public string? SelectedServiceTypeName { get; set; }
 
-        public List<CityVM>? Cities { get; set; }
-        public List<ServiceTypeVM>? ServiceTypes { get; set; }
+        //public List<CityVM>? Cities { get; set; }
+        //public List<ServiceTypeVM>? ServiceTypes { get; set; }
+        public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
+        public List<CityVM> Cities { get; set; } = new List<CityVM>();
+
         public List<ServiceResultVM>? Services { get; set; }
     }
 

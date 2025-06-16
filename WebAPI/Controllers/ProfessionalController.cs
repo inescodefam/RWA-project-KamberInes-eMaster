@@ -10,7 +10,7 @@ using WebAPI.Services;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/professional")]
     [ApiController]
     public class ProfessionalController : ControllerBase
     {
