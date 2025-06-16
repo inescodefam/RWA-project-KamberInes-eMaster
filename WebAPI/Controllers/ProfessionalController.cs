@@ -83,7 +83,7 @@ namespace WebAPI.Controllers
                 }
                 if (!string.IsNullOrEmpty(city))
                 {
-                    query = query.Where(p => p.City.City1.Contains(city));
+                    query = query.Where(p => p.City.Name.Contains(city));
                 }
                 var professionals = query.Skip(start * count).Take(count).ToList();
                 if (professionals == null || professionals.Count == 0)

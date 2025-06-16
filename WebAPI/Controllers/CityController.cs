@@ -29,7 +29,7 @@ namespace WebAPI.Controllers
                 var query = _context.Cities.AsQueryable();
                 if (!string.IsNullOrEmpty(searchTerm))
                 {
-                    query = query.Where(c => c.City1.Contains(searchTerm));
+                    query = query.Where(c => c.Name.Contains(searchTerm));
                 }
                 var result = query.Skip(start).Take(count).ToList();
                 return Ok(result);
@@ -50,20 +50,20 @@ namespace WebAPI.Controllers
             }
             try
             {
-                if (_context.Cities.Any(x => x.City1 == cityName))
+                if (_context.Cities.Any(x => x.Name == cityName))
                 {
                     return Conflict("City already exists.");
                 }
 
                 var city = new City
                 {
-                    City1 = cityName,
+                    Name = cityName,
 
                 };
                 _context.Cities.Add(city);
                 _context.SaveChanges();
 
-                City c = _context.Cities.FirstOrDefault(x => x.City1 == cityName);
+                City c = _context.Cities.FirstOrDefault(x => x.Name == cityName);
 
 
                 CityDto cityDto = _mapper.Map<CityDto>(c);

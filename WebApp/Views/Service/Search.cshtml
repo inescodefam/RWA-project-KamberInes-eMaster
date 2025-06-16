@@ -28,7 +28,7 @@
         <label>City:</label>
             @Html.DropDownListFor(
                      m => m.SelectedCityId,
-                     new SelectList(Model.Cities, "Id", "Name", Model.SelectedCityId),
+                     new SelectList(Model.Cities, "Idcity", "Name", Model.SelectedCityId),
                      "-- Select City --"
                      )
     </div>

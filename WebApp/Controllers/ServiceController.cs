@@ -35,8 +35,9 @@ namespace WebApp.Controllers
             var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>("api/service?count=1000&start=0") ?? new List<ServiceDto>();
 
             var cities = _mapper.Map<List<CityVM>>(cityDtos)?
-              .Where(c => c != null && !string.IsNullOrEmpty(c.City1))
+              .Where(c => c != null && !string.IsNullOrEmpty(c.Name))
               .ToList() ?? new List<CityVM>();
+
             var serviceTypes = _mapper.Map<List<ServiceTypeVM>>(serviceTypeDtos)?
                .Where(st => st != null && !string.IsNullOrEmpty(st.ServiceTypeName))
                .ToList() ?? new List<ServiceTypeVM>();
@@ -45,7 +46,7 @@ namespace WebApp.Controllers
             var filteredServices = allServices?
               .Where(s =>
                   (!cityId.HasValue ||
-                   (cities?.Any(c => c.Id == cityId && c.City1 == s.CityName) ?? false)) &&
+                   (cities?.Any(c => c.Idcity == cityId && c.Name == s.CityName) ?? false)) &&
                   (string.IsNullOrEmpty(serviceTypeName) ||
                    s.ServiceTypeName == serviceTypeName)
               )
