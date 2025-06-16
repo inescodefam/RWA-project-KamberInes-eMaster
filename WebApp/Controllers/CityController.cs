@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text;
-using System.Text.Json;
 using WebApp.Models;
+using WebApp.Services;
+
 
 namespace WebApp.Controllers
 {
@@ -11,43 +10,40 @@ namespace WebApp.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-
-        public CityController(IHttpClientFactory httpClientFactory, IMapper mapper)
+        private readonly ApiFetchService _apiFetchService;
+        public CityController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
-            _mapper = mapper;
+            _httpClient = httpClientFactory.CreateClient();
+            _httpClient.BaseAddress = new Uri("http://localhost:5020/");
         }
 
-        public ActionResult<List<CityVM>> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string searchTerm, int page = 1, int pageSize = 10)
         {
-            var response = _httpClient.GetAsync("api/city").Result;
+            var response = await _httpClient.GetAsync("api/city?...");
+
             if (response.IsSuccessStatusCode)
             {
-                var content = response.Content.ReadAsStringAsync().Result;
-                var cities = JsonSerializer.Deserialize<List<CityVM>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                return View(cities);
+                var cities = await response.Content.ReadFromJsonAsync<List<CityVM>>() ?? new List<CityVM>();
+                var model = new CityIndexVM { Cities = cities };
+                return View(model);
             }
-            return View();
+            return View(new CityIndexVM { Cities = new List<CityVM>() });
+
         }
 
-
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CityCreateVM model)
+        public async Task<IActionResult> AddCity(CityIndexVM model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
 
-            var content = new StringContent(JsonSerializer.Serialize(model.Name), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("api/city", content);
-
+            var response = await _httpClient.PostAsJsonAsync("api/city", model.NewCityName);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Index");
             }
-
-            ModelState.AddModelError("", "Failed to create city.");
-            return View(model);
+            ModelState.AddModelError("", "Failed to add city.");
+            return RedirectToAction("Index");
         }
+
     }
 }

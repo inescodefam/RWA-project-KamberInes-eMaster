@@ -38,12 +38,15 @@ namespace WebApp.Controllers
             var serviceTypes = _mapper.Map<List<ServiceTypeVM>>(serviceTypeDtos);
             var allServices = _mapper.Map<List<ServiceResultVM>>(serviceDtos);
 
-            var filteredServices = allServices
-                .Where(s =>
-                    (!cityId.HasValue || s.CityName == cities.FirstOrDefault(c => c.id == cityId)?.Name) &&
-                    (string.IsNullOrEmpty(serviceTypeName) || s.ServiceTypeName == serviceTypeName)
-                )
-                .ToList();
+            var filteredServices = allServices?
+              .Where(s =>
+                  (!cityId.HasValue ||
+                   (cities?.Any(c => c.Id == cityId && c.Name == s.CityName) ?? false)) &&
+                  (string.IsNullOrEmpty(serviceTypeName) ||
+                   s.ServiceTypeName == serviceTypeName)
+              )
+              .ToList() ?? new List<ServiceResultVM>();
+
 
             var vm = new ServiceSearchVM
             {
@@ -54,6 +57,12 @@ namespace WebApp.Controllers
                 Services = filteredServices
 
             };
+
+            if (vm.ServiceTypes == null)
+                vm.ServiceTypes = new List<ServiceTypeVM>();
+
+            if (vm.Cities == null)
+                vm.Cities = new List<CityVM>();
 
             return View(vm);
         }

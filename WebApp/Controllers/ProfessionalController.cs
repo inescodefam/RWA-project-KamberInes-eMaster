@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -24,25 +26,22 @@ namespace WebApp.Controllers
         // GET: ProfessionalController
         public async Task<IActionResult> Index(int count, int start = 0)
         {
-            // coment when ui is done
+            // coment when ui is done todo create pagination
             count = 50;
             var professionalsResult = await _apiFetchService.FetchList<ProfessionalDto, ProfessionalVM>($"api/professional?count={count}&start={start}", this);
 
             if (professionalsResult is ViewResult viewResult && viewResult.Model is List<ProfessionalVM> professionals)
             {
-                // Fetch users and cities
+
                 var users = await _apiFetchService.FetchList<UserDto, UserVM>("api/user?count=1000&start=0", this);
                 var cities = await _apiFetchService.FetchList<CityDto, CityVM>("api/city?count=1000&start=0", this);
 
-                // Convert to lists
                 var userList = (users as ViewResult)?.Model as List<UserVM> ?? new List<UserVM>();
                 var cityList = (cities as ViewResult)?.Model as List<CityVM> ?? new List<CityVM>();
 
-                // Build lookup dictionaries
                 var userDict = userList.ToDictionary(u => u.Id, u => u.Username);
-                var cityDict = cityList.ToDictionary(c => c.id, c => c.Name);
+                var cityDict = cityList.ToDictionary(c => c.Id, c => c.Name);
 
-                // Populate UserName and CityName
                 foreach (var p in professionals)
                 {
                     if (p.UserId.HasValue && userDict.TryGetValue((int)p.UserId, out var userName))
@@ -60,15 +59,15 @@ namespace WebApp.Controllers
             return professionalsResult;
         }
 
-        // GET: ProfessionalController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var professionals = _apiFetchService.FetchList<ProfessionalDto, ProfessionalVM>($"api/professional/{id}", this);
+            return View(professionals);
         }
 
         // GET: ProfessionalController/Create
         // BecomeProfessional
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> CreateCity()
         {
             var cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
             var vm = new BecomeProfessionalVM { Cities = cities };
@@ -91,6 +90,8 @@ namespace WebApp.Controllers
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
                 var response = await _httpClient.PostAsJsonAsync("api/professional", new { UserId = userId, CityId = model.CityId });
+                //var response = await _httpClient.PostAsync("api/professional",
+                //new StringContent(JsonSerializer.Serialize(new { UserId = userId, CityId = model.CityId }), Encoding.UTF8, "application/json"));
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -99,8 +100,7 @@ namespace WebApp.Controllers
                 }
 
                 ModelState.AddModelError("", "Could not become professional.");
-                model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
-                return View(model);
+                return View();
             }
             catch
             {
@@ -113,7 +113,8 @@ namespace WebApp.Controllers
         // GET: ProfessionalController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var professional = _httpClient.GetAsync($"api/professional/{id}");
+            return View(professional);
         }
 
         // POST: ProfessionalController/Edit/5
@@ -123,6 +124,8 @@ namespace WebApp.Controllers
         {
             try
             {
+                _httpClient.PutAsync($"api/professional/{id}",
+                    new StringContent(JsonSerializer.Serialize(collection), Encoding.UTF8, "application/json"));
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -134,7 +137,8 @@ namespace WebApp.Controllers
         // GET: ProfessionalController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var professional = _httpClient.GetAsync($"api/professional/{id}");
+            return View(professional);
         }
 
         // POST: ProfessionalController/Delete/5
@@ -144,6 +148,7 @@ namespace WebApp.Controllers
         {
             try
             {
+                _httpClient.DeleteAsync($"api/professional/{id}");
                 return RedirectToAction(nameof(Index));
             }
             catch

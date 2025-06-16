@@ -73,17 +73,6 @@ namespace WebAPI.Services
             }
             try
             {
-                //var existingService = _context.Services.FirstOrDefault(x => x.IdService == id);
-                //if (existingService == null)
-                //{
-                //    return NotFound();
-                //}
-                //existingService.Description = service.Description;
-                //existingService.Price = service.Price;
-                //existingService.ProfessionalId = service.ProfessionalId;
-                //existingService.ServiceTypeId = service.ServiceTypeId;
-                //_context.SaveChanges();
-
                 _context.Services.Update(service);
                 _context.SaveChanges();
             }

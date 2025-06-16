@@ -109,7 +109,7 @@ namespace WebAPI.Controllers
         {
             if (!ModelState.IsValid)
             {
-                BadRequest(ModelState);
+                return BadRequest(ModelState);
             }
             var professional = new Professional
             {

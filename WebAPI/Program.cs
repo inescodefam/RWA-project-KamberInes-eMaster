@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Shared.BL.Services;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Models;
@@ -69,7 +70,7 @@ builder.Services.AddDbContext<EProfessionalContext>(options =>
 });
 builder.Services.AddScoped<LogService>();
 builder.Services.AddScoped<ServicesService>();
-
+builder.Services.AddScoped<ICityService, CityService>();
 
 builder.Services.AddCors(options =>
 {

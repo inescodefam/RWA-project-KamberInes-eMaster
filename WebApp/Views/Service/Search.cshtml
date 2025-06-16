@@ -1,28 +1,35 @@
-﻿@model WebApp.Models.ServiceSearchVM
+﻿@using WebApp.Models
+@model WebApp.Models.ServiceSearchVM
 @{
     ViewBag.Title = "Service Search";
 }
 
 <h2>Search for Professional Services</h2>
+<!-- At top of view -->
+<p>Cities Count: @Model.Cities?.Count</p>
+<p>ServiceTypes Count: @Model.ServiceTypes?.Count</p>
+
 
 @using (Html.BeginForm("Search", "Service", FormMethod.Get))
 {
     <div style="display: flex; align-items: center; gap: 1rem;">
     <div>
         <label>Service Type:</label>
-        @Html.DropDownListFor(
-                m => m.SelectedServiceTypeName,
-                new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
-                "-- Select Service Type --"
-                )
+            @Html.DropDownListFor(
+                     m => m.SelectedServiceTypeName,
+                     new SelectList(Model.ServiceTypes ?? new List<ServiceTypeVM>(),
+                     "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
+                     "-- Select Service Type --"
+                     )
     </div>
     <div>
         <label>City:</label>
-        @Html.DropDownListFor(
-                m => m.SelectedCityId,
-                new SelectList(Model.Cities, "id", "Name", Model.SelectedCityId),
-                "-- Select City --"
-                )
+            @Html.DropDownListFor(
+                     m => m.SelectedCityId,
+                     new SelectList(Model.Cities ?? new List<CityVM>(),
+                     "Id", "Name", Model.SelectedCityId),
+                     "-- Select City --"
+                     )
     </div>
     <div>
         <button type="submit">Search</button>
