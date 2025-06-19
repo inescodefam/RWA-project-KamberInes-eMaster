@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.BL.DTOs;
 using Shared.BL.Models;
 using WebAPI.Services;
 
@@ -45,16 +46,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Service> CreateService(Service service)
+        public ActionResult<Service> CreateServiceFromDto(ServiceDto serviceDto)
         {
             try
             {
-                if (service == null)
+                if (serviceDto == null)
                 {
                     return BadRequest("Service cannot be null.");
                 }
-                _servicesService.CreateService(service);
-                return CreatedAtAction(nameof(GetServiceByServiceType), new { type = service.ServiceTypeId }, service);
+                _servicesService.CreateService(serviceDto);
+                return CreatedAtAction(nameof(GetServiceByServiceType), new { type = serviceDto.ServiceTypeId }, serviceDto);
             }
             catch (Exception ex)
             {

@@ -1,4 +1,6 @@
-﻿using Shared.BL.Models;
+﻿using AutoMapper;
+using Shared.BL.DTOs;
+using Shared.BL.Models;
 using WebAPI.Models;
 
 namespace WebAPI.Services
@@ -6,10 +8,12 @@ namespace WebAPI.Services
     public class ServicesService
     {
         private readonly EProfessionalContext _context;
+        private readonly IMapper _mapper;
 
-        public ServicesService(EProfessionalContext context)
+        public ServicesService(EProfessionalContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public List<Service> GetServices(int count, int start = 0)
@@ -47,14 +51,15 @@ namespace WebAPI.Services
             }
         }
 
-        public Service CreateService(Service service)
+        public Service CreateService(ServiceDto serviceDto)
         {
-            if (service == null)
+            if (serviceDto == null)
             {
-                throw new ArgumentNullException(nameof(service), "Service cannot be null.");
+                throw new ArgumentNullException(nameof(serviceDto), "Service cannot be null.");
             }
             try
             {
+                Service service = _mapper.Map<Service>(serviceDto);
                 _context.Services.Add(service);
                 _context.SaveChanges();
                 return service;

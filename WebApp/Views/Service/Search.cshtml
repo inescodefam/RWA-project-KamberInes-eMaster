@@ -9,7 +9,15 @@
 <p>ServiceTypes: @(Model.ServiceTypes == null ? "null" : Model.ServiceTypes.Count.ToString())</p>
 <p>Cities: @(Model.Cities == null ? "null" : Model.Cities.Count.ToString())</p>
 
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div style="align-self: flex-end;">
+        <a asp-action="Create" asp-controller="Service" class="btn btn-primary" style="margin-left: 10px;">
+            + Add Service
+        </a>
+    </div>
 
+}
 
 @using (Html.BeginForm("Search", "Service", FormMethod.Get))
 {

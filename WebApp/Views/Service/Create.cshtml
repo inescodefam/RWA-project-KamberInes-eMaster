@@ -3,3 +3,43 @@
 *@
 @{
 }
+@model WebApp.Models.ServiceCreateVM
+
+
+<h2>Add New Service</h2>
+
+@using (Html.BeginForm("Create", "Service", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div>
+        <label>Professional:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedProfessionalId,
+                new SelectList(Model.Professionals, "IdProfessional", "UserName", Model.SelectedProfessionalId),
+                "-- Select Professional --",
+                new { @class = "form-control" }
+                )
+        @Html.ValidationMessageFor(m => m.SelectedProfessionalId)
+    </div>
+    <div>
+        <label>City:</label>
+        @Html.DropDownListFor(m => m.SelectedCityId, new SelectList(Model.Cities, "Idcity", "Name"), "-- Select City --")
+        @Html.ValidationMessageFor(m => m.SelectedCityId)
+    </div>
+    <div>
+        <label>Service Type:</label>
+        @Html.DropDownListFor(m => m.SelectedServiceTypeName, new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName"), "-- Select Service Type --")
+        @Html.ValidationMessageFor(m => m.SelectedServiceTypeName)
+    </div>
+    <div>
+        <label>Description:</label>
+        @Html.TextAreaFor(m => m.Description)
+    </div>
+    <div>
+        <label>Price:</label>
+        @Html.TextBoxFor(m => m.Price)
+        @Html.ValidationMessageFor(m => m.Price)
+    </div>
+    <button type="submit">Add Service</button>
+
+}

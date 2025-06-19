@@ -1,4 +1,6 @@
-﻿namespace WebApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApp.Models
 {
     public class ServiceSearchVM
     {
@@ -18,5 +20,22 @@
         public string? ServiceTypeName { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }
+    }
+
+    public class ServiceCreateVM
+    {
+        [Required]
+        public int? SelectedProfessionalId { get; set; }
+        public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
+        [Required]
+        public int SelectedCityId { get; set; }
+        [Required]
+        public string SelectedServiceTypeName { get; set; }
+        public string Description { get; set; }
+        [Required]
+        public decimal Price { get; set; }
+
+        public List<CityVM> Cities { get; set; } = new List<CityVM>();
+        public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
     }
 }
