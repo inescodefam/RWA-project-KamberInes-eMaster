@@ -35,6 +35,8 @@ namespace WebApp.Controllers
             var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>("api/city?count=1000&start=0") ?? new List<CityDto>();
             var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeDto>();
             var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>("api/service?count=1000&start=0") ?? new List<ServiceDto>();
+            var usersDtos = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
+            var professionalsDtos = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0") ?? new List<ProfessionalDto>();
 
             var cities = _mapper.Map<List<CityVM>>(cityDtos)?
               .Where(c => c != null && !string.IsNullOrEmpty(c.Name))
@@ -44,10 +46,24 @@ namespace WebApp.Controllers
                .Where(st => st != null && !string.IsNullOrEmpty(st.ServiceTypeName))
                .ToList() ?? new List<ServiceTypeVM>();
 
+            var serviceResult = new List<ServiceResultVM>();
 
-            var allServices = _mapper.Map<List<ServiceResultVM>>(serviceDtos);
+            foreach (ServiceDto s in serviceDtos)
+            {
+                int professionalUserId = professionalsDtos.FirstOrDefault(p => p.IdProfessional == s.ProfessionalId)?.UserId ?? 0;
+                ProfessionalDto pro = professionalsDtos.FirstOrDefault(p => p.IdProfessional == s.ProfessionalId);
+                var serviceResultVM = new ServiceResultVM
+                {
+                    ProfessionalName = usersDtos.FirstOrDefault(u => u.Iduser == professionalUserId).Username,
+                    CityName = cities.FirstOrDefault(c => c.Idcity == pro?.CityId)?.Name,
+                    ServiceTypeName = serviceTypes.FirstOrDefault(st => st.IdserviceType == s.ServiceTypeId)?.ServiceTypeName,
+                    Description = s.Description,
+                    Price = s.Price
+                };
+                serviceResult.Add(serviceResultVM);
+            }
 
-            var filteredServices = allServices?
+            var filteredServices = serviceResult?
               .Where(s =>
                   (!cityId.HasValue ||
                    (cities?.Any(c => c.Idcity == cityId && c.Name == s.CityName) ?? false)) &&
