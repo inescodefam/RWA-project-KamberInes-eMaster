@@ -1,7 +1,7 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@model WebApp.Models.ServiceVM
+@model WebApp.Models.ServiceSearchVM
 
 @{
     ViewData["Title"] = "Service Search";
@@ -9,54 +9,4 @@
 
 <h2>Service Search</h2>
 
-<form method="get" asp-action="Index" class="row g-3 mb-4">
-    <div class="col-md-3">
-      @*   <label asp-for="SelectedServiceTypeId" class="form-label">Service Type</label>
-        <select asp-for="SelectedServiceTypeId" class="form-select" asp-items="Model.ServiceType">
-            <option value="">-- All Types --</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label asp-for="SelectedCityId" class="form-label">City</label>
-        <select asp-for="SelectedCityId" class="form-select" asp-items="Model.Cities">
-            <option value="">-- All Cities --</option>
-        </select>
-    </div>
-    <div class="col-md-3">
-        <label asp-for="ProfessionalName" class="form-label">Professional</label>
-        <input asp-for="ProfessionalName" class="form-control" placeholder="Search by professional name" />
-    </div>
-    <div class="col-md-3 d-flex align-items-end">
-        <button type="submit" class="btn btn-primary" id="btnSearch">Search</button>
-    </div> *@
-</form>
-
-@* @if (Model.Services != null && Model.Services.Any())
-{
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>City</th>
-                <th>Professional</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var service in Model.Services)
-            {
-                <tr>
-                    <td>@service.ServiceTypeName</td>
-                    <td>@service.City</td>
-                    <td>@service.Professional</td>
-                    <td>@service.Description</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="alert alert-info">No services found.</div>
-} *@
 

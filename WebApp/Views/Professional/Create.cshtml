@@ -4,13 +4,113 @@
 *@
 @{
 }
-@model BecomeProfessionalVM
+@model WebApp.Models.ProfessionalIndexVM
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#addProfessionalForm').submit(function(e) {
+            e.preventDefault();
 
-<form asp-action="Create" method="post">
-    <h4>Choose your company headquarters location:</h4>
-    <div>
-        <label for="CityId">Select City:</label>
-        <select asp-for="CityId" asp-items="@(new SelectList(Model.Cities, "Id", "Name"))"></select>
-    </div>
-    <button type="submit">Become Professional</button>
-</form>
+            var userId = $('#UserId').val();
+                if (!userId || userId === "0") {
+                $('#addProfessionalError').text('Please select a valid user.');
+                return;
+            }
+            var cityId = $('#CityId').val();
+
+            $.ajax({
+                url: '@Url.Action("Create", "Professional")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                        UserId: userId,
+                        CityId: cityId
+                }),
+                success: function(response) {
+                    $('#professionalsTable tbody').load(window.location.href + ' #professionalsTable tbody>*', '');
+                    $('#addProfessionalError').text('');
+                },
+                error: function(xhr) {
+                    $('#addProfessionalError').text('Could not add professional: ' + xhr.responseText);
+                }
+            });
+        });
+        $(document).on('click', '.delete-professional', function() {
+            var professionalId = $(this).data('id');
+            var row = $(this).closest('tr');
+            var deleteUrlTemplate = '@Url.Action("Delete", "Professional", new { id = "_id"})';
+
+            if (confirm('Are you sure you want to delete this professional?')) {
+                var deleteUrl = deleteUrlTemplate.replace('_id', professionalId);
+
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'DELETE',
+                    success: function() {
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+                        });
+                    },
+                    error: function(xhr) {
+                        alert('Error deleting professional: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <h2>Add Professional</h2>
+    <form id="addProfessionalForm" asp-action="Create" method="post">
+        <div>
+            <label>User</label>
+            <select name="UserId" id="UserId">
+                <option value="">Select user</option>
+                @foreach (var user in Model.Users)
+                {
+                    <option value="@user.Value">@user.Text</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label>City</label>
+            <select name="CityId" id="CityId">
+                @foreach (var city in Model.Cities)
+                {
+                    <option value="@city.Value">@city.Text</option>
+                }
+            </select>
+        </div>
+        <button type="submit">Add Professional</button>
+    </form>
+
+    <table id="professionalsTable" class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Professionals != null)
+            {
+                foreach (var p in Model.Professionals)
+                {
+                    <tr>
+                        <td>@p.UserName</td>
+                        <td>@p.CityName</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm delete-professional"
+                                    data-id="@p.IdProfessional">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <div id="addProfessionalError" style="color:red;"></div>
+}

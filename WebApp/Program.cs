@@ -15,8 +15,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 builder.Services.AddAutoMapper(typeof(Program));
 
+// Add to your services configuration
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 builder.Services.AddScoped<ApiFetchService>();
+builder.Services.AddScoped<ProfessionalViewModelService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>

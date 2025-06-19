@@ -21,10 +21,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult CreateServiceType() => View();
 
         [HttpPost]
         public async Task<IActionResult> CreateServiceType(ServiceTypeVM model)

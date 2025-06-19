@@ -22,9 +22,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult CreateServiceType() => View();
-
-        [HttpGet]
         public ActionResult<List<ServiceTypeDto>> GetServiceTypes(int count, int start = 0)
         {
             try

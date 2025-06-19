@@ -13,9 +13,9 @@ namespace WebAPI.Auth
 
             var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, email),
-                    new Claim(JwtRegisteredClaimNames.Sub, email),
-
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim(JwtRegisteredClaimNames.Email, email),
+                    new Claim(JwtRegisteredClaimNames.Sub, email)
                 };
 
             foreach (var role in roles)

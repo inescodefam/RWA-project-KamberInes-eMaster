@@ -48,7 +48,7 @@
                                     <a class="nav-link" asp-controller="User" asp-action="Index">Users</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Professional" asp-action="Index">Professionals</a>
+                                    <a class="nav-link" asp-controller="Professional" asp-action="Create">Professionals</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Service" asp-action="Search">Services</a>
@@ -57,39 +57,28 @@
                                     <a class="nav-link" asp-controller="City" asp-action="Index">City</a>
                                 </li>
                             }
-
-                            @if (User.IsInRole("Professional"))
+                            else
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Service" asp-action="Index">Your Services</a>
                                 </li>
                                
-                            }
-                            else
-                            {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Professional" asp-action="Create">Become Professional</a>
+                                    <a class="nav-link" asp-controller="Professional" asp-action="Index">Professionals</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Service" asp-action="Search">Services</a>
                                 </li>
 
                             }
-
-
-                             <li class="nav-item">
-                               <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
-                            </li>
+                                 <li class="nav-item">
+                                   <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
+                                </li>
                         }
-                        @* else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
-                            </li>
-                        } *@
+                       
                     </ul>
 
                 </div>

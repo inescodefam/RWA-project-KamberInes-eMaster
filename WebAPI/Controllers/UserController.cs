@@ -57,6 +57,23 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("email/{email}")]
+        public ActionResult<UserDto> GetUserByEmail(string email)
+        {
+            try
+            {
+                var user = _context.Users.FirstOrDefault(x => x.Email == email);
+
+                return user != null
+                ? Ok(_mapper.Map<UserDto>(user))
+                : NotFound($"User with email {email} not found");
+            }
+            catch
+            {
+                return NotFound();
+            }
+        }
+
         [HttpPut]
         public void Put([FromBody] UserDto userDto)
         {

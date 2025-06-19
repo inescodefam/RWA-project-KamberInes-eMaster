@@ -89,6 +89,12 @@ namespace WebApp.Controllers
             {
                 return View(model);
             }
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "Passwords do not match.");
+                return View(model);
+            }
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync("api/auth/register", content);
             if (response.IsSuccessStatusCode)

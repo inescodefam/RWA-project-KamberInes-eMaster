@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using WebApp.Models;
@@ -14,50 +13,32 @@ namespace WebApp.Controllers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly ApiFetchService _apiFetchService;
+        private readonly ProfessionalViewModelService _viewModelService;
 
-        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
+        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, ProfessionalViewModelService viewModelService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
             _apiFetchService = apiFetchService;
+            _viewModelService = viewModelService;
         }
-
 
         // GET: ProfessionalController
         [HttpGet]
-        public async Task<IActionResult> Index(int count, int start = 0)
+        public async Task<IActionResult> Index(int count = 50, int start = 0)
         {
-            // coment when ui is done todo create pagination
-            count = 50;
-            var professionalsResult = await _apiFetchService.FetchList<ProfessionalDto, ProfessionalVM>($"api/professional?count={count}&start={start}", this);
+            var model = await _viewModelService.GetProfessionalIndexVM(count, start);
 
-            if (professionalsResult is ViewResult viewResult && viewResult.Model is List<ProfessionalVM> professionals)
-            {
+            return View(model);
+        }
 
-                var users = await _apiFetchService.FetchList<UserDto, UserVM>("api/user?count=1000&start=0", this);
-                var cities = await _apiFetchService.FetchList<CityDto, CityVM>("api/city?count=1000&start=0", this);
+        // GET: ProfessionalController/AddProfessional
+        [HttpGet]
+        public async Task<IActionResult> Create()
+        {
+            var model = await _viewModelService.GetProfessionalIndexVM();
 
-                var userList = (users as ViewResult)?.Model as List<UserVM> ?? new List<UserVM>();
-                var cityList = (cities as ViewResult)?.Model as List<CityVM> ?? new List<CityVM>();
-
-                var userDict = userList.ToDictionary(u => u.Id, u => u.Username);
-                var cityDict = cityList.ToDictionary(c => c.Idcity, c => c.Name);
-
-                foreach (var p in professionals)
-                {
-                    if (p.UserId.HasValue && userDict.TryGetValue((int)p.UserId, out var userName))
-                        p.UserName = userName;
-                    else
-                        p.UserName = "Unknown";
-                    if (p.CityId.HasValue && cityDict.TryGetValue(p.CityId.Value, out var cityName))
-                        p.CityName = cityName;
-                    else
-                        p.CityName = "Unknown";
-                }
-
-                return View(professionals);
-            }
-            return professionalsResult;
+            return View(model);
         }
 
         public ActionResult Details(int id)
@@ -66,51 +47,25 @@ namespace WebApp.Controllers
             return View(professionals);
         }
 
-        // GET: ProfessionalController/Create
-        // BecomeProfessional
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
-            var vm = new BecomeProfessionalVM { Cities = cities };
-            return View(vm);
-        }
-
-        // POST: ProfessionalController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BecomeProfessionalVM model)
+        public async Task<IActionResult> Create([FromBody] ProfessionalVM model)
         {
-            try
+            if (model == null)
             {
-                if (!ModelState.IsValid)
-                {
-                    model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
-                    return View(model);
-                }
-
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-                var response = await _httpClient.PostAsJsonAsync("api/professional", new { UserId = userId, CityId = model.CityId });
-                //var response = await _httpClient.PostAsync("api/professional",
-                //new StringContent(JsonSerializer.Serialize(new { UserId = userId, CityId = model.CityId }), Encoding.UTF8, "application/json"));
-
-                if (response.IsSuccessStatusCode)
-                {
-
-                    return RedirectToAction("Index", "Service");
-                }
-
-                ModelState.AddModelError("", "Could not become professional.");
-                return View();
+                ModelState.AddModelError("", "Invalid data submitted.");
+                return BadRequest("Invalid data submitted.");
             }
-            catch
-            {
 
-                model.Cities = await _httpClient.GetFromJsonAsync<List<CityVM>>("api/city");
-                return View(model);
-            }
+            var newProfessional = _mapper.Map<ProfessionalDto>(model);
+            var response = await _httpClient.PostAsJsonAsync("api/professional", newProfessional);
+
+            if (response.IsSuccessStatusCode)
+                return Ok();
+
+            return BadRequest();
+
         }
+
 
         // GET: ProfessionalController/Edit/5
         public ActionResult Edit(int id)
@@ -137,25 +92,24 @@ namespace WebApp.Controllers
         }
 
         // GET: ProfessionalController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            var professional = _httpClient.GetAsync($"api/professional/{id}");
-            return View(professional);
-        }
+        public ActionResult Delete() => View();
 
-        // POST: ProfessionalController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        // delete: ProfessionalController/Delete/5
+        [Route("Professional/Delete/{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                _httpClient.DeleteAsync($"api/professional/{id}");
-                return RedirectToAction(nameof(Index));
+                var response = await _httpClient.DeleteAsync($"api/professional/{id}");
+                if (response.IsSuccessStatusCode)
+                    return NoContent();
+
+                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return StatusCode(500, ex.Message);
             }
         }
     }

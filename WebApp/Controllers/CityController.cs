@@ -15,7 +15,6 @@ namespace WebApp.Controllers
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _httpClient.BaseAddress = new Uri("http://localhost:5020/");
-
         }
 
         [HttpGet]

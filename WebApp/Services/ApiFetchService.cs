@@ -32,5 +32,22 @@ namespace WebApp.Services
                 return controller.RedirectToAction("Login", "Auth");
             }
         }
+
+        public async Task<List<TVm>> FetchDataList<TDto, TVm>(string url)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+
+                response.EnsureSuccessStatusCode();
+                var dtos = await response.Content.ReadFromJsonAsync<List<TDto>>();
+                var vms = _mapper.Map<List<TVm>>(dtos);
+                return vms;
+            }
+            catch
+            {
+                throw new Exception("Failed to fetch data from API. Please check the URL or your network connection.");
+            }
+        }
     }
 }

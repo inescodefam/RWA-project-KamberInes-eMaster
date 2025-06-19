@@ -11,6 +11,7 @@ using WebAPI.Services;
 namespace WebAPI.Controllers
 {
     [Route("api/professional")]
+    [Authorize]
     [ApiController]
     public class ProfessionalController : ControllerBase
     {
@@ -111,17 +112,24 @@ namespace WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var professional = new Professional
-            {
-                UserId = professionalDto.UserId
-            };
+
+            var professional = _mapper.Map<Professional>(professionalDto);
+
+            if (!_context.Users.Any(u => u.Iduser == professionalDto.UserId))
+                return BadRequest("Invalid User ID");
+
+            if (!_context.Cities.Any(c => c.Idcity == professionalDto.CityId))
+                return BadRequest("Invalid City ID");
 
             try
             {
                 _context.Professionals.Add(professional);
                 _context.SaveChanges();
+
                 _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
-                return Ok("Professional added successfully");
+                return CreatedAtAction(nameof(GetSingleProfessional),
+                    new { id = professional.IdProfessional },
+                    _mapper.Map<ProfessionalDto>(professional));
             }
             catch (Exception ex)
             {

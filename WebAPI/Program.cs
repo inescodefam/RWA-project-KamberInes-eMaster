@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Shared.BL.Services;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Models;
@@ -59,6 +60,7 @@ builder.Services
             ValidateIssuer = false,
             ValidateAudience = false,
             RoleClaimType = ClaimTypes.Role,
+            NameClaimType = JwtRegisteredClaimNames.Email,
             IssuerSigningKey = new SymmetricSecurityKey(Key)
         };
     });

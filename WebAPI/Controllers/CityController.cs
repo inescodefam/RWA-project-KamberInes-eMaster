@@ -21,6 +21,21 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("all")]
+        public IActionResult GetAllCities()
+        {
+            try
+            {
+                var cities = _context.Cities.ToList();
+                return Ok(_mapper.Map<List<CityDto>>(cities));
+
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the cities.");
+            }
+        }
+
         [HttpGet]
         public ActionResult<List<CityDto>> GetCities(int count, int start = 0, string searchTerm = "")
         {
