@@ -26,7 +26,8 @@ namespace WebApp.Controllers
         {
             // coment when ui is done todo implement pagination
             count = 50;
-            return await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}", this);
+            var response = await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}");
+            return Ok(response);
         }
 
         [HttpGet]

@@ -18,6 +18,7 @@ namespace WebApp.Mapper
             CreateMap<CityVM, CityDto>();
             CreateMap<ServiceVM, ServiceDto>();
             CreateMap<ServiceDto, ServiceVM>();
+
         }
     }
 }

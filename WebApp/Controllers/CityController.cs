@@ -11,10 +11,12 @@ namespace WebApp.Controllers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly ApiFetchService _apiFetchService;
-        public CityController(IHttpClientFactory httpClientFactory)
+        public CityController(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _httpClient.BaseAddress = new Uri("http://localhost:5020/");
+            _apiFetchService = apiFetchService;
+            _mapper = mapper;
         }
 
         [HttpGet]

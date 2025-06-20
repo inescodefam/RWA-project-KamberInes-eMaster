@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using WebAPI.Auth;
-using WebAPI.Models;
+using Shared.BL.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -14,13 +12,11 @@ namespace WebAPI.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly EProfessionalContext _context;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public UserController(EProfessionalContext context, IMapper mapper)
+        public UserController(IUserService userService)
         {
-            _context = context;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         // GET: api/<UserController>
@@ -29,8 +25,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var users = _context.Users.Skip(start * count).Take(count);
-                var userDtos = _mapper.Map<List<UserDto>>(users);
+                var userDtos = _userService.GetUsers(count, start);
 
                 return Ok(userDtos);
             }
@@ -47,8 +42,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Iduser == id);
-                var userDto = _mapper.Map<UserDto>(user);
+
+                var userDto = _userService.GetUserById(id);
                 return Ok(userDto);
             }
             catch
@@ -62,10 +57,10 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == email);
+                var user = _userService.GetUserByEmail(email);
 
                 return user != null
-                ? Ok(_mapper.Map<UserDto>(user))
+                ? Ok(user)
                 : NotFound($"User with email {email} not found");
             }
             catch
@@ -75,55 +70,40 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public void Put([FromBody] UserDto userDto)
+        public IActionResult Put([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
-                BadRequest(ModelState);
-                return;
+                return BadRequest(ModelState);
             }
 
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
-
-                var b64salt = HashPwd.GetSalt();
-                var b64hash = HashPwd.GetHash(userDto.Password, b64salt);
-                if (user != null)
-                {
-                    user.Username = userDto.Username ?? user.Username;
-                    user.FirstName = userDto.FirstName ?? user.FirstName;
-                    user.LastName = userDto.LastName ?? user.LastName;
-                    user.Email = userDto.Email;
-                    user.Phone = userDto.PhoneNumber ?? user.Phone;
-                    user.PasswordHash = b64hash;
-                    user.PasswordSalt = b64salt;
-                    _context.SaveChanges();
-                }
+                var updated = _userService.UpdateUser(userDto);
+                return updated
+                    ? Ok("User updated successfully")
+                    : NotFound("User not found");
             }
             catch
             {
-                NotFound();
+                return BadRequest();
             }
         }
 
-        // DELETE api/<UserController>/5
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
-        public void Delete(UserDto userDto)
+        public IActionResult Delete(UserDto userDto)
         {
             try
             {
-                var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
-                if (user != null)
-                {
-                    _context.Users.Remove(user);
-                    _context.SaveChanges();
-                }
+                _userService.DeleteUser(userDto);
+                return Ok("User deleted successfully");
+
+
             }
             catch
             {
-                NotFound();
+                return BadRequest();
             }
         }
 

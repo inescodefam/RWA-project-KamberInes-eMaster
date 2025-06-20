@@ -1,9 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using Shared.BL.Models;
-using WebAPI.Models;
+using Shared.BL.Services;
 using WebAPI.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -15,16 +13,13 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProfessionalController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly EProfessionalContext _context;
-        private readonly IMapper _mapper;
         private readonly LogService _loggingService;
-        public ProfessionalController(IConfiguration configuration, EProfessionalContext context, IMapper mapper, LogService logService)
+
+        private readonly IProfessionalService _professionalService;
+        public ProfessionalController(LogService logService, IProfessionalService professionalService)
         {
-            _configuration = configuration;
-            _context = context;
-            _mapper = mapper;
             _loggingService = logService;
+            _professionalService = professionalService;
         }
 
         [HttpGet]
@@ -32,16 +27,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var professionals = _context.Professionals.Skip(start * count).Take(count).ToList();
-
-                if (professionals == null || professionals.Count == 0)
-                {
-                    return NotFound("No professionals found");
-                }
-
-                var professionalDto = _mapper.Map<List<ProfessionalDto>>(professionals);
-                _loggingService.Log($"Retrieved {professionalDto.Count} professionals from the database.", "info");
-                return Ok(professionalDto);
+                var professionals = _professionalService.GetProfessionals(count, start);
+                return Ok(professionals);
             }
             catch (Exception ex)
             {
@@ -52,18 +39,17 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public ActionResult<ProfessionalDto> GetSingleProfessional(int id)
+        public ActionResult<ProfessionalDto> GetSingleProfessionalById(int id)
         {
-            var professional = _context.Professionals.Find(id);
-            if (professional == null)
+            try
             {
-                _loggingService.Log($"Professional with ID {id} not found.", "warning");
-                return NotFound();
+                var professionalDto = _professionalService.GetSingleProfessional(id);
+                return Ok(professionalDto);
             }
-
-            var professionalDto = _mapper.Map<ProfessionalDto>(professional);
-            _loggingService.Log($"Retrieved professional with ID {id} from the database.", "info");
-            return Ok(professionalDto);
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // get professional by name name in user
@@ -77,23 +63,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var query = _context.Professionals.AsQueryable();
-                if (!string.IsNullOrEmpty(name))
-                {
-                    query = query.Where(p => p.User.FirstName == name || p.User.LastName == name);
-                }
-                if (!string.IsNullOrEmpty(city))
-                {
-                    query = query.Where(p => p.City.Name.Contains(city));
-                }
-                var professionals = query.Skip(start * count).Take(count).ToList();
-                if (professionals == null || professionals.Count == 0)
-                {
-                    _loggingService.Log($"No professionals found for name '{name}' and city '{city}'.", "info");
-                    return NotFound("No professionals found");
-                }
-                var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
-                _loggingService.Log($"Retrieved {professionalDtos.Count} professionals for name '{name}' and city '{city}'.", "info");
+                var professionalDtos = _professionalService.SearchProfessionals(name, city, count, start);
                 return Ok(professionalDtos);
 
             }
@@ -113,23 +83,10 @@ namespace WebAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var professional = _mapper.Map<Professional>(professionalDto);
-
-            if (!_context.Users.Any(u => u.Iduser == professionalDto.UserId))
-                return BadRequest("Invalid User ID");
-
-            if (!_context.Cities.Any(c => c.Idcity == professionalDto.CityId))
-                return BadRequest("Invalid City ID");
-
             try
             {
-                _context.Professionals.Add(professional);
-                _context.SaveChanges();
-
-                _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
-                return CreatedAtAction(nameof(GetSingleProfessional),
-                    new { id = professional.IdProfessional },
-                    _mapper.Map<ProfessionalDto>(professional));
+                var response = _professionalService.CreateProfessional(professionalDto);
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -146,19 +103,12 @@ namespace WebAPI.Controllers
             {
                 BadRequest(ModelState);
             }
-            var professional = _context.Professionals.Find(id);
-            if (professional == null)
-            {
-                NotFound();
-                _loggingService.Log($"Professional with ID {id} not found for update.", "warning");
-                return;
-            }
+
             try
             {
-                professional = _mapper.Map(professionalDto, professional);
-                _context.Professionals.Update(professional);
-                _context.SaveChanges();
-                _loggingService.Log($"Professional with ID {id} updated successfully.", "info");
+                var response = _professionalService.UpdateProfessional(id, professionalDto);
+                if (!response) NotFound();
+
                 Ok("Professional updated successfully");
             }
             catch (Exception ex)
@@ -173,23 +123,18 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            var professional = _context.Professionals.Find(id);
-            if (professional == null)
-            {
-                NotFound();
-                _loggingService.Log($"Professional with ID {id} not found for deletion.", "warning");
-                return;
-            }
+
             try
             {
-                _context.Professionals.Remove(professional);
-                _context.SaveChanges();
-                _loggingService.Log($"Professional with ID {id} deleted successfully.", "info");
+                var response = _professionalService.DeleteProfessional(id);
+                if (!response)
+                {
+                    NotFound();
+                }
                 Ok("Professional deleted successfully");
             }
             catch (Exception ex)
             {
-                _loggingService.Log($"Error deleting professional with ID {id}: {ex.Message}", "error");
                 StatusCode(500, ex.Message);
             }
         }

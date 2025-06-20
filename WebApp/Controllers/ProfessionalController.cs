@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using System.Text;
-using System.Text.Json;
+using Shared.BL.Services;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -14,13 +13,15 @@ namespace WebApp.Controllers
         private readonly IMapper _mapper;
         private readonly ApiFetchService _apiFetchService;
         private readonly ProfessionalViewModelService _viewModelService;
+        private readonly IProfessionalService _professionalService;
 
-        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, ProfessionalViewModelService viewModelService)
+        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, ProfessionalViewModelService viewModelService, IProfessionalService professionalService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
             _apiFetchService = apiFetchService;
             _viewModelService = viewModelService;
+            _professionalService = professionalService;
         }
 
         // GET: ProfessionalController
@@ -43,23 +44,25 @@ namespace WebApp.Controllers
 
         public ActionResult Details(int id)
         {
-            var professionals = _apiFetchService.FetchList<ProfessionalDto, ProfessionalVM>($"api/professional/{id}", this);
-            return View(professionals);
+            var professional = _professionalService.GetSingleProfessional(id);
+            return View(professional);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProfessionalVM model)
+        public async Task<IActionResult> Create([FromBody] ProfessionalVM professionalVM)
         {
-            if (model == null)
+
+            var professionalDto = _mapper.Map<ProfessionalDto>(professionalVM);
+
+            if (professionalDto == null)
             {
                 ModelState.AddModelError("", "Invalid data submitted.");
                 return BadRequest("Invalid data submitted.");
             }
 
-            var newProfessional = _mapper.Map<ProfessionalDto>(model);
-            var response = await _httpClient.PostAsJsonAsync("api/professional", newProfessional);
+            var response = _professionalService.CreateProfessional(professionalDto);
 
-            if (response.IsSuccessStatusCode)
+            if (response)
                 return Ok();
 
             return BadRequest();
@@ -77,12 +80,16 @@ namespace WebApp.Controllers
         // POST: ProfessionalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ProfessionalDto professionalDto)
         {
             try
             {
-                _httpClient.PutAsync($"api/professional/{id}",
-                    new StringContent(JsonSerializer.Serialize(collection), Encoding.UTF8, "application/json"));
+                var response = _professionalService.UpdateProfessional(id, professionalDto);
+                if (!response)
+                {
+                    ModelState.AddModelError("", "Failed to update professional.");
+                    return View(professionalDto);
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -97,15 +104,15 @@ namespace WebApp.Controllers
         // delete: ProfessionalController/Delete/5
         [Route("Professional/Delete/{id}")]
         [HttpDelete]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"api/professional/{id}");
-                if (response.IsSuccessStatusCode)
+                var response = _professionalService.DeleteProfessional(id);
+                if (response)
                     return NoContent();
 
-                return StatusCode((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+                return View();
             }
             catch (Exception ex)
             {

@@ -1,22 +1,21 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
+using Shared.BL.Services;
 using WebApp.Models;
-using WebApp.Services;
 
 namespace WebApp.Controllers
 {
     public class UserController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        private readonly ApiFetchService _apiFetchService;
 
-        public UserController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
+
+        public UserController(IUserService userService, IMapper mapper)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _userService = userService;
             _mapper = mapper;
-            _apiFetchService = apiFetchService;
         }
 
         //GET: UserController
@@ -24,7 +23,8 @@ namespace WebApp.Controllers
         {
             // coment when ui is done
             count = 50;
-            return await _apiFetchService.FetchList<UserDto, UserVM>($"api/user?count={count}&start={start}", this);
+            var users = await _userService.GetUsers(count, start);
+            return View(users);
         }
 
         // GET: UserController/Details/5
@@ -32,20 +32,13 @@ namespace WebApp.Controllers
         {
             try
             {
-                var response = await _httpClient.GetAsync($"api/user/{id}");
-
-                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-                {
-                    return RedirectToAction("Login", "Auth");
-                }
-                response.EnsureSuccessStatusCode();
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
+                var user = _userService.GetUserById(id);
                 if (user == null)
                 {
                     return NotFound();
                 }
-                var viewModel = _mapper.Map<UserVM>(user);
-                return View(viewModel);
+
+                return View(user);
             }
             catch (Exception)
             {
@@ -58,38 +51,64 @@ namespace WebApp.Controllers
         // GET: UserController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var user = _userService.GetUserById(id);
+            if (user == null)
+                return NotFound();
+
+            var viewModel = _mapper.Map<UserVM>(user);
+            return View(viewModel);
         }
 
         // POST: UserController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, UserVM model)
         {
             try
             {
+                if (!ModelState.IsValid)
+                    return View(model);
+
+                var userDto = _mapper.Map<UserDto>(model);
+                var result = _userService.UpdateUser(userDto);
+
+                if (!result)
+                    return View(model);
+
                 return RedirectToAction(nameof(Index));
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
 
         // GET: UserController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var userDto = _userService.GetUserById(id);
+            if (userDto == null)
+                return NotFound();
+
+            var viewModel = _mapper.Map<UserVM>(userDto);
+            return View(viewModel);
         }
 
         // POST: UserController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(UserDto userDto)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                //var userDto = _userService.GetUserById(id);
+                if (userDto == null)
+                    return NotFound();
+
+                _userService.DeleteUser(userDto);
+                return View();
+
             }
             catch
             {

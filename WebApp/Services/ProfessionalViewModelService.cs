@@ -16,10 +16,11 @@ namespace WebApp.Services
             _mapper = mapper;
         }
 
-        public async Task<ProfessionalIndexVM> GetProfessionalIndexVM(int professionalCount = 50,
-                                                                    int professionalStart = 0,
-                                                                    int userCount = 1000,
-                                                                    int cityCount = 1000)
+        public async Task<ProfessionalIndexVM> GetProfessionalIndexVM(
+            int professionalCount = 50,
+            int professionalStart = 0,
+            int userCount = 1000,
+            int cityCount = 1000)
         {
 
             var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>(

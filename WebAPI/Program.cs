@@ -73,6 +73,8 @@ builder.Services.AddDbContext<EProfessionalContext>(options =>
 builder.Services.AddScoped<LogService>();
 builder.Services.AddScoped<ServicesService>();
 builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 builder.Services.AddCors(options =>
 {
