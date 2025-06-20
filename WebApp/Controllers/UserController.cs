@@ -79,7 +79,7 @@ namespace WebApp.Controllers
                 if (!result)
                     return View(model);
 
-                return RedirectToAction(nameof(Edit));
+                return RedirectToAction("Search", "Service");
             }
             catch
             {
