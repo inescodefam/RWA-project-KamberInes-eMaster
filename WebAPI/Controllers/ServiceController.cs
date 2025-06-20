@@ -31,13 +31,25 @@ namespace WebAPI.Controllers
                 return StatusCode(500, "An error occurred while retrieving the services.");
             }
         }
-
-        [HttpGet("{type}")]
+        [HttpGet("type/{type}")]
         public ActionResult<Service> GetServiceByServiceType(string type)
         {
             try
             {
                 return Ok(_servicesService.GetServiceByServiceType(type));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the service.");
+            }
+        }
+
+        [HttpGet("id/{id}")]
+        public ActionResult<ServiceDto> GetServiceByServiceType(int id)
+        {
+            try
+            {
+                return Ok(_servicesService.GetServiceByServiceId(id));
             }
             catch (Exception)
             {
@@ -64,7 +76,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateService(int id, Service service)
+        public ActionResult UpdateService(int id, ServiceDto service)
         {
             if (id != service.IdService)
             {

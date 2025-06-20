@@ -54,6 +54,7 @@ namespace WebApp.Controllers
                 ProfessionalDto pro = professionalsDtos.FirstOrDefault(p => p.IdProfessional == s.ProfessionalId);
                 var serviceResultVM = new ServiceResultVM
                 {
+                    IdService = s.IdService,
                     ProfessionalName = usersDtos.FirstOrDefault(u => u.Iduser == professionalUserId).Username,
                     CityName = cities.FirstOrDefault(c => c.Idcity == pro?.CityId)?.Name,
                     ServiceTypeName = serviceTypes.FirstOrDefault(st => st.IdserviceType == s.ServiceTypeId)?.ServiceTypeName,
@@ -80,7 +81,6 @@ namespace WebApp.Controllers
                 SelectedCityId = cityId,
                 SelectedServiceTypeName = serviceTypeName,
                 Services = filteredServices ?? new List<ServiceResultVM>()
-
             };
 
             if (vm.ServiceTypes == null)
@@ -171,5 +171,93 @@ namespace WebApp.Controllers
             return View(vm);
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var serviceDto = await _httpClient.GetFromJsonAsync<ServiceDto>($"api/service/id/{id}");
+
+            var serviceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
+            var cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
+            var professionals = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0") ?? new List<ProfessionalDto>();
+            var users = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
+
+            int cityId = professionals.FirstOrDefault(p => p.IdProfessional == serviceDto.ProfessionalId)?.CityId ?? 0;
+
+            List<ProfessionalVM> professionalsData = professionals.Select(p => new ProfessionalVM
+            {
+                IdProfessional = p.IdProfessional,
+                UserId = p.UserId,
+                CityId = p.CityId,
+                UserName = users.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
+            }).ToList();
+
+            var vm = new ServiceEditVM
+            {
+                IdService = serviceDto.IdService,
+                SelectedProfessionalId = serviceDto.ProfessionalId,
+                SelectedCityId = cityId,
+                SelectedServiceTypeName = serviceTypes.FirstOrDefault(st => st.IdserviceType == serviceDto.ServiceTypeId).ServiceTypeName,
+                Description = serviceDto.Description,
+                Price = serviceDto.Price,
+                Professionals = professionalsData,
+                Cities = cities,
+                ServiceTypes = serviceTypes
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ServiceEditVM vm)
+        {
+            vm.ServiceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
+            vm.Cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
+            var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>("api/professional?count=1000&start=0") ?? new List<ProfessionalVM>();
+            var users = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
+            List<ProfessionalVM> professionalsData = professionals.Select(p => new ProfessionalVM
+            {
+                IdProfessional = p.IdProfessional,
+                UserId = p.UserId,
+                CityId = p.CityId,
+                UserName = users.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
+            }).ToList();
+
+            vm.Professionals = professionalsData;
+
+            var exists = vm.ServiceTypes.Any(st => st.ServiceTypeName == vm.SelectedServiceTypeName);
+
+            if (!ModelState.IsValid)
+            {
+                return View(vm);
+            }
+
+            var serviceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
+            var serviceId = serviceTypes.FirstOrDefault(st => st.ServiceTypeName == vm.SelectedServiceTypeName)?.IdserviceType;
+
+            var serviceDto = new ServiceDto
+            {
+                IdService = vm.IdService,
+                ProfessionalId = vm.SelectedProfessionalId,
+                ServiceTypeId = serviceId,
+                Description = vm.Description,
+                Price = vm.Price
+            };
+
+            var response = await _httpClient.PutAsJsonAsync($"api/service/{vm.IdService}", serviceDto);
+
+            if (response.IsSuccessStatusCode)
+                return RedirectToAction("Search");
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/service/{id}");
+            return RedirectToAction("Search");
+        }
+
     }
+
 }

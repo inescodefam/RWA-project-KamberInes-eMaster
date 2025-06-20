@@ -3,3 +3,59 @@
 *@
 @{
 }
+@model WebApp.Models.ServiceEditVM
+
+@{
+    ViewBag.Title = "Edit Service";
+}
+
+<h2>Edit Service</h2>
+
+@using (Html.BeginForm("Edit", "Service", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.IdService)
+
+    <div>
+        <label>Professional:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedProfessionalId,
+                new SelectList(Model.Professionals, "IdProfessional", "UserName", Model.SelectedProfessionalId),
+                "-- Select Professional --",
+                new { @class = "form-control" }
+                )
+        @Html.ValidationMessageFor(m => m.SelectedProfessionalId)
+    </div>
+    <div>
+        <label>City:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedCityId,
+                new SelectList(Model.Cities, "Idcity", "Name", Model.SelectedCityId),
+                "-- Select City --",
+                new { @class = "form-control" }
+                )
+        @Html.ValidationMessageFor(m => m.SelectedCityId)
+    </div>
+    <div>
+        <label>Service Type:</label>
+        @Html.DropDownListFor(
+                m => m.SelectedServiceTypeName,
+                new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
+                "-- Select Service Type --",
+                new { @class = "form-control" }
+                )
+        @Html.ValidationMessageFor(m => m.SelectedServiceTypeName)
+    </div>
+    <div>
+        <label>Description:</label>
+        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+    </div>
+    <div>
+        <label>Price:</label>
+        @Html.TextBoxFor(m => m.Price, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Price)
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Search" asp-controller="Service" class="btn btn-secondary">Cancel</a>
+}
+

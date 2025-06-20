@@ -15,6 +15,7 @@ namespace WebApp.Models
 
     public class ServiceResultVM
     {
+        public int? IdService { get; set; }
         public string? ProfessionalName { get; set; }
         public string? CityName { get; set; }
         public string? ServiceTypeName { get; set; }
@@ -30,12 +31,25 @@ namespace WebApp.Models
         [Required]
         public int SelectedCityId { get; set; }
         [Required]
-        public string SelectedServiceTypeName { get; set; }
-        public string Description { get; set; }
+        public string? SelectedServiceTypeName { get; set; }
+        public string? Description { get; set; }
         [Required]
         public decimal Price { get; set; }
 
         public List<CityVM> Cities { get; set; } = new List<CityVM>();
         public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
+    }
+
+    public class ServiceEditVM
+    {
+        public int IdService { get; set; }
+        public int? SelectedProfessionalId { get; set; }
+        public int SelectedCityId { get; set; }
+        public string? SelectedServiceTypeName { get; set; }
+        public string? Description { get; set; }
+        public decimal? Price { get; set; }
+        public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
+        public List<CityVM> Cities { get; set; } = new List<CityVM>();
+        public List<ServiceTypeVM>? ServiceTypes { get; set; }
     }
 }

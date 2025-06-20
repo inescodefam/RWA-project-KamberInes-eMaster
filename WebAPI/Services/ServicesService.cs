@@ -70,14 +70,15 @@ namespace WebAPI.Services
             }
         }
 
-        public void UpdateService(int id, Service service)
+        public void UpdateService(int id, ServiceDto serviceDto)
         {
-            if (service == null)
+            if (serviceDto == null)
             {
-                throw new ArgumentNullException(nameof(service), "Service cannot be null.");
+                throw new ArgumentNullException(nameof(serviceDto), "Service cannot be null.");
             }
             try
             {
+                Service service = _mapper.Map<Service>(serviceDto);
                 _context.Services.Update(service);
                 _context.SaveChanges();
             }
@@ -105,5 +106,22 @@ namespace WebAPI.Services
             }
         }
 
+        public ServiceDto GetServiceByServiceId(int? id)
+        {
+
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id), "Service id cannot be null.");
+            }
+            try
+            {
+                ServiceDto serviceDto = _mapper.Map<ServiceDto>(_context.Services.Find(id));
+                return serviceDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the service.", ex);
+            }
+        }
     }
 }
