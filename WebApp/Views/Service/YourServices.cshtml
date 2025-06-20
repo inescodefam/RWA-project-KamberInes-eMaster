@@ -1,0 +1,64 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model WebApp.Models.ServiceSearchVM
+
+@{
+    ViewData["Title"] = "Your service orders";
+}
+
+<h2>Service orders</h2>
+@{
+    ViewData["Title"] = "Your Services";
+}
+
+<h2>Your Services</h2>
+<table id="your-services-table" class="table">
+    <thead>
+        <tr>
+            <th>Service</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Filled by JavaScript -->
+    </tbody>
+</table>
+@section Scripts {
+    <script src="~/js/site.js"></script>
+    <script>
+        function renderYourServices() {
+            var services = getYourServices();
+            var tbody = $('#your-services-table tbody');
+            tbody.empty();
+            if (services.length === 0) {
+                tbody.append('<tr><td colspan="4">No services added.</td></tr>');
+            } else {
+                services.forEach(function (service) {
+                    tbody.append(
+                        `<tr>
+                            <td>${service.name}</td>
+                            <td>${service.desc}</td>
+                            <td>${service.price}</td>
+                            <td>
+                                <button class="btn btn-danger remove-from-your-services" data-id="${service.id}">Remove</button>
+                            </td>
+                        </tr>`
+                    );
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            if ($('#your-services-table').length) {
+                renderYourServices();
+            }
+        });
+    </script>
+}
+
+
+
+

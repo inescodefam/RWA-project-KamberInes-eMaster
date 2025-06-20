@@ -73,6 +73,15 @@
                     <td>@service.ServiceTypeName</td>
                     <td>@service.Description</td>
                     <td>@service.Price</td>
+                    <td>
+                        <button class="btn btn-success add-to-your-services"
+                                data-id="@service.IdService"
+                                data-name="@service.ServiceTypeName"
+                                data-desc="@service.Description"
+                                data-price="@service.Price">
+                            Order
+                        </button>
+                    </td>
                     @*@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     { *@
                         <td>
@@ -95,3 +104,7 @@ else
 {
     <p>No services found for the selected criteria.</p>
 }
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}
+
