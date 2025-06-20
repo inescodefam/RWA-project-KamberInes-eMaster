@@ -20,7 +20,7 @@ namespace WebAPI.Services
 
         public async Task<List<UserDto>> GetUsers(int count, int start = 0)
         {
-            var users = _context.Users.Skip(start * count).Take(count).ToList();
+            var users = _context.Users.Skip(start * count).Take(count);
             return _mapper.Map<List<UserDto>>(users);
         }
 
@@ -63,5 +63,6 @@ namespace WebAPI.Services
             _context.Users.Remove(user);
             _context.SaveChangesAsync();
         }
+
     }
 }

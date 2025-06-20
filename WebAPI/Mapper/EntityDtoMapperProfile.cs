@@ -20,6 +20,7 @@ namespace WebAPI.DTOs
             CreateMap<CityDto, City>();
             CreateMap<ServiceType, ServiceTypeDto>();
             CreateMap<ServiceTypeDto, ServiceType>();
+
         }
     }
 }

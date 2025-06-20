@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using Shared.BL.Services;
 using System.Text;
 using WebApp.Auth;
 using WebApp.Services;
@@ -19,6 +20,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 builder.Services.AddScoped<ApiFetchService>();
 builder.Services.AddScoped<ProfessionalViewModelService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalApiServicecs>();
+builder.Services.AddScoped<IUserService, UserApiService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>

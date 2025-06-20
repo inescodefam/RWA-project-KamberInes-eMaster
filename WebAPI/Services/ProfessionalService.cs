@@ -38,7 +38,7 @@ namespace WebAPI.Services
 
         public async Task<ProfessionalDto> GetSingleProfessional(int id)
         {
-            var professional = _context.Professionals.Find(id);
+            var professional = await _context.Professionals.FindAsync(id);
             if (professional == null)
             {
                 _loggingService.Log($"Professional with ID {id} not found.", "warning");

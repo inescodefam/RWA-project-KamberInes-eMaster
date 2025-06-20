@@ -21,11 +21,11 @@ namespace WebAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public ActionResult<List<UserDto>> Get(int count, int start = 0)
+        public async Task<ActionResult<List<UserDto>>> Get(int count, int start = 0)
         {
             try
             {
-                var userDtos = _userService.GetUsers(count, start);
+                var userDtos = await _userService.GetUsers(count, start);
 
                 return Ok(userDtos);
             }
@@ -38,12 +38,12 @@ namespace WebAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public ActionResult<UserDto> GetUserById(int id)
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             try
             {
 
-                var userDto = _userService.GetUserById(id);
+                var userDto = await _userService.GetUserById(id);
                 return Ok(userDto);
             }
             catch

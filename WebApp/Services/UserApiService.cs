@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
-using WebApp.Models;
 
 namespace WebApp.Services
 {
@@ -17,16 +16,19 @@ namespace WebApp.Services
             _mapper = mapper;
             _apiFetchService = apiFetchService;
         }
-        public Task<List<UserDto>> GetUsers(int count, int start = 0)
+        public async Task<List<UserDto>> GetUsers(int count, int start = 0)
         {
-            var users = _apiFetchService.FetchList<UserDto, UserVM>($"api/user?count={count}&start={start}");
-            return _mapper.Map<Task<List<UserDto>>>(users);
+            var response = await _httpClient.GetAsync($"api/user?count={count}&start={start}");
+            response.EnsureSuccessStatusCode();
+            var users = await response.Content.ReadFromJsonAsync<List<UserDto>>();
+            return users;
         }
 
-        public Task<UserDto> GetUserById(int id)
+        public async Task<UserDto> GetUserById(int id)
         {
-            var user = _apiFetchService.Fetch<UserDto, UserVM>($"api/user/{id}");
-            return _mapper.Map<Task<UserDto>>(user);
+            var user = await _httpClient.GetAsync($"api/user/{id}");
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
         }
 
         public bool UpdateUser(UserDto userDto)

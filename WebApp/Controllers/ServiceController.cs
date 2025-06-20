@@ -26,7 +26,8 @@ namespace WebApp.Controllers
         {
             // coment when ui is done todo implement pagination
             count = 50;
-            var response = await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}");
+            //var response = await _apiFetchService.FetchList<ServiceDto, ServiceVM>($"api/service?count={count}&start={start}");
+            var response = _httpClient.GetAsync($"api/service?count={count}&start={start}");
             return Ok(response);
         }
 
@@ -214,7 +215,7 @@ namespace WebApp.Controllers
             vm.ServiceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
             vm.Cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
             var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>("api/professional?count=1000&start=0") ?? new List<ProfessionalVM>();
-            var users = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
+            var users = await _apiFetchService.FetchDataList<UserDto, UserVM>("api/user?count=1000&start=0");
             List<ProfessionalVM> professionalsData = professionals.Select(p => new ProfessionalVM
             {
                 IdProfessional = p.IdProfessional,

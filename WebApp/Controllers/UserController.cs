@@ -19,20 +19,19 @@ namespace WebApp.Controllers
         }
 
         //GET: UserController
-        public async Task<IActionResult> Index(int count, int start = 0)
+        public async Task<IActionResult> Index(int count = 50, int start = 0)
         {
-            // coment when ui is done
-            count = 50;
             var users = await _userService.GetUsers(count, start);
             return View(users);
         }
+
 
         // GET: UserController/Details/5
         public async Task<ActionResult> Details(int id)
         {
             try
             {
-                var user = _userService.GetUserById(id);
+                var user = await _userService.GetUserById(id);
                 if (user == null)
                 {
                     return NotFound();
@@ -49,13 +48,14 @@ namespace WebApp.Controllers
 
 
         // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var user = _userService.GetUserById(id);
+            var user = await _userService.GetUserById(id);
             if (user == null)
                 return NotFound();
 
             var viewModel = _mapper.Map<UserVM>(user);
+
             return View(viewModel);
         }
 
@@ -84,9 +84,9 @@ namespace WebApp.Controllers
         }
 
         // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var userDto = _userService.GetUserById(id);
+            var userDto = await _userService.GetUserById(id);
             if (userDto == null)
                 return NotFound();
 

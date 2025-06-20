@@ -22,6 +22,7 @@ namespace WebApp.Services
             int userCount = 1000,
             int cityCount = 1000)
         {
+            
 
             var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>(
                 $"api/professional?count={professionalCount}&start={professionalStart}");
