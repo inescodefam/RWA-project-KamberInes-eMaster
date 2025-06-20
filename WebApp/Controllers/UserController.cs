@@ -21,8 +21,9 @@ namespace WebApp.Controllers
         //GET: UserController
         public async Task<IActionResult> Index(int count = 50, int start = 0)
         {
-            var users = await _userService.GetUsers(count, start);
-            return View(users);
+            List<UserDto> users = await _userService.GetUsers(count, start);
+            List<UserVM> userVMs = _mapper.Map<List<UserVM>>(users);
+            return View(userVMs);
         }
 
 
