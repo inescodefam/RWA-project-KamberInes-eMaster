@@ -32,8 +32,18 @@ namespace WebAPI.Services
 
         public async Task<UserDto> GetUserByEmail(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-            return _mapper.Map<UserDto>(user);
+            email = email.ToLowerInvariant().Trim();
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email);
+
+                return _mapper.Map<UserDto>(user);
+            }
+            catch (Exception ex)
+            {
+
+                throw new Exception($"Error retrieving user by email: Error: {ex.Message}", ex);
+            }
         }
 
         public bool UpdateUser(UserDto userDto)
@@ -51,6 +61,7 @@ namespace WebAPI.Services
             user.Phone = userDto.PhoneNumber ?? user.Phone;
             user.PasswordHash = b64hash;
             user.PasswordSalt = b64salt;
+            _context.Users.Update(user);
             _context.SaveChanges();
             return true;
         }

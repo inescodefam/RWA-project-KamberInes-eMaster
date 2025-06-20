@@ -49,9 +49,12 @@ namespace WebApp.Controllers
 
 
         // GET: UserController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public async Task<ActionResult> Edit()
         {
-            var user = await _userService.GetUserById(id);
+            var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email");
+            var userEmail = emailClaim?.Value;
+
+            UserDto user = await _userService.GetUserByEmail(userEmail);
             if (user == null)
                 return NotFound();
 
@@ -63,7 +66,7 @@ namespace WebApp.Controllers
         // POST: UserController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, UserVM model)
+        public ActionResult Edit(UserVM model)
         {
             try
             {
@@ -76,7 +79,7 @@ namespace WebApp.Controllers
                 if (!result)
                     return View(model);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Edit));
             }
             catch
             {

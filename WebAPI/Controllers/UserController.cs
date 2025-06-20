@@ -53,11 +53,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("email/{email}")]
-        public ActionResult<UserDto> GetUserByEmail(string email)
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
             try
             {
-                var user = _userService.GetUserByEmail(email);
+                var user = await _userService.GetUserByEmail(email);
 
                 return user != null
                 ? Ok(user)
@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
             }
             catch
             {
-                return NotFound();
+                return NotFound($"User with email: {email} can not be found!");
             }
         }
 

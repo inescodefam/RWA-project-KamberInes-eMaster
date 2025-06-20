@@ -96,6 +96,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 // enable cors so my webapp and web api can listenon different ports
 app.UseCors();

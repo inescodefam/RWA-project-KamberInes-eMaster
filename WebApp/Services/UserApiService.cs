@@ -44,9 +44,12 @@ namespace WebApp.Services
                 throw new Exception("Unable to delete user.");
         }
 
-        public Task<UserDto> GetUserByEmail(string email)
+        public async Task<UserDto> GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"api/user/email/{email}");
+            response.EnsureSuccessStatusCode();
+            UserDto userDto = await response.Content.ReadFromJsonAsync<UserDto>();
+            return userDto;
         }
 
     }
