@@ -68,7 +68,7 @@ builder.Services
 
 builder.Services.AddDbContext<EProfessionalContext>(options =>
 {
-    options.UseSqlServer("name=ConnectionString:ConnStr");
+    options.UseSqlServer("name=ConnectionStrings:ConnStr");
 });
 builder.Services.AddScoped<LogService>();
 builder.Services.AddScoped<ServicesService>();
