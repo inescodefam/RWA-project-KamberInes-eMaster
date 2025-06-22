@@ -23,11 +23,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProfessionalDto>> GetAllProfessionals(int count, int start = 0)
+        public async Task<ActionResult<IEnumerable<ProfessionalDto>>> GetAllProfessionals(int count, int start = 0)
         {
+            if (count <= 0 || start < 0)
+                return BadRequest("Invalid paging parameters");
             try
             {
-                var professionals = _professionalService.GetProfessionals(count, start);
+                var professionals = await _professionalService.GetProfessionals(count, start);
+
+                if (professionals == null || !professionals.Any())
+                {
+                    _loggingService.Log("No professionals found in the database.", "info");
+                    return NoContent();
+                }
+
                 return Ok(professionals);
             }
             catch (Exception ex)

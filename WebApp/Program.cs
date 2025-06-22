@@ -20,7 +20,7 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 builder.Services.AddScoped<ApiFetchService>();
 builder.Services.AddScoped<ProfessionalViewModelService>();
-builder.Services.AddScoped<IProfessionalService, ProfessionalApiServicecs>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalApiServices>();
 builder.Services.AddScoped<IUserService, UserApiService>();
 
 

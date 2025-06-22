@@ -7,14 +7,14 @@ using System.Text.Json;
 
 namespace WebApp.Services
 {
-    public class ProfessionalApiServicecs : IProfessionalService
+    public class ProfessionalApiServices : IProfessionalService
     {
 
         private readonly HttpClient _httpClient;
         private readonly ApiFetchService _apiFetchService;
         private readonly IMapper _mapper;
 
-        public ProfessionalApiServicecs(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper)
+        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _apiFetchService = apiFetchService;
@@ -35,9 +35,18 @@ namespace WebApp.Services
         }
 
 
-        public List<ProfessionalDto> GetProfessionals(int count, int start = 0)
+        public async Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"api/professional?count={count}&start={start}");
+            response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return new List<ProfessionalDto>();
+            }
+            var professionalsDto = await response.Content.ReadFromJsonAsync<List<ProfessionalDto>>();
+
+            return professionalsDto;
         }
 
 

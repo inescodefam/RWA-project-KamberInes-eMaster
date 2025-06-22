@@ -5,27 +5,24 @@ using WebApp.Models;
 
 namespace WebApp.Services
 {
-    public class ProfessionalViewModelService
+    public class ProfessionalViewModelService : IProfessionalViewModelService
     {
         private readonly ApiFetchService _apiFetchService;
         private readonly IMapper _mapper;
 
-        public ProfessionalViewModelService(ApiFetchService apiFetchService, IMapper mapper)
+        public ProfessionalViewModelService(ApiFetchService apiFetchService, IMapper mapper, IHttpClientFactory httpClient)
         {
             _apiFetchService = apiFetchService;
             _mapper = mapper;
         }
 
+
         public async Task<ProfessionalIndexVM> GetProfessionalIndexVM(
-            int professionalCount = 50,
-            int professionalStart = 0,
+            List<ProfessionalVM> professionals,
+             int professionalCount,
             int userCount = 1000,
             int cityCount = 1000)
         {
-            
-
-            var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>(
-                $"api/professional?count={professionalCount}&start={professionalStart}");
 
             var users = await _apiFetchService.FetchDataList<UserDto, UserVM>(
                 $"api/user?count={userCount}&start=0");
@@ -33,7 +30,6 @@ namespace WebApp.Services
             var cities = await _apiFetchService.FetchDataList<CityDto, CityVM>(
                 $"api/city?count={cityCount}&start=0");
 
-            professionals = professionals ?? new List<ProfessionalVM>();
             users = users ?? new List<UserVM>();
             cities = cities ?? new List<CityVM>();
 

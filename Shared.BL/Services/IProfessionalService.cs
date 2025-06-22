@@ -4,7 +4,7 @@ namespace Shared.BL.Services
 {
     public interface IProfessionalService
     {
-        List<ProfessionalDto> GetProfessionals(int count, int start = 0);
+        Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0);
         Task<ProfessionalDto> GetSingleProfessional(int id);
         List<ProfessionalDto> SearchProfessionals(string? Name, string? cityName, int count, int start = 0);
         bool CreateProfessional(ProfessionalDto professionalDto);

@@ -18,14 +18,14 @@ namespace WebAPI.Services
             _mapper = mapper;
             _loggingService = logService;
         }
-        public List<ProfessionalDto> GetProfessionals(int count, int start = 0)
+        public async Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0)
         {
-            var professionals = _context.Professionals.Skip(start * count).Take(count).ToList();
+            var professionals = _context.Professionals.Skip(start * count).Take(count);
 
-            if (professionals == null || professionals.Count == 0)
+            if (!professionals.Any())
             {
                 _loggingService.Log("No professionals found in the database.", "info");
-                throw new ArgumentException("No professionals found!");
+                return new List<ProfessionalDto>();
             }
 
             var professionalDto = _mapper.Map<List<ProfessionalDto>>(professionals);

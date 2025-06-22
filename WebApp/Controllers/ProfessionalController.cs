@@ -28,16 +28,30 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int count = 50, int start = 0)
         {
-            var model = await _viewModelService.GetProfessionalIndexVM(count, start);
+            var model = await _professionalService.GetProfessionals(count, start);
+            List<ProfessionalVM> professionalVMs = _mapper.Map<List<ProfessionalVM>>(model);
 
-            return View(model);
+            if (professionalVMs == null || professionalVMs.Count == 0)
+            {
+                ModelState.AddModelError("", "No professionals found.");
+                return View(new ProfessionalIndexVM
+                {
+                    Professionals = new List<ProfessionalVM>()
+                });
+            }
+            var professionalIndexModel = await _viewModelService.GetProfessionalIndexVM(professionalVMs, count);
+
+            return View(professionalVMs);
         }
 
         // GET: ProfessionalController/AddProfessional
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var model = await _viewModelService.GetProfessionalIndexVM();
+            var professionals = await _professionalService.GetProfessionals(1000, 0);
+            int count = professionals.Count;
+            var professionalVms = _mapper.Map<List<ProfessionalVM>>(professionals);
+            var model = await _viewModelService.GetProfessionalIndexVM(professionalVms, count);
 
             return View(model);
         }
