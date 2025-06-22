@@ -42,7 +42,7 @@ namespace WebApp.Controllers
             int count = 1000; // todo remove when ...
             int start = 0;
             var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>($"api/city?count={count}&start={start}") ?? new List<CityDto>();
-            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>($"api/city?count={count}&start={start}") ?? new List<ServiceTypeDto>();
+            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>($"api/servicetype?count={count}&start={start}") ?? new List<ServiceTypeDto>();
             var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>($"api/service?count={count}&start={start}") ?? new List<ServiceDto>();
             var usersDtos = await _userApiService.GetUsers(count, start);
             var professionalsDtos = await _professionalApiService.GetProfessionals(count);

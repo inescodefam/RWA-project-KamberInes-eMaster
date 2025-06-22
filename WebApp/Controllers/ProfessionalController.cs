@@ -55,13 +55,6 @@ namespace WebApp.Controllers
 
             return View(model);
         }
-
-        public ActionResult Details(int id)
-        {
-            var professional = _professionalService.GetSingleProfessional(id);
-            return View(professional);
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProfessionalVM professionalVM)
         {
@@ -82,6 +75,13 @@ namespace WebApp.Controllers
             return BadRequest();
 
         }
+
+        public ActionResult Details(int id)
+        {
+            var professional = _professionalService.GetSingleProfessional(id);
+            return View(professional);
+        }
+
 
 
         // GET: ProfessionalController/Edit/5

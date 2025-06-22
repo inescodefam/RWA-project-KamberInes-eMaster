@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Shared.BL.DTOs;
+using Shared.BL.Models;
 using WebApp.Models;
 
 namespace WebApp.Mapper
@@ -12,6 +13,8 @@ namespace WebApp.Mapper
             CreateMap<UserDto, UserVM>();
             CreateMap<ProfessionalDto, ProfessionalVM>();
             CreateMap<ProfessionalVM, ProfessionalDto>();
+            CreateMap<ProfessionalDto, Professional>();
+            CreateMap<Professional, ProfessionalDto>();
             CreateMap<ServiceTypeDto, ServiceTypeVM>();
             CreateMap<ServiceTypeVM, ServiceTypeDto>();
             CreateMap<CityDto, CityVM>();
