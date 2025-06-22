@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
+using Shared.BL.Services;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -12,13 +13,17 @@ namespace WebApp.Controllers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly ApiFetchService _apiFetchService;
+        private readonly IProfessionalService _professionalApiService;
+        private readonly IUserService _userApiService;
 
 
-        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
+        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, IProfessionalService professionalApiService, IUserService userApiService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
             _apiFetchService = apiFetchService;
+            _professionalApiService = professionalApiService;
+            _userApiService = userApiService;
         }
 
         [HttpGet]
@@ -34,11 +39,13 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<ActionResult> Search(int? cityId, string serviceTypeName)
         {
-            var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>("api/city?count=1000&start=0") ?? new List<CityDto>();
-            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeDto>();
-            var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>("api/service?count=1000&start=0") ?? new List<ServiceDto>();
-            var usersDtos = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
-            var professionalsDtos = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0") ?? new List<ProfessionalDto>();
+            int count = 1000; // todo remove when ...
+            int start = 0;
+            var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>($"api/city?count={count}&start={start}") ?? new List<CityDto>();
+            var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>($"api/city?count={count}&start={start}") ?? new List<ServiceTypeDto>();
+            var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>($"api/service?count={count}&start={start}") ?? new List<ServiceDto>();
+            var usersDtos = await _userApiService.GetUsers(count, start);
+            var professionalsDtos = await _professionalApiService.GetProfessionals(count);
 
             var cities = _mapper.Map<List<CityVM>>(cityDtos)?
               .Where(c => c != null && !string.IsNullOrEmpty(c.Name))
