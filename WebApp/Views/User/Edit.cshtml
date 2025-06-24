@@ -10,7 +10,7 @@
 }
 
 <h2>Edit Profile</h2>
-<form asp-action="Edit" method="post">
+<form id="profileForm" asp-action="Edit" method="post">
     <div class="form-group">
         <label asp-for="Username"></label>
         <input asp-for="Username" class="form-control" />
@@ -25,7 +25,7 @@
     <div class="form-group">
         <label asp-for="Password"></label>
         <input asp-for="Password" class="form-control"/>
-        <span asp-validation-for="FirstName" class="text-danger"></span>
+        <span asp-validation-for="Password" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="FirstName"></label>
@@ -45,3 +45,43 @@
     <button type="submit" class="btn btn-primary">Save</button>
     <a asp-action="Index" class="btn btn-secondary">Cancel</a>
 </form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#profileForm').submit(function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '@Url.Action("Edit", "User")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                             console.log("Redirecting to:", response.redirectUrl);
+                            window.location.href = response.redirectUrl;
+                        } else {
+
+                            $('.text-danger').empty();
+
+                            if (response.errors) {
+                                for (var field in response.errors) {
+                                    var errorSpan = $('[data-valmsg-for="' + field + '"]');
+                                    errorSpan.text(response.errors[field].join(', '));
+                                    errorSpan.removeClass('field-validation-valid');
+                                    errorSpan.addClass('field-validation-error');
+                                }
+                            }
+                            if (response.message) {
+                                alert(response.message);
+                            }
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error: ' + xhr.statusText);
+                    }
+                });
+            });
+        });
+    </script>
+}

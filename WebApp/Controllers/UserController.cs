@@ -63,29 +63,34 @@ namespace WebApp.Controllers
             return View(viewModel);
         }
 
-        // POST: UserController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(UserVM model)
+        public async Task<JsonResult> Edit(UserVM model)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+                return Json(new { success = false, errors });
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                    return View(model);
-
                 var userDto = _mapper.Map<UserDto>(model);
                 var result = _userService.UpdateUser(userDto);
 
-                if (!result)
-                    return View(model);
-
-                return RedirectToAction("Search", "Service");
+                return result
+                    ? Json(new { success = true, redirectUrl = Url.Action("Search", "Service") })
+                    : Json(new { success = false, message = "Update failed" });
             }
-            catch
+            catch (Exception ex)
             {
-                return View(model);
+                return Json(new { success = false, message = ex.Message });
             }
         }
+
 
         // GET: UserController/Delete/5
         public async Task<ActionResult> Delete(int id)

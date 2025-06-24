@@ -51,16 +51,20 @@ namespace WebAPI.Services
             var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
             if (user == null) return false;
 
-            var b64salt = HashPwd.GetSalt();
-            var b64hash = HashPwd.GetHash(userDto.Password, b64salt);
+            if (userDto.Password != null)
+            {
+                var b64salt = HashPwd.GetSalt();
+                var b64hash = HashPwd.GetHash(userDto.Password, b64salt);
+                user.PasswordHash = b64hash;
+                user.PasswordSalt = b64salt;
+            }
 
             user.Username = userDto.Username ?? user.Username;
             user.FirstName = userDto.FirstName ?? user.FirstName;
             user.LastName = userDto.LastName ?? user.LastName;
-            user.Email = userDto.Email;
+            user.Email = userDto.Email ?? user.Email;
             user.Phone = userDto.PhoneNumber ?? user.Phone;
-            user.PasswordHash = b64hash;
-            user.PasswordSalt = b64salt;
+
             _context.Users.Update(user);
             _context.SaveChanges();
             return true;
