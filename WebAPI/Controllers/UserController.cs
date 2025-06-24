@@ -70,7 +70,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] UserDto userDto)
+        public async Task<IActionResult> Put([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var updated = _userService.UpdateUser(userDto);
+                var updated = await _userService.UpdateUser(userDto);
                 return updated
                     ? Ok("User updated successfully")
                     : NotFound("User not found");

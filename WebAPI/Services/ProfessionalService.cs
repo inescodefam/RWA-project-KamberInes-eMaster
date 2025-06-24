@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
@@ -20,7 +21,7 @@ namespace WebAPI.Services
         }
         public async Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0)
         {
-            var professionals = _context.Professionals.Skip(start * count).Take(count);
+            var professionals = await _context.Professionals.Skip(start * count).Take(count).ToListAsync();
 
             if (!professionals.Any())
             {
@@ -51,10 +52,10 @@ namespace WebAPI.Services
             return professionalDto;
         }
 
-        public List<ProfessionalDto> SearchProfessionals(string? name, string? cityName, int count, int start = 0)
+        public async Task<List<ProfessionalDto>> SearchProfessionals(string? name, string? cityName, int count, int start = 0)
         {
-
             var query = _context.Professionals.AsQueryable();
+
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(p => p.User.FirstName == name || p.User.LastName == name);
@@ -63,12 +64,14 @@ namespace WebAPI.Services
             {
                 query = query.Where(p => p.City.Name.Contains(cityName));
             }
-            var professionals = query.Skip(start * count).Take(count).ToList();
+
+            var professionals = await query.Skip(start * count).Take(count).ToListAsync();
             if (professionals == null || professionals.Count == 0)
             {
                 _loggingService.Log($"No professionals found for name '{name}' and city '{cityName}'.", "info");
                 throw new Exception("No professionals found");
             }
+
             var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
             _loggingService.Log($"Retrieved {professionalDtos.Count} professionals for name '{name}' and city '{cityName}'.", "info");
 
@@ -76,7 +79,7 @@ namespace WebAPI.Services
         }
 
 
-        public bool CreateProfessional(ProfessionalDto professionalDto)
+        public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)
         {
             var professional = _mapper.Map<Professional>(professionalDto);
             if (!_context.Users.Any(u => u.Iduser == professionalDto.UserId))
@@ -89,7 +92,7 @@ namespace WebAPI.Services
                 throw new ArgumentException("Invalid City ID");
             }
 
-            _context.Professionals.Add(professional);
+            await _context.Professionals.AddAsync(professional);
             _context.SaveChanges();
             _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
 

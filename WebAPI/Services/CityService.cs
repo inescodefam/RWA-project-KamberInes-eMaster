@@ -16,7 +16,7 @@ namespace Shared.BL.Services
             _mapper = mapper;
         }
 
-        public CityDto CreateCityAsync(string cityName)
+        public async Task<CityDto> CreateCityAsync(string cityName)
         {
             if (string.IsNullOrEmpty(cityName))
             {
@@ -31,14 +31,23 @@ namespace Shared.BL.Services
             {
                 Name = cityName,
             };
-            _context.Cities.Add(city);
+            await _context.Cities.AddAsync(city);
 
             return _mapper.Map<CityDto>(city);
         }
 
         public Task<List<CityDto>> GetCitiesAsync(string searchTerm, int count, int start = 0)
         {
-            throw new NotImplementedException();
+            var cities = _context.Cities
+                .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .Skip(start)
+                .Take(count)
+                .ToList();
+            var cityDtos = _mapper.Map<List<CityDto>>(cities);
+
+            return cities.Count == 0
+                ? Task.FromResult(new List<CityDto>())
+                : Task.FromResult(cityDtos);
         }
     }
 }

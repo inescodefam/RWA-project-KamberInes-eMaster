@@ -79,7 +79,7 @@ namespace WebApp.Controllers
             try
             {
                 var userDto = _mapper.Map<UserDto>(model);
-                var result = _userService.UpdateUser(userDto);
+                var result = await _userService.UpdateUser(userDto);
 
                 return result
                     ? Json(new { success = true, redirectUrl = Url.Action("Search", "Service") })

@@ -9,7 +9,7 @@
     <div>No professionals found.</div>
 }
 <h2>Professionals List</h2>
-<table class="table">
+@* <table class="table">
     <thead>
         <tr>
             <th>Username</th>
@@ -26,3 +26,239 @@
         }
     </tbody>
 </table>
+ *@
+@* <div class="container my-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Search Professionals</h4>
+        </div>
+        <div class="card-body">
+            <form id="searchProfessionalForm" class="row g-3">
+                <div class="col-md-6">
+                    <label for="searchUsername" class="form-label">Username</label>
+                    <input type="text" id="searchUsername" name="username" class="form-control" placeholder="Enter username" />
+                </div>
+                <div class="col-md-6">
+                    <label for="searchCityId" class="form-label">City</label>
+                    <select id="searchCityId" name="cityId" class="form-select">
+                        <option value="">All cities</option>
+                        @foreach (var city in Model.Cities)
+                        {
+                            <option value="@city.Value">@city.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <span id="searchProfessionalError" class="text-danger ms-3"></span>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Search Results</h5>
+        </div>
+        <div class="card-body p-0">
+            <table id="searchProfessionalsTable" class="table table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Username</th>
+                        <th>City</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+$(document).ready(function() {
+
+    $('#searchProfessionalForm').submit(function(e) {
+        e.preventDefault();
+        var username = $('#searchUsername').val();
+        var cityId = $('#searchCityId').val();
+
+        $.ajax({
+            url: '@Url.Action("Search", "Professional")',
+            type: 'GET',
+            data: { username: username, cityId: cityId },
+            success: function(results) {
+                var $tbody = $('#searchProfessionalsTable tbody');
+                $tbody.empty();
+
+                if (results.length === 0) {
+                    $tbody.append('
+<tr><td colspan="2" class="text-center text-muted">No professionals found.</td></tr>');
+                } else {
+                    $.each(results, function(i, p) {
+                        $tbody.append('
+<tr><td>' + p.userName + '</td><td>' + p.cityName + '</td></tr>');
+                    });
+                }
+                $('#searchProfessionalError').text('');
+            },
+            error: function(xhr) {
+                $('#searchProfessionalError').text('Error searching professionals: ' + xhr.responseText);
+            }
+        });
+    });
+}); *@
+
+@{
+    ViewData["Title"] = "Professional Directory";
+}
+
+<div class="container py-4">
+    <!-- Search Professionals Card -->
+    <div class="card shadow-lg mb-5">
+        <div class="card-header bg-primary text-white py-3">
+            <h3 class="mb-0"><i class="bi bi-search me-2"></i>Search Professionals</h3>
+        </div>
+        <div class="card-body">
+            <form id="searchProfessionalForm" class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" id="searchUsername" name="username" class="form-control" placeholder="Enter username" />
+                        <label for="searchUsername"><i class="bi bi-person-fill me-2"></i>Username</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <select id="searchCityId" name="cityId" class="form-select">
+                            <option value="">All cities</option>
+                            @foreach (var city in Model.Cities)
+                            {
+                                <option value="@city.Value">@city.Text</option>
+                            }
+                        </select>
+                        <label for="searchCityId"><i class="bi bi-geo-alt-fill me-2"></i>City</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary w-100 py-2">
+                        <i class="bi bi-search me-2"></i>Search Professionals
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Results Card -->
+    <div class="card shadow-lg">
+        <div class="card-header bg-light py-3">
+            <h4 class="mb-0"><i class="bi bi-list-task me-2"></i>Search Results</h4>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="searchProfessionalsTable" class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th><i class="bi bi-person-badge me-2"></i>Professional</th>
+                            <th><i class="bi bi-geo-alt me-2"></i>City</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Results will appear here via AJAX -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResultsMessage" class="text-center py-5 d-none">
+                <i class="bi bi-people display-4 text-muted mb-3"></i>
+                <p class="h4 text-muted">No professionals found</p>
+                <p class="text-muted">Try different search criteria</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card-header {
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        .table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+        .form-control, .form-select {
+            border: 1px solid #dee2e6;
+            transition: all 0.3s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3a8ffe, #6c42f5);
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2a7dee, #5b32e5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .table-hover tbody tr:hover {
+            background-color: rgba(13, 110, 253, 0.05);
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize form with empty results message
+            $('#noResultsMessage').removeClass('d-none');
+            
+            $('#searchProfessionalForm').submit(function(e) {
+                e.preventDefault();
+                var username = $('#searchUsername').val();
+                var cityId = $('#searchCityId').val();
+
+                $.ajax({
+                    url: '@Url.Action("Search", "Professional")',
+                    type: 'GET',
+                    data: { 
+                        name: username, 
+                        city: cityId,
+                        count: 100, 
+                        start: 0
+                    },
+                    success: function(results) {
+                        var $tbody = $('#searchProfessionalsTable tbody');
+                        $tbody.empty();
+                        
+                        if (results && results.length > 0) {
+                            $('#noResultsMessage').addClass('d-none');
+                            $.each(results, function(i, p) {
+                                $tbody.append(
+                                    `<tr>
+                                        <td>${p.userName || 'N/A'}</td>
+                                        <td>${p.cityName || 'N/A'}</td>
+                                    </tr>`
+                                );
+                            });
+                        } else {
+                            $('#noResultsMessage').removeClass('d-none');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Search error:', xhr.responseText);
+                        alert('Error searching professionals. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+

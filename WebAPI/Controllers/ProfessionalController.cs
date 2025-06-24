@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProfessionalDto professionalDto)
+        public async Task<IActionResult> Post([FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var response = _professionalService.CreateProfessional(professionalDto);
+                var response = await _professionalService.CreateProfessional(professionalDto);
                 return Ok();
             }
             catch (Exception ex)

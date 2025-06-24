@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
 using WebApp.Models;
@@ -55,6 +56,18 @@ namespace WebApp.Controllers
 
             return View(model);
         }
+
+        // GET: ProfessionalController/Search
+        [HttpGet]
+        public async Task<IActionResult> Search(string username, string? city, int? count, int? start)
+        {
+            var response = await _professionalService.SearchProfessionals(username, city, 1000, 0);
+            response.ToJson();
+
+            return Json(response);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProfessionalVM professionalVM)
         {
@@ -67,7 +80,7 @@ namespace WebApp.Controllers
                 return BadRequest("Invalid data submitted.");
             }
 
-            var response = _professionalService.CreateProfessional(professionalDto);
+            var response = await _professionalService.CreateProfessional(professionalDto);
 
             if (response)
                 return Ok();

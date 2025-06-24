@@ -7,7 +7,7 @@ namespace Shared.BL.Services
         Task<List<UserDto>> GetUsers(int count, int start = 0);
         Task<UserDto> GetUserById(int id);
         Task<UserDto> GetUserByEmail(string email);
-        bool UpdateUser(UserDto userDto);
+        Task<bool> UpdateUser(UserDto userDto);
         void DeleteUser(UserDto userDto);
     }
 }

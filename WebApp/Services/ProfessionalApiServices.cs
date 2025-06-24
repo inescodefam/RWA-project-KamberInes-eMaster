@@ -13,12 +13,16 @@ namespace WebApp.Services
         private readonly HttpClient _httpClient;
         private readonly ApiFetchService _apiFetchService;
         private readonly IMapper _mapper;
+        private readonly ICityService _cityService;
+        private readonly IUserService _userService;
 
-        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper)
+        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper, ICityService cityService, IUserService userService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _apiFetchService = apiFetchService;
             _mapper = mapper;
+            _cityService = cityService;
+            _userService = userService;
         }
 
         async public Task<ProfessionalDto> GetSingleProfessional(int id)
@@ -27,10 +31,10 @@ namespace WebApp.Services
             return profesionalDto;
         }
 
-        public bool CreateProfessional(ProfessionalDto professionalDto)
+        public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)
         {
             var newProfessional = _mapper.Map<Professional>(professionalDto);
-            var response = _httpClient.PostAsJsonAsync("api/professional", newProfessional);
+            var response = await _httpClient.PostAsJsonAsync("api/professional", newProfessional);
             return response != null;
         }
 
@@ -50,9 +54,25 @@ namespace WebApp.Services
         }
 
 
-        public List<ProfessionalDto> SearchProfessionals(string? Name, string? cityName, int count, int start = 0)
+        public async Task<List<ProfessionalDto>> SearchProfessionals(string? Name, string? cityName, int count, int start)
         {
-            throw new NotImplementedException();
+            var professinals = await GetProfessionals(count, start);
+            List<CityDto> cities = _cityService.GetCitiesAsync(cityName, 1000).Result;
+            List<UserDto> users = _userService.GetUsers(1000).Result;
+
+            CityDto city = null;
+            List<int> userIds = null;
+
+            if (Name != null)
+                userIds = users.Where(u => u.Username == Name).Select(u => u.Iduser).ToList();
+
+            if (cityName != null)
+                city = cities.Find(c => cityName == c.Name);
+
+            var result = professinals.Where(p => p.CityId == city?.Idcity).ToList();
+            result = result.Where(p => userIds.Contains(p.UserId ?? -1)).ToList();
+
+            return _mapper.Map<List<ProfessionalDto>>(result);
         }
 
         public bool UpdateProfessional(int id, ProfessionalDto professionalDto)

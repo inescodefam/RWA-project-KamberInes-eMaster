@@ -6,6 +6,7 @@
 }
 @model WebApp.Models.ProfessionalIndexVM
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
 <script>
     $(document).ready(function() {
         $('#addProfessionalForm').submit(function(e) {
@@ -62,55 +63,74 @@
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
-    <h2>Add Professional</h2>
-    <form id="addProfessionalForm" asp-action="Create" method="post">
-        <div>
-            <label>User</label>
-            <select name="UserId" id="UserId">
-                <option value="">Select user</option>
-                @foreach (var user in Model.Users)
-                {
-                    <option value="@user.Value">@user.Text</option>
-                }
-            </select>
+    <div class="container my-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Add Professional</h4>
+            </div>
+            <div class="card-body">
+                <form id="addProfessionalForm" asp-action="Create" method="post" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="UserId" class="form-label">User</label>
+                        <select name="UserId" id="UserId" class="form-select">
+                            <option value="">Select user</option>
+                            @foreach (var user in Model.Users)
+                            {
+                                <option value="@user.Value">@user.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="CityId" class="form-label">City</label>
+                        <select name="CityId" id="CityId" class="form-select">
+                            @foreach (var city in Model.Cities)
+                            {
+                                <option value="@city.Value">@city.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success">Add Professional</button>
+                        <span id="addProfessionalError" class="text-danger ms-3"></span>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div>
-            <label>City</label>
-            <select name="CityId" id="CityId">
-                @foreach (var city in Model.Cities)
-                {
-                    <option value="@city.Value">@city.Text</option>
-                }
-            </select>
-        </div>
-        <button type="submit">Add Professional</button>
-    </form>
 
-    <table id="professionalsTable" class="table">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>City</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (Model.Professionals != null)
-            {
-                foreach (var p in Model.Professionals)
-                {
-                    <tr>
-                        <td>@p.UserName</td>
-                        <td>@p.CityName</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-professional"
-                                    data-id="@p.IdProfessional">
-                                Delete
-                            </button>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
-    <div id="addProfessionalError" style="color:red;"></div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Professionals List</h5>
+            </div>
+            <div class="card-body p-0">
+                <table id="professionalsTable" class="table table-striped mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Username</th>
+                            <th>City</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Professionals != null)
+                        {
+                            foreach (var p in Model.Professionals)
+                            {
+                                <tr>
+                                    <td>@p.UserName</td>
+                                    <td>@p.CityName</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm delete-professional"
+                                                data-id="@p.IdProfessional">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 }
+

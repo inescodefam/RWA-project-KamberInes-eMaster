@@ -31,10 +31,10 @@ namespace WebApp.Services
             return userDto;
         }
 
-        public bool UpdateUser(UserDto userDto)
+        public async Task<bool> UpdateUser(UserDto userDto)
         {
-            var response = _httpClient.PutAsync("api/user", JsonContent.Create(userDto));
-            return response.Result.IsSuccessStatusCode;
+            var response = await _httpClient.PutAsync("api/user", JsonContent.Create(userDto));
+            return response.IsSuccessStatusCode;
         }
 
         public void DeleteUser(UserDto userDto)

@@ -20,7 +20,7 @@ namespace WebAPI.Services
 
         public async Task<List<UserDto>> GetUsers(int count, int start = 0)
         {
-            var users = _context.Users.Skip(start * count).Take(count);
+            var users = await _context.Users.Skip(start * count).Take(count).ToListAsync();
             return _mapper.Map<List<UserDto>>(users);
         }
 
@@ -46,9 +46,9 @@ namespace WebAPI.Services
             }
         }
 
-        public bool UpdateUser(UserDto userDto)
+        public async Task<bool> UpdateUser(UserDto userDto)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Email == userDto.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == userDto.Email);
             if (user == null) return false;
 
             if (userDto.Password != null)
