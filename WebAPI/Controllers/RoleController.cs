@@ -46,5 +46,32 @@ namespace WebAPI.Controllers
 
             return Ok();
         }
+
+        [HttpPut("api/role/{roleId}")]
+        public async Task<IActionResult> UpdateRole(int roleId, [FromBody] string newRoleName)
+        {
+            if (string.IsNullOrEmpty(newRoleName))
+            {
+                return BadRequest("New role name cannot be empty.");
+            }
+            var response = await _roleService.UpdateRole(roleId, newRoleName);
+            if (!response)
+            {
+                return NotFound("Role not found or could not be updated.");
+            }
+            return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("api/role/{roleId}")]
+        public async Task<IActionResult> DeleteRole(int roleId)
+        {
+            var response = await _roleService.DeleteRole(roleId);
+            if (!response)
+            {
+                return NotFound("Role not found or could not be deleted.");
+            }
+            return Ok();
+        }
     }
 }

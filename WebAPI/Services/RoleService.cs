@@ -51,5 +51,32 @@ namespace WebAPI.Services
             return true;
         }
 
+        public async Task<bool> UpdateRole(int roleId, string newRoleName)
+        {
+            Role roleToUpdate = _context.Roles.FirstOrDefault(r => r.Idrole == roleId);
+            if (roleToUpdate == null)
+            {
+                return false;
+            }
+            roleToUpdate.RoleName = newRoleName;
+            _context.Roles.Update(roleToUpdate);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> DeleteRole(int roleId)
+        {
+            Role roletoDelete = _context.Roles.FirstOrDefault(r => r.Idrole == roleId);
+            if (roletoDelete == null)
+            {
+                return false;
+            }
+
+            _context.Roles.Remove(roletoDelete);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }
