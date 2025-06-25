@@ -106,24 +106,24 @@ namespace WebAPI.Controllers
 
         // PUT api/<ProfessionalsController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] ProfessionalDto professionalDto)
+        public async Task<IActionResult> Put(int id, [FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
-                BadRequest(ModelState);
+                return BadRequest(ModelState);
             }
 
             try
             {
-                var response = _professionalService.UpdateProfessional(id, professionalDto);
-                if (!response) NotFound();
+                var response = await _professionalService.UpdateProfessional(id, professionalDto);
+                if (!response) return NotFound();
 
-                Ok("Professional updated successfully");
+                return Ok("Professional updated successfully");
             }
             catch (Exception ex)
             {
                 _loggingService.Log($"Error updating professional with ID {id}: {ex.Message}", "error");
-                StatusCode(500, ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
 

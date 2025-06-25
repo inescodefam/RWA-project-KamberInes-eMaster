@@ -3,3 +3,73 @@
 *@
 @{
 }
+@model WebApp.Models.ProfessionalIndexVM
+
+@{
+    ViewData["Title"] = "Edit Professional";
+}
+
+<div class="container">
+    <h2 class="mb-4">Edit Professional</h2>
+
+    @if (Model.Professionals?.FirstOrDefault() != null)
+    {
+        var professional = Model.Professionals.First();
+
+        <form asp-action="Edit" method="post">
+            <input type="hidden" name="id" value="@professional.IdProfessional" />
+            @Html.AntiForgeryToken()
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="UserId" id="UserId">
+                                    <option value="">Select User</option>
+                                    @foreach (var user in Model.Users)
+                                    {
+                                        <option value="@user.Value"
+                                                selected="@(user.Value == professional.UserId?.ToString())">
+                                            @user.Text
+                                        </option>
+                                    }
+                                </select>
+                                <label for="UserId">User</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" name="CityId" id="CityId">
+                                    <option value="">Select City</option>
+                                    @foreach (var city in Model.Cities)
+                                    {
+                                        <option value="@city.Value"
+                                                selected="@(city.Value == professional.CityId?.ToString())">
+                                            @city.Text
+                                        </option>
+                                    }
+                                </select>
+                                <label for="CityId">City</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+                            <a asp-action="Create" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-warning">
+            Professional not found
+        </div>
+        <a asp-action="Create" class="btn btn-secondary">Back to List</a>
+    }
+</div>

@@ -98,17 +98,19 @@ namespace WebAPI.Services
 
             return true;
         }
-        public bool UpdateProfessional(int id, ProfessionalDto professionalDto)
+        public async Task<bool> UpdateProfessional(int id, ProfessionalDto professionalDto)
         {
-            var professional = _context.Professionals.Find(id);
+            var professional = await _context.Professionals.FindAsync(id);
             if (professional == null)
             {
                 _loggingService.Log($"Professional with ID {id} not found for update.", "warning");
                 return false;
             }
-            professional = _mapper.Map(professionalDto, professional);
-            _context.Professionals.Update(professional);
-            _context.SaveChanges();
+            professional.UserId = professionalDto.UserId;
+            professional.CityId = professionalDto.CityId;
+
+            //_context.Professionals.Update(professional);
+            await _context.SaveChangesAsync();
             _loggingService.Log($"Professional with ID {id} updated successfully.", "info");
 
             return true;

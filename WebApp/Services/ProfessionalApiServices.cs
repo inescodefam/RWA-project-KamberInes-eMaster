@@ -86,11 +86,11 @@ namespace WebApp.Services
             return _mapper.Map<List<ProfessionalDto>>(result);
         }
 
-        public bool UpdateProfessional(int id, ProfessionalDto professionalDto)
+        public async Task<bool> UpdateProfessional(int id, ProfessionalDto professionalDto)
         {
-            var resposne = _httpClient.PutAsync($"api/professional/{id}",
+            var resposne = await _httpClient.PutAsync($"api/professional/{id}",
                    new StringContent(JsonSerializer.Serialize(professionalDto), Encoding.UTF8, "application/json"));
-            return resposne != null;
+            return resposne.IsSuccessStatusCode;
         }
         public bool DeleteProfessional(int id)
         {

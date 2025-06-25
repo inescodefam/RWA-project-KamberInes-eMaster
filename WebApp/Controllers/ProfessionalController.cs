@@ -135,23 +135,35 @@ namespace WebApp.Controllers
         // POST: ProfessionalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, ProfessionalDto professionalDto)
+        public async Task<ActionResult> Edit(int id, [FromForm] ProfessionalDto professionalDto)
         {
             try
             {
-                var response = _professionalService.UpdateProfessional(id, professionalDto);
+                var response = await _professionalService.UpdateProfessional(id, professionalDto);
                 if (!response)
                 {
                     ModelState.AddModelError("", "Failed to update professional.");
-                    return View(professionalDto);
+
+                    var model = await GetProfessionalViewModel(id);
+                    return View(model);
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Create));
             }
             catch
             {
-                return View();
+                var model = await GetProfessionalViewModel(id);
+                return View(model);
             }
         }
+
+        private async Task<ProfessionalIndexVM> GetProfessionalViewModel(int id)
+        {
+            var professional = await _professionalService.GetSingleProfessional(id);
+            var professionalVm = _mapper.Map<ProfessionalVM>(professional);
+            var professionalVmList = new List<ProfessionalVM> { professionalVm };
+            return await _viewModelService.GetProfessionalIndexVM(professionalVmList, 1);
+        }
+
 
         // GET: ProfessionalController/Delete/5
         public ActionResult Delete() => View();
