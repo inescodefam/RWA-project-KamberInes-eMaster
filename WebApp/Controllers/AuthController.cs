@@ -89,6 +89,10 @@ namespace WebApp.Controllers
             {
                 return View(model);
             }
+            if (string.IsNullOrWhiteSpace(model.ConfirmPassword))
+            {
+                ModelState.AddModelError("ConfirmPassword", "Confirm Password is required.");
+            }
 
             if (model.Password != model.ConfirmPassword)
             {

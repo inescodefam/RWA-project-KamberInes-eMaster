@@ -2,10 +2,18 @@
 @if (!User.Identity.IsAuthenticated)
 {
     <form asp-action="Login" method="post">
+    <label asp-for="Email"></label>
     <input asp-for="Email" placeholder="Email" />
+    <span asp-validation-for="Email" class="text-danger"></span>
+    <label asp-for="Password"></label>
     <input asp-for="Password" type="password" placeholder="Password" />
+     <span asp-validation-for="Password" class="text-danger"></span>
     <button type="submit">Login</button>
     <div asp-validation-summary="All" class="text-danger"></div>
 </form>
 <a asp-action="Register" asp-controller="Auth">Register</a>
 }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
