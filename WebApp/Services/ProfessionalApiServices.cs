@@ -69,8 +69,13 @@ namespace WebApp.Services
             if (cityName != null)
                 city = cities.Find(c => cityName == c.Name);
 
-            var result = professinals.Where(p => p.CityId == city?.Idcity).ToList();
-            result = result.Where(p => userIds.Contains(p.UserId ?? -1)).ToList();
+            List<ProfessionalDto> result = new List<ProfessionalDto>();
+
+            if (city != null)
+                result = professinals.Where(p => p.CityId == city?.Idcity).ToList();
+
+            if (userIds != null)
+                result = professinals.Where(p => userIds.Contains(p.UserId ?? -1)).ToList();
 
             return _mapper.Map<List<ProfessionalDto>>(result);
         }
