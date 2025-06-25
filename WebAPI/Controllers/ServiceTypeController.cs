@@ -58,5 +58,44 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] ServiceTypeDto dto)
+        {
+            if (dto == null || dto.IdserviceType <= 0 || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
+            {
+                return BadRequest("Invalid service type data.");
+            }
+            try
+            {
+                var updatedServiceType = await _serviceTypeService.UpdateServiceType(dto);
+                return Ok(updatedServiceType);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while updating the service type.");
+            }
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var result = await _serviceTypeService.DeleteServiceType(id);
+                if (result)
+                {
+                    return NoContent();
+                }
+                return NotFound($"Service type with ID {id} not found.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while deleting the service type.");
+            }
+        }
+
     }
 }

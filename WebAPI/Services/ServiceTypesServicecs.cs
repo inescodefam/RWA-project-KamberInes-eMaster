@@ -51,17 +51,27 @@ namespace WebAPI.Services
 
             return serviceTypeDto;
         }
-
-        public Task<bool> DeleteServiceType(int id)
+        public async Task<ServiceTypeDto> UpdateServiceType(ServiceTypeDto serviceTypeDto)
         {
-            throw new NotImplementedException();
+            ServiceType entity = _context.ServiceTypes.FirstOrDefault(st => st.IdserviceType == serviceTypeDto.IdserviceType);
+
+            if (entity == null)
+            {
+                throw new KeyNotFoundException("Service type not found.");
+            }
+            entity.ServiceTypeName = serviceTypeDto.ServiceTypeName;
+            await _context.SaveChangesAsync();
+            entity = _context.ServiceTypes.FirstOrDefault(st => st.IdserviceType == serviceTypeDto.IdserviceType);
+            ServiceTypeDto updatedServiceTypeDto = _mapper.Map<ServiceTypeDto>(entity);
+            return updatedServiceTypeDto;
         }
 
-
-
-        public Task<ServiceTypeDto> UpdateServiceType(ServiceTypeDto serviceTypeDto)
+        public async Task<bool> DeleteServiceType(int id)
         {
-            throw new NotImplementedException();
+            _context.ServiceTypes.Remove(new ServiceType { IdserviceType = id });
+            await _context.SaveChangesAsync();
+            return true;
         }
+
     }
 }
