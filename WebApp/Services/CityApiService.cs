@@ -1,5 +1,6 @@
 ﻿using Shared.BL.DTOs;
 using Shared.BL.Services;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 
@@ -35,12 +36,20 @@ namespace WebApp.Services
 
         public async Task<CityDto> CreateCityAsync(string cityName)
         {
+            var cities = await GetAllCitiesAsync();
+            var city = cities.FirstOrDefault(c =>
+                c.Name.Equals(cityName, StringComparison.OrdinalIgnoreCase));
+
+            if (city != null)
+            {
+                throw new InvalidOperationException($"City '{cityName}' already exists.");
+            }
+
             var response = await _httpClient.PostAsJsonAsync("api/city", new { Name = cityName });
 
             if (response.IsSuccessStatusCode)
             {
-                var cityDto = await response.Content.ReadFromJsonAsync<CityDto>();
-                return cityDto;
+                return await response.Content.ReadFromJsonAsync<CityDto>();
             }
 
             return null;
@@ -49,12 +58,19 @@ namespace WebApp.Services
         public async Task<List<CityDto>> GetAllCitiesAsync()
         {
             var response = await _httpClient.GetAsync("api/city/all");
-            if (response.IsSuccessStatusCode)
+
+            if (response.StatusCode == HttpStatusCode.NoContent || !response.IsSuccessStatusCode)
             {
-                var cities = await response.Content.ReadFromJsonAsync<List<CityDto>>() ?? new List<CityDto>();
-                return cities;
+                return new List<CityDto>();
             }
-            return new List<CityDto>();
+
+            var content = await response.Content.ReadAsStringAsync();
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                return new List<CityDto>();
+            }
+
+            return await response.Content.ReadFromJsonAsync<List<CityDto>>() ?? new List<CityDto>();
         }
 
         public async Task<bool> UpdateCityAsync(int id, string name)

@@ -31,19 +31,41 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create(CityIndexVM model)
+        [HttpGet]
+        public IActionResult Create()
         {
+            return View(new CityCreateVM());
+        }
 
-            var response = await _cityService.CreateCityAsync(model.NewCityName);
 
-            if (response != null)
+        [HttpPost]
+        public async Task<IActionResult> Create(CityCreateVM model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
             {
-                return RedirectToAction("Index");
-            }
+                var response = await _cityService.CreateCityAsync(model.Name);
 
-            ModelState.AddModelError("", "Failed to add city. Please try again later.");
-            return RedirectToAction("Index");
+                if (response == null)
+                {
+                    ModelState.AddModelError("", "Failed to create city. Please try again.");
+                    return View(model);
+                }
+                return RedirectToAction("Index");
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("Name", ex.Message);
+                return View(model);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An unexpected error occurred.");
+                return View(model);
+            }
         }
 
     }

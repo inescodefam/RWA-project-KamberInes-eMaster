@@ -45,7 +45,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public ActionResult<ServiceDto> GetServiceByServiceType(int id)
+        public ActionResult<ServiceDto> GetServiceByServiceId(int id)
         {
             try
             {

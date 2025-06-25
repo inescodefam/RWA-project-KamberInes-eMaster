@@ -20,12 +20,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("all")]
-        public IActionResult GetAllCities()
+        public async Task<IActionResult> GetAllCities()
         {
             try
             {
-                var result = _cityService.GetAllCitiesAsync();
-                return Ok();
+                var result = await _cityService.GetAllCitiesAsync();
+                return Ok(result);
 
             }
             catch (Exception)
@@ -56,6 +56,14 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("City data is required.");
             }
+
+            var cities = await _cityService.GetAllCitiesAsync();
+            if (cities.Any(c => c.Name.Equals(city.Name, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException($"City '{city.Name}' already exists.");
+                //return Conflict($"City '{city.Name}' already exists.");
+            }
+
             try
             {
                 var cityDto = await _cityService.CreateCityAsync(city.Name);
