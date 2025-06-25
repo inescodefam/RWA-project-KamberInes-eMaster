@@ -50,11 +50,11 @@ namespace WebApp.Services
             }
             var professionalsDto = await response.Content.ReadFromJsonAsync<List<ProfessionalDto>>();
 
-            return professionalsDto;
+            return professionalsDto ?? new List<ProfessionalDto>();
         }
 
 
-        public async Task<List<ProfessionalDto>> SearchProfessionals(string? Name, string? cityName, int count, int start)
+        public async Task<List<ProfessionalDto>> Search(string? Name, string? cityName, int count, int start)
         {
             var professinals = await GetProfessionals(count, start);
             List<CityDto> cities = _cityService.GetCitiesAsync(cityName, 1000).Result;

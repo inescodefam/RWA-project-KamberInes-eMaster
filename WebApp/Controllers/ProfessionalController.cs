@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
 using WebApp.Models;
@@ -42,7 +41,7 @@ namespace WebApp.Controllers
             }
             var professionalIndexModel = await _viewModelService.GetProfessionalIndexVM(professionalVMs, count);
 
-            return View(professionalVMs);
+            return View(professionalIndexModel);
         }
 
         // GET: ProfessionalController/AddProfessional
@@ -61,10 +60,33 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Search(string username, string? city, int? count, int? start)
         {
-            var response = await _professionalService.SearchProfessionals(username, city, 1000, 0);
-            response.ToJson();
+            var response = await _professionalService.Search(username, city, 1000, 0);
+            List<ProfessionalVM> professionalVms = _mapper.Map<List<ProfessionalVM>>(response);
+            ProfessionalIndexVM model;
 
-            return Json(response);
+            if (professionalVms == null || professionalVms.Count == 0)
+            {
+                ModelState.AddModelError("", "No professionals found.");
+                model = new ProfessionalIndexVM
+                {
+                    Professionals = new List<ProfessionalVM>()
+                };
+            }
+            else
+            {
+
+                model = await _viewModelService.GetProfessionalIndexVM(professionalVms, professionalVms.Count);
+            }
+
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return Json(new { Professionals = model.Professionals });
+            }
+            else
+            {
+                return View("Index", model);
+            }
         }
 
 

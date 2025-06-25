@@ -20,3 +20,47 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .table th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #dee2e6;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3a8ffe, #6c42f5);
+        border: none;
+        transition: all 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2a7dee, #5b32e5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(13, 110, 253, 0.05);
+    }
+

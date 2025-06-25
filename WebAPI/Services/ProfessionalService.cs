@@ -52,7 +52,7 @@ namespace WebAPI.Services
             return professionalDto;
         }
 
-        public async Task<List<ProfessionalDto>> SearchProfessionals(string? name, string? cityName, int count, int start = 0)
+        public async Task<List<ProfessionalDto>> Search(string? name, string? cityName, int count, int start = 0)
         {
             var query = _context.Professionals.AsQueryable();
 

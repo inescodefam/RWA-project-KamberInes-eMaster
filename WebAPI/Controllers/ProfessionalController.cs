@@ -72,7 +72,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var professionalDtos = _professionalService.SearchProfessionals(name, city, count, start);
+                var professionalDtos = _professionalService.Search(name, city, count, start);
                 return Ok(professionalDtos);
 
             }
