@@ -16,6 +16,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1",
@@ -75,6 +77,7 @@ builder.Services.AddScoped<ServicesService>();
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 
 builder.Services.AddCors(options =>

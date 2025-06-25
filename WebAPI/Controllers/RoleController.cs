@@ -1,46 +1,48 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.Models;
-using System.Security.Claims;
+using Shared.BL.Services;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
     public class RoleController : Controller
     {
-        private readonly IConfiguration _configuration;
-        private readonly EProfessionalContext _context;
-        public RoleController(IConfiguration configuration, EProfessionalContext context)
+
+        private readonly IRoleService _roleService;
+
+        public RoleController(IConfiguration configuration, EProfessionalContext context, IRoleService roleService)
         {
-            _configuration = configuration;
-            _context = context;
+
+            _roleService = roleService;
         }
 
         [Authorize]
         [HttpGet("api/role")]
-        public IActionResult GetUserRole()
+        public async Task<IActionResult> GetUserRole()
         {
-            var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-            if (string.IsNullOrEmpty(userRole))
+            var userRole = await _roleService.GetUserRole();
+            if (userRole == null)
             {
                 return Unauthorized("User role not found.");
             }
+
             return Ok(new { Role = userRole });
         }
 
         [HttpPost("api/role")]
-        public IActionResult AssignRoleToUser([FromBody] string roleName)
+        public async Task<IActionResult> AssignRoleToUser([FromBody] string roleName)
         {
             if (string.IsNullOrEmpty(roleName))
             {
                 return BadRequest("Role name cannot be empty.");
             }
 
-            _context.Roles.Add(new Role
+            var response = await _roleService.AssignRoleToUser(roleName);
+
+            if (!response)
             {
-                RoleName = roleName,
-                UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0")
-            });
+                return BadRequest("Failed to assign role to user.");
+            }
 
             return Ok();
         }
