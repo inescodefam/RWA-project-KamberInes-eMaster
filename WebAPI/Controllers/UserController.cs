@@ -99,7 +99,6 @@ namespace WebAPI.Controllers
                 _userService.DeleteUser(userDto);
                 return Ok("User deleted successfully");
 
-
             }
             catch
             {

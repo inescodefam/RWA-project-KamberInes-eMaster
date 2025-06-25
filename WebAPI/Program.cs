@@ -78,7 +78,7 @@ builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
-
+builder.Services.AddScoped<IServiceType, ServiceTypesServicecs>();
 
 builder.Services.AddCors(options =>
 {

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using Shared.BL.Models;
+using Shared.BL.Services;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -14,29 +14,21 @@ namespace WebAPI.Controllers
     {
         private readonly EProfessionalContext _context;
         private readonly IMapper _mapper;
+        private readonly IServiceType _serviceTypeService;
 
-        public ServiceTypeController(EProfessionalContext context, IMapper mapper)
+        public ServiceTypeController(EProfessionalContext context, IMapper mapper, IServiceType serviceType)
         {
             _context = context;
             _mapper = mapper;
+            _serviceTypeService = serviceType;
         }
 
         [HttpGet]
-        public ActionResult<List<ServiceTypeDto>> GetServiceTypes(int count, int start = 0)
+        public ActionResult<List<ServiceTypeDto>> Get(int count, int start = 0)
         {
             try
             {
-                var serviceTypes = _context.ServiceTypes
-                    .Skip(start * count)
-                    .Take(count)
-                    .Select(st => new ServiceTypeDto
-                    {
-                        IdserviceType = st.IdserviceType,
-                        ServiceTypeName = st.ServiceTypeName
-                    })
-                    .ToList();
-
-                var serviceTypesDto = _mapper.Map<List<ServiceTypeDto>>(serviceTypes);
+                var serviceTypesDto = _serviceTypeService.GetServiceTypes(count, start).Result;
                 return Ok(serviceTypesDto);
             }
             catch (Exception)
@@ -46,7 +38,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateServiceType([FromBody] ServiceTypeDto dto)
+        public async Task<IActionResult> Post([FromBody] ServiceTypeDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -56,17 +48,9 @@ namespace WebAPI.Controllers
             try
             {
 
-                var entity = new ServiceType
-                {
-                    ServiceTypeName = dto.ServiceTypeName
-                };
+                var entity = await _serviceTypeService.CreateServiceType(dto);
 
-                _context.ServiceTypes.Add(entity);
-                _context.SaveChanges();
-
-                dto.IdserviceType = entity.IdserviceType;
-
-                return CreatedAtAction(nameof(GetServiceTypes), new { id = entity.IdserviceType }, dto);
+                return CreatedAtAction(nameof(Get), new { id = entity.IdserviceType }, dto);
             }
             catch (Exception)
             {
