@@ -57,7 +57,7 @@ namespace WebApp.Services
         public async Task<List<ProfessionalDto>> Search(string? Name, string? cityName, int count, int start)
         {
             var professinals = await GetProfessionals(count, start);
-            List<CityDto> cities = _cityService.GetCitiesAsync(cityName, 1000).Result;
+            List<CityDto> cities = await _cityService.GetCitiesAsync(cityName, 1, 1000);
             List<UserDto> users = _userService.GetUsers(1000).Result;
 
             CityDto city = null;

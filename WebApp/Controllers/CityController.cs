@@ -29,7 +29,6 @@ namespace WebApp.Controllers
                 TotalCount = response.Count
             };
             return View(model);
-
         }
 
         [HttpPost]

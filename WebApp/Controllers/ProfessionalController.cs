@@ -81,7 +81,7 @@ namespace WebApp.Controllers
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
             {
-                return Json(new { Professionals = model.Professionals });
+                return Json(new { model.Professionals });
             }
             else
             {
