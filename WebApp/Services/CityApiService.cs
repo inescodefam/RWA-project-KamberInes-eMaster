@@ -1,18 +1,17 @@
-﻿using AutoMapper;
-using Shared.BL.DTOs;
+﻿using Shared.BL.DTOs;
 using Shared.BL.Services;
+using System.Text;
+using System.Text.Json;
 
 namespace WebApp.Services
 {
     public class CityApiService : ICityService
     {
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
 
-        public CityApiService(IHttpClientFactory httpClientFactory, IMapper mapper)
+        public CityApiService(IHttpClientFactory httpClientFactory)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
-            _mapper = mapper;
         }
         public async Task<List<CityDto>> GetCitiesAsync(string searchTerm, int page, int pageSize = 10)
         {
@@ -47,5 +46,39 @@ namespace WebApp.Services
             return null;
         }
 
+        public async Task<List<CityDto>> GetAllCitiesAsync()
+        {
+            var response = await _httpClient.GetAsync("api/city/all");
+            if (response.IsSuccessStatusCode)
+            {
+                var cities = await response.Content.ReadFromJsonAsync<List<CityDto>>() ?? new List<CityDto>();
+                return cities;
+            }
+            return new List<CityDto>();
+        }
+
+        public async Task<bool> UpdateCityAsync(int id, string name)
+        {
+            var content = new StringContent(
+              JsonSerializer.Serialize(new { Name = name }),
+                  Encoding.UTF8,
+                 "application/json"
+             );
+
+            var response = await _httpClient.PutAsync($"api/city/{id}", content);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteCityAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/city/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

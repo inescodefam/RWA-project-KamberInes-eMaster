@@ -32,10 +32,11 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCityAsync(CityIndexVM model)
+        public async Task<IActionResult> Create(CityIndexVM model)
         {
 
             var response = await _cityService.CreateCityAsync(model.NewCityName);
+
             if (response != null)
             {
                 return RedirectToAction("Index");

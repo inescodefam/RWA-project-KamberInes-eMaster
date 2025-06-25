@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using Shared.BL.Models;
+using Shared.BL.Services;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -12,13 +12,11 @@ namespace WebAPI.Controllers
     [Authorize]
     public class CityController : Controller
     {
-        private readonly EProfessionalContext _context;
-        private readonly IMapper _mapper;
+        private readonly ICityService _cityService;
 
-        public CityController(EProfessionalContext context, IMapper mapper)
+        public CityController(EProfessionalContext context, IMapper mapper, ICityService cityService)
         {
-            _context = context;
-            _mapper = mapper;
+            _cityService = cityService;
         }
 
         [HttpGet("all")]
@@ -26,8 +24,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var cities = _context.Cities.ToList();
-                return Ok(_mapper.Map<List<CityDto>>(cities));
+                var result = _cityService.GetAllCitiesAsync();
+                return Ok();
 
             }
             catch (Exception)
@@ -37,16 +35,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CityDto>> GetCities(int count, int start = 0, string searchTerm = "")
+        public async Task<ActionResult<List<CityDto>>> GetCities(int count, int start = 0, string searchTerm = "")
         {
             try
             {
-                var query = _context.Cities.AsQueryable();
-                if (!string.IsNullOrEmpty(searchTerm))
-                {
-                    query = query.Where(c => c.Name.Contains(searchTerm));
-                }
-                var result = query.Skip(start).Take(count).ToList();
+                var result = await _cityService.GetCitiesAsync(searchTerm, count, start);
+
                 return Ok(result);
             }
             catch (Exception)
@@ -56,34 +50,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CityDto> CreateCity([FromBody] string cityName)
+        public async Task<ActionResult<CityDto>> CreateCity([FromBody] CreateCityDto city)
         {
-            System.Diagnostics.Debug.WriteLine($"Received cityName: {cityName}");
-            if (cityName == null)
+            if (city.Name == null)
             {
                 return BadRequest("City data is required.");
             }
             try
             {
-                if (_context.Cities.Any(x => x.Name == cityName))
-                {
-                    return Conflict("City already exists.");
-                }
+                var cityDto = await _cityService.CreateCityAsync(city.Name);
 
-                var city = new City
-                {
-                    Name = cityName,
-
-                };
-                _context.Cities.Add(city);
-                _context.SaveChanges();
-
-                City c = _context.Cities.FirstOrDefault(x => x.Name == cityName);
-
-
-                CityDto cityDto = _mapper.Map<CityDto>(c);
-
-                return CreatedAtAction(nameof(GetCities), new { id = city.Idcity }, cityDto);
+                return CreatedAtAction(nameof(GetCities), new { id = cityDto.Idcity }, cityDto);
             }
             catch (Exception)
             {
@@ -91,5 +68,33 @@ namespace WebAPI.Controllers
             }
 
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateCity(int id, string name)
+        {
+            var response = await _cityService.UpdateCityAsync(id, name);
+            return Ok("City updated successfuly!");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteCity(int id)
+        {
+            try
+            {
+                var response = await _cityService.DeleteCityAsync(id);
+                if (!response)
+                {
+                    return NotFound();
+                }
+                return Ok("City deleted succesfuly.");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
     }
 }

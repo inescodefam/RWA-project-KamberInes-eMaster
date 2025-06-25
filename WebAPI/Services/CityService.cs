@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using WebAPI.Models;
@@ -27,27 +28,64 @@ namespace Shared.BL.Services
             {
                 throw new InvalidOperationException("City already exists.");
             }
+
             var city = new City
             {
                 Name = cityName,
             };
             await _context.Cities.AddAsync(city);
+            _context.SaveChanges();
 
-            return _mapper.Map<CityDto>(city);
+            City c = _context.Cities.FirstOrDefault(x => x.Name == cityName);
+            CityDto cityDto = _mapper.Map<CityDto>(c);
+
+            return cityDto;
         }
 
-        public Task<List<CityDto>> GetCitiesAsync(string searchTerm, int count, int start = 0)
+        public async Task<List<CityDto>> GetCitiesAsync(string searchTerm, int count, int start = 0)
         {
-            var cities = _context.Cities
-                .Where(c => string.IsNullOrEmpty(searchTerm) || c.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
-                .Skip(start)
-                .Take(count)
-                .ToList();
-            var cityDtos = _mapper.Map<List<CityDto>>(cities);
 
-            return cities.Count == 0
-                ? Task.FromResult(new List<CityDto>())
-                : Task.FromResult(cityDtos);
+            var query = _context.Cities.AsQueryable();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c => c.Name.Contains(searchTerm));
+            }
+
+            var result = await query.Skip(start).Take(count).ToListAsync();
+            var ciiyDtos = _mapper.Map<List<CityDto>>(result);
+            return ciiyDtos;
+        }
+
+        public async Task<List<CityDto>> GetAllCitiesAsync()
+        {
+            var cities = await _context.Cities.ToListAsync();
+            var citiesDtos = _mapper.Map<List<CityDto>>(cities);
+            return citiesDtos;
+        }
+
+        public async Task<bool> UpdateCityAsync(int id, string name)
+        {
+            var city = await _context.Cities.FindAsync(id);
+            if (city == null)
+            {
+                return false;
+            }
+
+            city.Name = name;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteCityAsync(int id)
+        {
+            var city = await _context.Cities.FindAsync(id);
+            if (city == null)
+            {
+                return false;
+            }
+            _context.Cities.Remove(city);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
