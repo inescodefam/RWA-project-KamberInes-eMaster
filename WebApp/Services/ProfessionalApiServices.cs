@@ -27,8 +27,14 @@ namespace WebApp.Services
 
         async public Task<ProfessionalDto> GetSingleProfessional(int id)
         {
-            ProfessionalDto profesionalDto = await _apiFetchService.Fetch<Professional, ProfessionalDto>($"api/professional/{id}");
-            return profesionalDto;
+            var response = await _httpClient.GetAsync($"api/professional/{id}");
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            {
+                return null;
+            }
+            var professionalDto = await response.Content.ReadFromJsonAsync<ProfessionalDto>();
+
+            return professionalDto;
         }
 
         public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)

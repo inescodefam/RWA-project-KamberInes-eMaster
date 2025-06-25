@@ -48,11 +48,11 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public ActionResult<ProfessionalDto> GetSingleProfessionalById(int id)
+        public async Task<ActionResult<ProfessionalDto>> GetSingleProfessionalById(int id)
         {
             try
             {
-                var professionalDto = _professionalService.GetSingleProfessional(id);
+                var professionalDto = await _professionalService.GetSingleProfessional(id);
                 return Ok(professionalDto);
             }
             catch (Exception ex)

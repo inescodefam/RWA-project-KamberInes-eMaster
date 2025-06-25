@@ -120,10 +120,16 @@ namespace WebApp.Controllers
 
 
         // GET: ProfessionalController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            var professional = _httpClient.GetAsync($"api/professional/{id}");
-            return View(professional);
+            var professional = await _professionalService.GetSingleProfessional(id);
+            ProfessionalVM professionalVm = _mapper.Map<ProfessionalVM>(professional);
+
+            var professionalVmList = new List<ProfessionalVM> { professionalVm };
+
+            ProfessionalIndexVM professionalIndexVM = await _viewModelService.GetProfessionalIndexVM(professionalVmList, 1);
+
+            return View(professionalIndexVM);
         }
 
         // POST: ProfessionalController/Edit/5
