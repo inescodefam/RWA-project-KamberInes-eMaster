@@ -6,5 +6,6 @@
         public int? UserId { get; set; }
         public int? ExperienceYears { get; set; }
         public List<CityDto> Cities { get; set; } = new List<CityDto>();
+        public List<int>? CityIds { get; set; } = new List<int>();
     }
 }

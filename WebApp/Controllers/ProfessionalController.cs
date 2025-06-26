@@ -91,7 +91,6 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProfessionalVM professionalVM)
         {
-
             var professionalDto = _mapper.Map<ProfessionalDto>(professionalVM);
 
             if (professionalDto == null)

@@ -25,7 +25,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                         UserId: userId,
-                        CityId: cityId
+                        CityIds: [cityId]
                 }),
                 success: function(response) {
                     $('#professionalsTable tbody').load(window.location.href + ' #professionalsTable tbody>*', '');

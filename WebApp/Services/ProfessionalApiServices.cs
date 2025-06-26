@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Shared.BL.DTOs;
-using Shared.BL.Models;
 using Shared.BL.Services;
 using System.Text;
 using System.Text.Json;
@@ -11,16 +10,14 @@ namespace WebApp.Services
     {
 
         private readonly HttpClient _httpClient;
-        private readonly ApiFetchService _apiFetchService;
         private readonly IMapper _mapper;
         private readonly ICityService _cityService;
         private readonly IUserService _userService;
         private readonly ICityProfessionalService _cityProfessionalService;
 
-        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper, ICityService cityService, IUserService userService, ICityProfessionalService cityProfessional)
+        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, IMapper mapper, ICityService cityService, IUserService userService, ICityProfessionalService cityProfessional)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
-            _apiFetchService = apiFetchService;
             _mapper = mapper;
             _cityService = cityService;
             _userService = userService;
@@ -41,8 +38,7 @@ namespace WebApp.Services
 
         public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)
         {
-            var newProfessional = _mapper.Map<Professional>(professionalDto);
-            var response = await _httpClient.PostAsJsonAsync("api/professional", newProfessional);
+            var response = await _httpClient.PostAsJsonAsync("api/professional", professionalDto);
             return response != null;
         }
 

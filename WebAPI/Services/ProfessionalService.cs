@@ -4,6 +4,7 @@ using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
 using WebAPI.Context;
+using WebAPI.Models;
 
 namespace WebAPI.Services
 {
@@ -117,14 +118,29 @@ namespace WebAPI.Services
 
         public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)
         {
-            var professional = _mapper.Map<Professional>(professionalDto);
             if (!_context.Users.Any(u => u.Iduser == professionalDto.UserId))
             {
                 throw new ArgumentException("Invalid User ID");
             }
 
+            var cities = await _cityService.GetAllCitiesAsync();
+
+            var professional = new Professional
+            {
+                UserId = professionalDto.UserId
+            };
             await _context.Professionals.AddAsync(professional);
             _context.SaveChanges();
+
+            await _context.CityProfessionals.AddRangeAsync(
+                professionalDto.CityIds.Select(cityId => new CityProfessional
+                {
+                    ProfessionalId = professional.IdProfessional,
+                    CityId = cityId
+                })
+            );
+            _context.SaveChanges();
+
             _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
 
             return true;
