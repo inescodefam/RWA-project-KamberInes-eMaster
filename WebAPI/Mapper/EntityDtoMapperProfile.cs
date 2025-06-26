@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
+using WebAPI.Models;
 
 namespace WebAPI.DTOs
 {
@@ -20,7 +21,8 @@ namespace WebAPI.DTOs
             CreateMap<CityDto, City>();
             CreateMap<ServiceType, ServiceTypeDto>();
             CreateMap<ServiceTypeDto, ServiceType>();
-
+            CreateMap<CityProfessional, CityProfessionalDto>();
+            CreateMap<CityProfessionalDto, CityProfessional>();
         }
     }
 }
