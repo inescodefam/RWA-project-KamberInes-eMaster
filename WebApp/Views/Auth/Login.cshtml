@@ -1,19 +1,36 @@
 ﻿@model WebApp.Models.AuthVM
 @if (!User.Identity.IsAuthenticated)
 {
-    <form asp-action="Login" method="post">
-    <label asp-for="Email"></label>
-    <input asp-for="Email" placeholder="Email" />
-    <span asp-validation-for="Email" class="text-danger"></span>
-    <label asp-for="Password"></label>
-    <input asp-for="Password" type="password" placeholder="Password" />
-     <span asp-validation-for="Password" class="text-danger"></span>
-    <button type="submit">Login</button>
-    <div asp-validation-summary="All" class="text-danger"></div>
-</form>
-<a asp-action="Register" asp-controller="Auth">Register</a>
+    <div class="container mt-5" style="max-width: 400px;">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title text-center mb-4">Sign In</h3>
+                <form asp-action="Login" method="post" autocomplete="off">
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                    <div asp-validation-summary="All" class="text-danger small mb-2"></div>
+                </form>
+                <div class="text-center mt-3">
+                    <a asp-action="Register" asp-controller="Auth" class="btn btn-link">Don't have an account? Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+
 
