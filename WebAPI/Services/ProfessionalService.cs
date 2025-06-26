@@ -149,42 +149,30 @@ namespace WebAPI.Services
         public async Task<bool> UpdateProfessional(int id, ProfessionalDto professionalDto)
         {
             var professional = await _context.Professionals.FindAsync(id);
-            var cities = professionalDto.Cities;
+            var citiIds = professionalDto.CityIds;
+
             var citiesDtos = await _cityService.GetAllCitiesAsync();
+
+            List<CityDto?> cities = citiIds?.Select(cityId => citiesDtos.FirstOrDefault(c => c.Idcity == cityId)).ToList() ?? new List<CityDto?>();
 
             if (cities != null && cities.Count > 0)
             {
                 foreach (var city in cities)
                 {
-                    if (city.Idcity != 0 && citiesDtos.Contains(city))
+                    var cityProfessionalDto = new CityProfessionalDto
                     {
-                        _loggingService.Log($"City with ID {city.Idcity} already exist.", "warning");
+                        ProfessionalId = professional.IdProfessional,
+                        CityId = city.Idcity
+                    };
+
+                    var cityProfessional = await _cityProfessionalService.AddCityProfessionalAsync(cityProfessionalDto);
+
+                    if (cityProfessional == null)
+                    {
+                        _loggingService.Log($"CityProfessional with Professional ID {professional.IdProfessional} and City ID {city.Idcity} can not be added.", "warning");
                         return false;
                     }
-                    else
-                    {
-                        var result = await _cityService.CreateCityAsync(city.Name);
-                        if (result == null)
-                        {
-                            _loggingService.Log($"City with {city.Name} can not be added.", "warning");
-                            return false;
-                        }
 
-                        var cityProfessionalDto = new CityProfessionalDto
-                        {
-                            ProfessionalId = professional.IdProfessional,
-                            CityId = result.Idcity
-                        };
-
-                        var cityProfessional = await _cityProfessionalService.AddCityProfessionalAsync(cityProfessionalDto);
-                        if (cityProfessional == null)
-                        {
-                            _loggingService.Log($"CityProfessional with Professional ID {professional.IdProfessional} and City ID {result.Idcity} can not be added.", "warning");
-                            return false;
-
-                        }
-
-                    }
                 }
             }
 

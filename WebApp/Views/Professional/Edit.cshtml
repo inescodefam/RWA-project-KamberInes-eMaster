@@ -16,6 +16,36 @@
     {
         var professional = Model.Professionals.First();
 
+        <div class="card-body p-0">
+            <table id="professionalsTable" class="table table-striped mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Username</th>
+                        <th>City</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Professionals != null)
+                    {
+                        foreach (var p in Model.Professionals)
+                        {
+                            <tr>
+                                <td>@p.UserName</td>
+                                <td>@string.Join(", ", p.CityNames ?? new List<string>())</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm delete-professional"
+                                            data-id="@p.IdProfessional">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
         <form asp-action="Edit" method="post">
             <input type="hidden" name="id" value="@professional.IdProfessional" />
             @Html.AntiForgeryToken()
@@ -42,17 +72,24 @@
 
                         <div class="col-md-6">
                             <div class="form-floating">
-                                <select class="form-select" name="CityId" id="CityId">
+                                <select class="form-select" name="CityIds" id="CityIds" multiple>
                                     <option value="">Select City</option>
                                     @foreach (var city in Model.Cities)
                                     {
                                         <option value="@city.Value"
-                                                selected="@(professional?.CityNames?.Contains(city.Value ))">
+                                                selected="@(professional?.CityIds?.Contains(int.Parse(city.Value)) ?? false)">
                                             @city.Text
                                         </option>
                                     }
+                                   @*  @foreach (var city in professional.CityIds)
+                                    {
+                                        <option value="@city"
+                                                selected="@(professional.CityIds?.Contains(city) ?? false)">
+                                            @city
+                                        </option>
+                                    }) *@
                                 </select>
-                                <label for="CityId">City</label>
+                                <label for="CityIds">City</label>
                             </div>
                         </div>
 

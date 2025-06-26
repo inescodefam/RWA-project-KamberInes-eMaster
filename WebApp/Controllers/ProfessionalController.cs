@@ -132,10 +132,11 @@ namespace WebApp.Controllers
         // POST: ProfessionalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, [FromForm] ProfessionalDto professionalDto)
+        public async Task<ActionResult> Edit(int id, [FromForm] ProfessionalVM professionalVm)
         {
             try
             {
+                ProfessionalDto professionalDto = _mapper.Map<ProfessionalDto>(professionalVm);
                 var response = await _professionalService.UpdateProfessional(id, professionalDto);
                 if (!response)
                 {
