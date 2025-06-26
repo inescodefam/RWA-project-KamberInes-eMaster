@@ -98,8 +98,8 @@
                             $.each(professionals, function(i, p) {
                                 $tbody.append(
                                     `<tr>
-                                        <td>${p.userName || 'N/A'}</td>
-                                        <td>${p.cityName || 'N/A'}</td>
+                                        <td>${p.userName || '-'}</td>
+                                        <td>${p.cityNames.join(", ") || '-'}</td>
                                     </tr>`
                                 );
                             });
