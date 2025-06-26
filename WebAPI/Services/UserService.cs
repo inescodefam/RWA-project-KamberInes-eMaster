@@ -48,7 +48,7 @@ namespace WebAPI.Services
 
         public async Task<bool> UpdateUser(UserDto userDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == userDto.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Iduser == userDto.Iduser);
             if (user == null) return false;
 
             if (userDto.Password != null)

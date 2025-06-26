@@ -11,6 +11,7 @@
 
 <h2>Edit Profile</h2>
 <form id="profileForm" asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Iduser" />
     <div class="form-group">
         <label asp-for="Username"></label>
         <input asp-for="Username" class="form-control" />
