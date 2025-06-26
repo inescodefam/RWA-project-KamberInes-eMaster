@@ -7,9 +7,9 @@ namespace WebApp.Models
     {
         public List<ProfessionalVM> Professionals { get; set; }
         [Display(Name = "Users")]
-        public List<SelectListItem> Users { get; set; }
+        public List<SelectListItem> Users { get; set; } = new List<SelectListItem>();
         [Display(Name = "Cities")]
-        public List<SelectListItem> Cities { get; set; }
+        public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
         [Display(Name = "New professional")]
         public ProfessionalVM NewProfessional { get; set; }
     }
