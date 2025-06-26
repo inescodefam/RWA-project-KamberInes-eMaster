@@ -25,15 +25,19 @@ namespace WebApp.Models
 
     public class ServiceCreateVM
     {
-        [Required]
+        [Required(ErrorMessage = "Professional selection is required.")]
         public int? SelectedProfessionalId { get; set; }
         public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
-        [Required]
+        [Required(ErrorMessage = "At least one city must be selected.")]
+        [MinLength(1, ErrorMessage = "At least one city must be selected.")]
         public List<int>? SelectedCitiesIds { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Service type selection is required.")]
+        [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]
         public string? SelectedServiceTypeName { get; set; }
+        [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
         public string? Description { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Price is required.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Price must be a non-negative value.")]
         public decimal Price { get; set; }
 
         public List<CityVM> Cities { get; set; } = new List<CityVM>();
@@ -44,8 +48,11 @@ namespace WebApp.Models
     {
         public int IdService { get; set; }
         public int? SelectedProfessionalId { get; set; }
+        [MinLength(1, ErrorMessage = "At least one city must be selected.")]
         public List<int>? SelectedCityId { get; set; }
+        [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]
         public string? SelectedServiceTypeName { get; set; }
+        [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
         public string? Description { get; set; }
         public decimal? Price { get; set; }
         public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
