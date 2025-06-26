@@ -12,7 +12,7 @@
 {
     @Html.AntiForgeryToken()
     <div>
-        <label>Professional:</label>
+        <label asp-for="SelectedProfessionalId">Professional:</label>
         @Html.DropDownListFor(
                 m => m.SelectedProfessionalId,
                 new SelectList(Model.Professionals, "IdProfessional", "UserName", Model.SelectedProfessionalId),
@@ -22,21 +22,21 @@
         @Html.ValidationMessageFor(m => m.SelectedProfessionalId)
     </div>
     <div>
-        <label>City:</label>
+        <label asp-for="SelectedCitiesIds">City:</label>
         @Html.DropDownListFor(m => m.SelectedCitiesIds, new SelectList(Model.Cities, "Idcity", "Name"), "-- Select City --")
         @Html.ValidationMessageFor(m => m.SelectedCitiesIds)
     </div>
     <div>
-        <label>Service Type:</label>
+        <label asp-for="SelectedServiceTypeName">Service Type:</label>
         @Html.DropDownListFor(m => m.SelectedServiceTypeName, new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName"), "-- Select Service Type --")
         @Html.ValidationMessageFor(m => m.SelectedServiceTypeName)
     </div>
     <div>
-        <label>Description:</label>
+        <label asp-for="Description">Description:</label>
         @Html.TextAreaFor(m => m.Description)
     </div>
     <div>
-        <label>Price:</label>
+        <label asp-for="Price">Price:</label>
         @Html.TextBoxFor(m => m.Price)
         @Html.ValidationMessageFor(m => m.Price)
     </div>

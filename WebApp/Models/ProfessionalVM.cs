@@ -1,12 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Models
 {
     public class ProfessionalIndexVM
     {
         public List<ProfessionalVM> Professionals { get; set; }
+        [Display(Name = "Users")]
         public List<SelectListItem> Users { get; set; }
+        [Display(Name = "Cities")]
         public List<SelectListItem> Cities { get; set; }
+        [Display(Name = "New professional")]
         public ProfessionalVM NewProfessional { get; set; }
     }
 

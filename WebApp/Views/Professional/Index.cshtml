@@ -20,7 +20,7 @@
                 <div class="col-md-6">
                     <div class="form-floating">
                         <input type="text" id="searchUsername" name="username" class="form-control" placeholder="Enter username" />
-                        <label for="searchUsername"><i class="bi bi-person-fill me-2"></i>Username</label>
+                        <label asp-for="Users" for="searchUsername"><i class="bi bi-person-fill me-2"></i>Username</label>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -32,7 +32,7 @@
                                 <option value="@city.Text">@city.Text</option>
                             }
                         </select>
-                        <label for="searchCityName"><i class="bi bi-geo-alt-fill me-2"></i>City</label>
+                        <label asp-for="Cities" for="searchCityName"><i class="bi bi-geo-alt-fill me-2"></i>City</label>
                     </div>
                 </div>
                 <div class="col-12">

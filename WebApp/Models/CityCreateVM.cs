@@ -5,8 +5,8 @@ namespace WebApp.Models
     public class CityCreateVM
     {
         [Required(ErrorMessage = "City name is required.")]
-        [StringLength(100, ErrorMessage = "Naziv grada može imati najviše 100 znakova.")]
-        [Display(Name = "Naziv grada")]
+        [StringLength(100, ErrorMessage = "Maximum lenght for city name is 100 characters.")]
+        [Display(Name = "City name")]
         public string Name { get; set; }
     }
 }
