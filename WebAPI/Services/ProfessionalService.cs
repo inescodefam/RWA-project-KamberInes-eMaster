@@ -25,7 +25,7 @@ namespace WebAPI.Services
         }
         public async Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0)
         {
-            var professionals = await _context.Professionals.Skip(start * count).Take(count).ToListAsync();
+            var professionals = _context.Professionals.Skip(start * count).Take(count).ToList();
 
             if (!professionals.Any())
             {

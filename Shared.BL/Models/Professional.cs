@@ -10,8 +10,6 @@ public partial class Professional
     [Column("idProfessional")]
     public int IdProfessional { get; set; }
 
-    public int? CityId { get; set; }
-
     [Column("UserID")]
     public int? UserId { get; set; }
 

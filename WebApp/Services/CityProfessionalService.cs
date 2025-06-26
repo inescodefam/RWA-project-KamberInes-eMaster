@@ -5,6 +5,14 @@ namespace WebApp.Services
 {
     public class CityProfessionalService : ICityProfessionalService
     {
+
+        private readonly HttpClient _httpClient;
+
+        public CityProfessionalService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
+        }
+
         public Task<CityProfessionalDto> AddCityProfessionalAsync(CityProfessionalDto model)
         {
             throw new NotImplementedException();
@@ -15,9 +23,13 @@ namespace WebApp.Services
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<CityProfessionalDto>> GetCityProfessionalsAsync()
+        public async Task<IEnumerable<CityProfessionalDto>> GetCityProfessionalsAsync()
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.GetAsync($"api/city-professional");
+            List<CityProfessionalDto> cityProfessionalDtos = response.IsSuccessStatusCode
+                ? await response.Content.ReadFromJsonAsync<List<CityProfessionalDto>>() ?? new List<CityProfessionalDto>()
+                : new List<CityProfessionalDto>();
+            return cityProfessionalDtos;
         }
 
         public Task<List<CityProfessionalDto?>> GetCitysByProfessionalAsync(int professionalId)
