@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAPI.Models;
 
 namespace Shared.BL.Models;
 
@@ -14,6 +15,5 @@ public partial class City
     [StringLength(100)]
     public string? Name { get; set; }
 
-    [InverseProperty("City")]
-    public virtual ICollection<Professional> Professionals { get; set; } = new List<Professional>();
+    public virtual ICollection<CityProfessional> CityProfessionals { get; set; } = new List<CityProfessional>();
 }

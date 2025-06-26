@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAPI.Models;
 
 namespace Shared.BL.Models;
 [Table("Professional")]
@@ -17,9 +18,8 @@ public partial class Professional
     [Column("experienceYears")]
     public int? ExperienceYears { get; set; }
 
-    [ForeignKey("CityId")]
-    [InverseProperty("Professionals")]
-    public virtual City? City { get; set; }
+    public virtual ICollection<CityProfessional> CityProfessionals { get; set; } = new List<CityProfessional>();
+
 
     [InverseProperty("Professional")]
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();

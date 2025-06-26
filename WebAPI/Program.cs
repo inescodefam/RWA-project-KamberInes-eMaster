@@ -6,7 +6,7 @@ using Shared.BL.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebAPI.Models;
+using WebAPI.Context;
 using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);

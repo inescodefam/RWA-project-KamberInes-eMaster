@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
-using WebAPI.Models;
+using WebAPI.Context;
 
 namespace WebAPI.Controllers
 {

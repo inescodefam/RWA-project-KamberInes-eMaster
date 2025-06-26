@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
 using WebAPI.Auth;
-using WebAPI.Models;
+using WebAPI.Context;
 
 namespace WebAPI.Services
 {

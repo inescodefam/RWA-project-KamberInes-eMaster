@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
-using WebAPI.Models;
+using WebAPI.Context;
 
 namespace WebAPI.Services
 {

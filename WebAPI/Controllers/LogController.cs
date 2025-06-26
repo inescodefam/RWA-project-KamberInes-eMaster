@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.BL.Models;
-using WebAPI.Models;
+using WebAPI.Context;
 
 namespace WebAPI.Controllers
 {

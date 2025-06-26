@@ -2,8 +2,7 @@
 using Shared.BL.Models;
 using Shared.BL.Services;
 using System.Security.Claims;
-using WebAPI.Models;
-
+using WebAPI.Context;
 
 namespace WebAPI.Services
 {
