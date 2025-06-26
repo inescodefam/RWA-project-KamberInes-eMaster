@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
@@ -19,7 +20,7 @@ namespace WebAPI.Services
 
         public async Task<List<ServiceTypeDto>> GetServiceTypes(int count, int start)
         {
-            var serviceTypes = _context.ServiceTypes
+            var serviceTypes = await _context.ServiceTypes
                      .Skip(start * count)
                      .Take(count)
                      .Select(st => new ServiceTypeDto
@@ -27,7 +28,7 @@ namespace WebAPI.Services
                          IdserviceType = st.IdserviceType,
                          ServiceTypeName = st.ServiceTypeName
                      })
-                     .ToList();
+                     .ToListAsync();
 
             var serviceTypesDto = _mapper.Map<List<ServiceTypeDto>>(serviceTypes);
             return serviceTypesDto;
@@ -45,7 +46,7 @@ namespace WebAPI.Services
             };
 
             _context.ServiceTypes.Add(entity);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             serviceTypeDto.IdserviceType = entity.IdserviceType;
 

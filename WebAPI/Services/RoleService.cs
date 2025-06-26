@@ -20,13 +20,13 @@ namespace WebAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<string> GetUserRole()
+        public string GetUserRole()
         {
             var user = _httpContextAccessor.HttpContext?.User;
-            var userRole = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            var userRole = user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (string.IsNullOrEmpty(userRole))
             {
-                return null;
+                return "";
             }
 
             return userRole;

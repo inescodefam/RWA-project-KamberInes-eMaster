@@ -18,9 +18,9 @@ namespace WebAPI.Controllers
 
         [Authorize]
         [HttpGet("api/role")]
-        public async Task<IActionResult> GetUserRole()
+        public IActionResult GetUserRole()
         {
-            var userRole = await _roleService.GetUserRole();
+            var userRole = _roleService.GetUserRole();
             if (userRole == null)
             {
                 return Unauthorized("User role not found.");
