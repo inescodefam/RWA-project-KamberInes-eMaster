@@ -107,22 +107,20 @@ namespace WebApp.Controllers
         // POST: UserController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(UserDto userDto)
+        public async Task<ActionResult> DeleteUser(int id)
         {
             try
             {
-
-                //var userDto = _userService.GetUserById(id);
+                var userDto = await _userService.GetUserById(id);
                 if (userDto == null)
                     return NotFound();
 
-                _userService.DeleteUser(userDto);
-                return View();
-
+                await _userService.DeleteUser(id);
+                return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return RedirectToAction("Index");
             }
         }
 

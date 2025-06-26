@@ -26,9 +26,10 @@ namespace WebApp.Services
 
         public async Task<UserDto> GetUserById(int id)
         {
-            var user = await _httpClient.GetAsync($"api/user/{id}");
-            var userDto = _mapper.Map<UserDto>(user);
-            return userDto;
+            var resposne = await _httpClient.GetAsync($"api/user/{id}");
+            resposne.EnsureSuccessStatusCode();
+            var user = await resposne.Content.ReadFromJsonAsync<UserDto>();
+            return user;
         }
 
         public async Task<bool> UpdateUser(UserDto userDto)
@@ -37,10 +38,10 @@ namespace WebApp.Services
             return response.IsSuccessStatusCode;
         }
 
-        public void DeleteUser(UserDto userDto)
+        public async Task DeleteUser(int userId)
         {
-            var response = _httpClient.DeleteAsync($"api/user/{userDto.Iduser}");
-            if (!response.Result.IsSuccessStatusCode)
+            var response = await _httpClient.DeleteAsync($"api/user/delete/{userId}");
+            if (!response.IsSuccessStatusCode)
                 throw new Exception("Unable to delete user.");
         }
 

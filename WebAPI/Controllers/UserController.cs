@@ -92,11 +92,11 @@ namespace WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
-        public IActionResult Delete(UserDto userDto)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                _userService.DeleteUser(userDto);
+                await _userService.DeleteUser(id);
                 return Ok("User deleted successfully");
 
             }

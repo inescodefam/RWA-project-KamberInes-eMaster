@@ -70,13 +70,13 @@ namespace WebAPI.Services
             return true;
         }
 
-        public void DeleteUser(UserDto userDto)
+        public async Task DeleteUser(int userId)
         {
-            var user = _context.Users.FirstOrDefault(x => x.Iduser == userDto.Iduser);
+            var user = _context.Users.FirstOrDefault(x => x.Iduser == userId);
             if (user == null) throw new Exception("User not found");
 
             _context.Users.Remove(user);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
     }

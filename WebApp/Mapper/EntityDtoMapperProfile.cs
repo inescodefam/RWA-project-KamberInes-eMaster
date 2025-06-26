@@ -11,6 +11,8 @@ namespace WebApp.Mapper
         {
             CreateMap<UserVM, UserDto>();
             CreateMap<UserDto, UserVM>();
+            CreateMap<UserDto, User>();
+            CreateMap<User, UserDto>();
             CreateMap<ProfessionalDto, ProfessionalVM>();
             CreateMap<ProfessionalVM, ProfessionalDto>();
             CreateMap<ProfessionalDto, Professional>();
