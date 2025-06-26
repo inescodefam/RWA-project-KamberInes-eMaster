@@ -17,7 +17,7 @@
                 $('#addProfessionalError').text('Please select a valid user.');
                 return;
             }
-            var cityId = $('#CityId').val();
+            var cityIds = $('#CityIds').val();
 
             $.ajax({
                 url: '@Url.Action("Create", "Professional")',
@@ -25,7 +25,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                         UserId: userId,
-                        CityIds: [cityId]
+                        CityIds: cityIds
                 }),
                 success: function(response) {
                     $('#professionalsTable tbody').load(window.location.href + ' #professionalsTable tbody>*', '');
@@ -81,8 +81,8 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="CityId" class="form-label">City</label>
-                        <select name="CityId" id="CityId" class="form-select">
+                        <label for="CityIds" class="form-label">City</label>
+                        <select name="CityIds" id="CityIds" class="form-select" multiple>
                             @foreach (var city in Model.Cities)
                             {
                                 <option value="@city.Value">@city.Text</option>
