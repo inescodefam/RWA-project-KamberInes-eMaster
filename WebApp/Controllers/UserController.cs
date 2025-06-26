@@ -10,12 +10,13 @@ namespace WebApp.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IRoleService _roleService;
 
-
-        public UserController(IUserService userService, IMapper mapper)
+        public UserController(IUserService userService, IMapper mapper, IRoleService roleService)
         {
             _userService = userService;
             _mapper = mapper;
+            _roleService = roleService;
         }
 
         //GET: UserController
@@ -122,6 +123,31 @@ namespace WebApp.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateRole(int userId, string roleName)
+        {
+            try
+            {
+                RoleDto roleDto = new RoleDto
+                {
+                    UserId = userId,
+                    RoleName = roleName
+                };
+                var response = await _roleService.AssignRoleToUser(roleDto);
+
+                if (!response)
+                {
+                    return Json(new { success = false, message = "Failed to update role" });
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
             }
         }
     }

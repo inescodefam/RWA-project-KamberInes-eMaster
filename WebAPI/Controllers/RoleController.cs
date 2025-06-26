@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.BL.DTOs;
 using Shared.BL.Services;
 using WebAPI.Context;
 
 namespace WebAPI.Controllers
 {
+    [Route("api/role")]
+    [ApiController]
+    [Authorize]
     public class RoleController : Controller
     {
 
@@ -16,8 +20,7 @@ namespace WebAPI.Controllers
             _roleService = roleService;
         }
 
-        [Authorize]
-        [HttpGet("api/role")]
+        [HttpGet]
         public IActionResult GetUserRole()
         {
             var userRole = _roleService.GetUserRole();
@@ -29,15 +32,15 @@ namespace WebAPI.Controllers
             return Ok(new { Role = userRole });
         }
 
-        [HttpPost("api/role")]
-        public async Task<IActionResult> AssignRoleToUser([FromBody] string roleName)
+        [HttpPost]
+        public async Task<IActionResult> AssignRoleToUser(RoleDto roleDto)
         {
-            if (string.IsNullOrEmpty(roleName))
+            if (string.IsNullOrEmpty(roleDto.RoleName) || roleDto.UserId == null)
             {
                 return BadRequest("Role name cannot be empty.");
             }
 
-            var response = await _roleService.AssignRoleToUser(roleName);
+            var response = await _roleService.AssignRoleToUser(roleDto);
 
             if (!response)
             {

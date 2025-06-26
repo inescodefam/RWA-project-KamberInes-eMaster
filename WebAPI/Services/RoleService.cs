@@ -1,4 +1,6 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
 using System.Security.Claims;
@@ -32,18 +34,19 @@ namespace WebAPI.Services
             return userRole;
         }
 
-        public async Task<bool> AssignRoleToUser(string roleName)
+        public async Task<bool> AssignRoleToUser(RoleDto roleDto)
         {
-            var user = _httpContextAccessor.HttpContext?.User;
-            if (user == null || !user.Identity.IsAuthenticated || roleName.IsNullOrEmpty())
+            var user = _context.Users.FirstOrDefaultAsync(u => u.Iduser == roleDto.UserId);
+
+            if (user == null || roleDto.RoleName.IsNullOrEmpty())
             {
                 return false;
             }
 
             _context.Roles.Add(new Role
             {
-                RoleName = roleName,
-                UserId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0")
+                RoleName = roleDto.RoleName,
+                UserId = roleDto.UserId,
             });
             await _context.SaveChangesAsync();
 

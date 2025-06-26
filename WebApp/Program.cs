@@ -26,6 +26,7 @@ builder.Services.AddScoped<ICityService, CityApiService>();
 builder.Services.AddScoped<ICityProfessionalService, CityProfessionalService>();
 builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
 builder.Services.AddScoped<IServiceType, ServiceTypeService>();
+builder.Services.AddScoped<IRoleService, RoleApiService>();
 
 builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("http://localhost:5020/")

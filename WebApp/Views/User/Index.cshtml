@@ -48,3 +48,59 @@
         }
     </tbody>
 </table>
+
+<div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update Role for <span id="usernameSpan"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="roleForm" method="post">
+                    <input type="hidden" id="userIdInput" name="userId">
+                    <div class="mb-3">
+                        <label for="roleNameInput" class="form-label">New Role</label>
+                        <input type="text" class="form-control" id="roleNameInput" name="roleName"
+                               placeholder="Enter role (e.g., Admin, User)" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Role update modal handling
+            $('.update-role').click(function() {
+                const userId = $(this).data('userid');
+                const username = $(this).data('username');
+
+                $('#usernameSpan').text(username);
+                $('#userIdInput').val(userId);
+                $('#roleModal').modal('show');
+            });
+
+            $('#roleForm').submit(function(e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: '@Url.Action("UpdateRole", "User")',
+                    type: 'POST',
+                    data: formData,
+                    success: function() {
+                        $('#roleModal').modal('hide');
+                        alert('Role updated successfully!');
+                    },
+                    error: function(xhr) {
+                        alert('Error updating role: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}
