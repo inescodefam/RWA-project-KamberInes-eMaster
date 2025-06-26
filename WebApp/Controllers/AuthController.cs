@@ -105,7 +105,7 @@ namespace WebApp.Controllers
             {
                 return RedirectToAction("Login");
             }
-            ModelState.AddModelError("", "Registration failed.");
+            ModelState.AddModelError("", "User already exists.");
             return View(model);
         }
 
