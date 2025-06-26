@@ -16,10 +16,11 @@ namespace WebApp.Controllers
         private readonly IProfessionalService _professionalApiService;
         private readonly IUserService _userApiService;
         private readonly ICityProfessionalService _cityProfessionalService;
-        private readonly ICityService _cityService;
+
+        private readonly IServiceApiService _serviceApiService;
 
 
-        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, IProfessionalService professionalApiService, IUserService userApiService, ICityProfessionalService cityProfessionalService, ICityService cityService)
+        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, IProfessionalService professionalApiService, IUserService userApiService, ICityProfessionalService cityProfessionalService, IServiceApiService serviceApiService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
@@ -27,7 +28,7 @@ namespace WebApp.Controllers
             _professionalApiService = professionalApiService;
             _userApiService = userApiService;
             _cityProfessionalService = cityProfessionalService;
-            _cityService = cityService;
+            _serviceApiService = serviceApiService;
         }
 
         [HttpGet]
@@ -259,40 +260,12 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(ServiceEditVM vm)
         {
-            vm.ServiceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
-            vm.Cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
-            var professionals = await _apiFetchService.FetchDataList<ProfessionalDto, ProfessionalVM>("api/professional?count=1000&start=0") ?? new List<ProfessionalVM>();
-            var users = await _apiFetchService.FetchDataList<UserDto, UserVM>("api/user?count=1000&start=0");
-            List<ProfessionalVM> professionalsData = professionals.Select(p => new ProfessionalVM
-            {
-                IdProfessional = p.IdProfessional,
-                UserId = p.UserId,
-                Cities = _mapper.Map<List<CityVM>>(p.Cities),
-                UserName = users.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
-            }).ToList();
-
-            vm.Professionals = professionalsData;
-
-            var exists = vm.ServiceTypes.Any(st => st.ServiceTypeName == vm.SelectedServiceTypeName);
-
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
 
-            var serviceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
-            var serviceId = serviceTypes.FirstOrDefault(st => st.ServiceTypeName == vm.SelectedServiceTypeName)?.IdserviceType;
-
-            var serviceDto = new ServiceDto
-            {
-                IdService = vm.IdService,
-                ProfessionalId = vm.SelectedProfessionalId,
-                ServiceTypeId = serviceId,
-                Description = vm.Description,
-                Price = vm.Price
-            };
-
-            var response = await _httpClient.PutAsJsonAsync($"api/service/{vm.IdService}", serviceDto);
+            var response = await _serviceApiService.EditService(vm);
 
             if (response.IsSuccessStatusCode)
                 return RedirectToAction("Search");
@@ -303,7 +276,8 @@ namespace WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _httpClient.DeleteAsync($"api/service/{id}");
+            var response = await _serviceApiService.DeleteService(id);
+
             return RedirectToAction("Search");
         }
 
