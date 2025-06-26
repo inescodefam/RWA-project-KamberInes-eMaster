@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
+using Shared.BL.Services;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -8,16 +9,13 @@ namespace WebApp.Controllers
 {
     public class ServiceTypeController : Controller
     {
-        private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-        private readonly ApiFetchService _apiFetchService;
+        private readonly IServiceType _serviceTypeService;
 
-
-        public ServiceTypeController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
+        public ServiceTypeController(IMapper mapper, ApiFetchService apiFetchService, IServiceType serviceType)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
-            _apiFetchService = apiFetchService;
+            _serviceTypeService = serviceType;
         }
 
         [HttpGet]
@@ -28,10 +26,18 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var serviceTypeDto = _mapper.Map<ServiceTypeDto>(model);
-                var response = await _httpClient.PostAsJsonAsync("api/servicetype", serviceTypeDto);
+                ServiceTypeDto modelDto = _mapper.Map<ServiceTypeDto>(model);
+                try
+                {
+                    var response = await _serviceTypeService.CreateServiceType(modelDto);
+                    return RedirectToAction("Search", "Service");
 
-                return RedirectToAction("Search", "Service");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("ServiceTypeName", ex.Message);
+                    return View(model);
+                }
             }
 
             return View(model);
