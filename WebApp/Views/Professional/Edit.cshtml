@@ -17,7 +17,7 @@
         var professional = Model.Professionals.First();
 
         <div class="card-body p-0">
-            <table id="professionalsTable" class="table table-striped mb-0">
+            <table id="professionalsTable" class="table table-striped mb-3">
                 <thead class="table-light">
                     <tr>
                         <th>Username</th>
@@ -60,6 +60,7 @@
                                     <option value="">Select User</option>
                                     @foreach (var user in Model.Users)
                                     {
+                                        <option value="">Select User</option>
                                         <option value="@user.Value"
                                                 selected="@(user.Value == professional.UserId?.ToString())">
                                             @user.Text
@@ -71,7 +72,8 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="form-floating">
+                            <div class="mb-3">
+                                <label asp-for="Cities" for="CityIds">City</label>
                                 <select class="form-select" name="CityIds" id="CityIds" multiple>
                                     <option value="">Select City</option>
                                     @foreach (var city in Model.Cities)
@@ -81,15 +83,7 @@
                                             @city.Text
                                         </option>
                                     }
-                                   @*  @foreach (var city in professional.CityIds)
-                                    {
-                                        <option value="@city"
-                                                selected="@(professional.CityIds?.Contains(city) ?? false)">
-                                            @city
-                                        </option>
-                                    }) *@
                                 </select>
-                                <label asp-for="Cities" for="CityIds">City</label>
                             </div>
                         </div>
 
@@ -105,7 +99,7 @@
     else
     {
         <div class="alert alert-warning">
-            Professional not found
+            Professional not found hvala
         </div>
         <a asp-action="Create" class="btn btn-secondary">Back to List</a>
     }
