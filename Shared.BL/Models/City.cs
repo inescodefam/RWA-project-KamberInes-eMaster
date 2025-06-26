@@ -9,7 +9,7 @@ public partial class City
 {
     [Key]
     [Column("IDCity")]
-    public int Idcity { get; set; }
+    public int? Idcity { get; set; }
 
     [Column("City")]
     [StringLength(100)]

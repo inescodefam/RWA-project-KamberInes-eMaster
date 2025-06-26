@@ -16,7 +16,7 @@ namespace WebAPI.Controllers
         private readonly LogService _loggingService;
 
         private readonly IProfessionalService _professionalService;
-        public ProfessionalController(LogService logService, IProfessionalService professionalService)
+        public ProfessionalController(LogService logService, IProfessionalService professionalService, ICityProfessionalService cityProfessionalService, ICityService cityService)
         {
             _loggingService = logService;
             _professionalService = professionalService;

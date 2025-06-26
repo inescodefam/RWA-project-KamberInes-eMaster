@@ -9,16 +9,12 @@ namespace WebAPI.Services
 {
     public class CityProfessionalService : ICityProfessionalService
     {
-        private readonly IProfessionalService _professionalService;
-        private readonly ICityService _cityService;
         private readonly EProfessionalContext _context;
         private readonly IMapper _mapper;
 
 
-        public CityProfessionalService(IProfessionalService professionalService, ICityService cityService, IMapper mapper, EProfessionalContext context)
+        public CityProfessionalService(IMapper mapper, EProfessionalContext context)
         {
-            _professionalService = professionalService;
-            _cityService = cityService;
             _context = context;
             _mapper = mapper;
         }
@@ -100,12 +96,12 @@ namespace WebAPI.Services
             var existsId = await ExistCityProfessionalId(idProfessionalCity);
             if (!existsId)
             {
-                throw new ArgumentException("CityProfessional does not exist.");
+                throw new ArgumentException("City Professional relation does not exist.");
             }
             var cityProfessional = await _context.CityProfessionals.FirstOrDefaultAsync(cp => cp.IdProfessionalCity == idProfessionalCity);
             if (cityProfessional == null)
             {
-                throw new ArgumentException("CityProfessional does not exist.");
+                throw new ArgumentException("City Professional relation does not exist.");
             }
             _context.CityProfessionals.Remove(cityProfessional);
             return await _context.SaveChangesAsync() > 0;

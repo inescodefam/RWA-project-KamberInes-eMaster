@@ -15,15 +15,19 @@ namespace WebApp.Controllers
         private readonly ApiFetchService _apiFetchService;
         private readonly IProfessionalService _professionalApiService;
         private readonly IUserService _userApiService;
+        private readonly ICityProfessionalService _cityProfessionalService;
+        private readonly ICityService _cityService;
 
 
-        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, IProfessionalService professionalApiService, IUserService userApiService)
+        public ServiceController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, IProfessionalService professionalApiService, IUserService userApiService, ICityProfessionalService cityProfessionalService, ICityService cityService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
             _apiFetchService = apiFetchService;
             _professionalApiService = professionalApiService;
             _userApiService = userApiService;
+            _cityProfessionalService = cityProfessionalService;
+            _cityService = cityService;
         }
 
         [HttpGet]
@@ -40,11 +44,13 @@ namespace WebApp.Controllers
         {
             int count = 1000; // todo remove when ...
             int start = 0;
+
             var cityDtos = await _httpClient.GetFromJsonAsync<List<CityDto>>($"api/city?count={count}&start={start}") ?? new List<CityDto>();
             var serviceTypeDtos = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>($"api/servicetype?count={count}&start={start}") ?? new List<ServiceTypeDto>();
             var serviceDtos = await _httpClient.GetFromJsonAsync<List<ServiceDto>>($"api/service?count={count}&start={start}") ?? new List<ServiceDto>();
             var usersDtos = await _userApiService.GetUsers(count, start);
             var professionalsDtos = await _professionalApiService.GetProfessionals(count);
+            var cityProfessionalDtos = await _cityProfessionalService.GetCityProfessionalsAsync();
 
             var cities = _mapper.Map<List<CityVM>>(cityDtos)?
               .Where(c => c != null && !string.IsNullOrEmpty(c.Name))
@@ -56,15 +62,26 @@ namespace WebApp.Controllers
 
             var serviceResult = new List<ServiceResultVM>();
 
+            Dictionary<int, List<string>> listCitiesNames = new Dictionary<int, List<string>>();
+            foreach (var city in cityProfessionalDtos)
+            {
+                listCitiesNames[city.ProfessionalId].Add(cities.FirstOrDefault(c => c.Idcity == city.CityId)?.Name ?? "Unknown City");
+            }
+
             foreach (ServiceDto s in serviceDtos)
             {
                 int professionalUserId = professionalsDtos.FirstOrDefault(p => p.IdProfessional == s.ProfessionalId)?.UserId ?? 0;
+
                 ProfessionalDto pro = professionalsDtos.FirstOrDefault(p => p.IdProfessional == s.ProfessionalId);
+                List<string> cityNames = listCitiesNames.ContainsKey(pro.IdProfessional)
+                                 ? listCitiesNames[pro.IdProfessional]
+                                 : new List<string>();
+
                 var serviceResultVM = new ServiceResultVM
                 {
                     IdService = s.IdService,
                     ProfessionalName = usersDtos.FirstOrDefault(u => u.Iduser == professionalUserId).Username,
-                    CityName = cities.FirstOrDefault(c => c.Idcity == pro?.CityId)?.Name,
+                    CityNames = cityNames,
                     ServiceTypeName = serviceTypes.FirstOrDefault(st => st.IdserviceType == s.ServiceTypeId)?.ServiceTypeName,
                     Description = s.Description,
                     Price = s.Price
@@ -72,10 +89,11 @@ namespace WebApp.Controllers
                 serviceResult.Add(serviceResultVM);
             }
 
+            // todo filtering logic....
             var filteredServices = serviceResult?
               .Where(s =>
                   (!cityId.HasValue ||
-                   (cities?.Any(c => c.Idcity == cityId && c.Name == s.CityName) ?? false)) &&
+                   (cities?.Any(c => c.Idcity == cityId) ?? false)) &&
                   (string.IsNullOrEmpty(serviceTypeName) ||
                    s.ServiceTypeName == serviceTypeName)
               )
@@ -107,6 +125,7 @@ namespace WebApp.Controllers
             var cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
             var professionalDtos = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0")
                 ?? new List<ProfessionalDto>();
+            var cityProfessionals = await _cityProfessionalService.GetCityProfessionalsAsync();
 
             var userDtos = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0")
                 ?? new List<UserDto>();
@@ -115,7 +134,7 @@ namespace WebApp.Controllers
             {
                 IdProfessional = p.IdProfessional,
                 UserId = p.UserId,
-                CityId = p.CityId,
+                Cities = _mapper.Map<List<CityVM>>(p.Cities),
                 UserName = userDtos.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
             }).ToList();
 
@@ -144,7 +163,7 @@ namespace WebApp.Controllers
                 {
                     IdProfessional = p.IdProfessional,
                     UserId = p.UserId,
-                    CityId = p.CityId,
+                    Cities = _mapper.Map<List<CityVM>>(p.Cities),
                     UserName = userDtos.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
                 }).ToList();
                 vm.ServiceTypes = serviceTypes;
@@ -189,14 +208,15 @@ namespace WebApp.Controllers
             var cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
             var professionals = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0") ?? new List<ProfessionalDto>();
             var users = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0") ?? new List<UserDto>();
+            var cityProfessional = await _cityProfessionalService.GetCityProfessionalsAsync();
 
-            int cityId = professionals.FirstOrDefault(p => p.IdProfessional == serviceDto.ProfessionalId)?.CityId ?? 0;
+            List<int> cityId = cityProfessional.Where(cp => cp.ProfessionalId == serviceDto.ProfessionalId && cp.CityId.HasValue).Select(cp => cp.CityId.Value).ToList();
 
             List<ProfessionalVM> professionalsData = professionals.Select(p => new ProfessionalVM
             {
                 IdProfessional = p.IdProfessional,
                 UserId = p.UserId,
-                CityId = p.CityId,
+                Cities = _mapper.Map<List<CityVM>>(p.Cities),
                 UserName = users.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
             }).ToList();
 
@@ -226,7 +246,7 @@ namespace WebApp.Controllers
             {
                 IdProfessional = p.IdProfessional,
                 UserId = p.UserId,
-                CityId = p.CityId,
+                Cities = _mapper.Map<List<CityVM>>(p.Cities),
                 UserName = users.FirstOrDefault(u => u.Iduser == p.UserId)?.Username
             }).ToList();
 

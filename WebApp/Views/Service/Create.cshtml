@@ -23,8 +23,8 @@
     </div>
     <div>
         <label>City:</label>
-        @Html.DropDownListFor(m => m.SelectedCityId, new SelectList(Model.Cities, "Idcity", "Name"), "-- Select City --")
-        @Html.ValidationMessageFor(m => m.SelectedCityId)
+        @Html.DropDownListFor(m => m.SelectedCitiesIds, new SelectList(Model.Cities, "Idcity", "Name"), "-- Select City --")
+        @Html.ValidationMessageFor(m => m.SelectedCitiesIds)
     </div>
     <div>
         <label>Service Type:</label>

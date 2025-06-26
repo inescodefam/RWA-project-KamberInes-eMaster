@@ -4,6 +4,7 @@
     {
         public int IdService { get; set; }
         public int? ProfessionalId { get; set; }
+        public List<int>? CityId { get; set; }
         public int? ServiceTypeId { get; set; }
 
         public string? Description { get; set; }

@@ -23,6 +23,7 @@ builder.Services.AddScoped<ProfessionalViewModelService>();
 builder.Services.AddScoped<IProfessionalService, ProfessionalApiServices>();
 builder.Services.AddScoped<IUserService, UserApiService>();
 builder.Services.AddScoped<ICityService, CityApiService>();
+builder.Services.AddScoped<ICityProfessionalService, CityProfessionalService>();
 
 
 builder.Services.AddHttpClient("ApiClient", client =>

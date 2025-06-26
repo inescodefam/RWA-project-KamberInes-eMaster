@@ -47,7 +47,7 @@
                                     @foreach (var city in Model.Cities)
                                     {
                                         <option value="@city.Value"
-                                                selected="@(city.Value == professional.CityId?.ToString())">
+                                                selected="@(professional?.CityNames?.Contains(city.Value ))">
                                             @city.Text
                                         </option>
                                     }

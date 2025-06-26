@@ -117,7 +117,7 @@
                             {
                                 <tr>
                                     <td>@p.UserName</td>
-                                    <td>@p.CityName</td>
+                                    <td>@string.Join(", ", p.CityNames ?? new List<string>())</td>
                                     <td>
                                         <button class="btn btn-danger btn-sm delete-professional"
                                                 data-id="@p.IdProfessional">

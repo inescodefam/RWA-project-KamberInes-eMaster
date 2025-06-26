@@ -11,15 +11,13 @@ namespace WebApp.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
-        private readonly ApiFetchService _apiFetchService;
         private readonly ProfessionalViewModelService _viewModelService;
         private readonly IProfessionalService _professionalService;
 
-        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService, ProfessionalViewModelService viewModelService, IProfessionalService professionalService)
+        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ProfessionalViewModelService viewModelService, IProfessionalService professionalService)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _mapper = mapper;
-            _apiFetchService = apiFetchService;
             _viewModelService = viewModelService;
             _professionalService = professionalService;
         }

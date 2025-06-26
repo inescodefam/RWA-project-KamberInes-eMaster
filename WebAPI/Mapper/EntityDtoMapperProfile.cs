@@ -11,7 +11,8 @@ namespace WebAPI.DTOs
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
-            CreateMap<Professional, ProfessionalDto>();
+            CreateMap<Professional, ProfessionalDto>()
+            .ForMember(dest => dest.Cities, opt => opt.Ignore());
             CreateMap<ProfessionalDto, Professional>();
             CreateMap<Service, ServiceDto>();
             CreateMap<ServiceDto, Service>();

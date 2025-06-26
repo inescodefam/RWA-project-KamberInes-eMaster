@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Shared.BL.DTOs;
+using Shared.BL.Services;
 using WebApp.Models;
 
 namespace WebApp.Services
@@ -9,11 +10,13 @@ namespace WebApp.Services
     {
         private readonly ApiFetchService _apiFetchService;
         private readonly IMapper _mapper;
+        private readonly ICityProfessionalService _cityProfessionalService;
 
-        public ProfessionalViewModelService(ApiFetchService apiFetchService, IMapper mapper, IHttpClientFactory httpClient)
+        public ProfessionalViewModelService(ApiFetchService apiFetchService, IMapper mapper, IHttpClientFactory httpClient, ICityProfessionalService cityProfessional)
         {
             _apiFetchService = apiFetchService;
             _mapper = mapper;
+            _cityProfessionalService = cityProfessional;
         }
 
 
@@ -35,14 +38,29 @@ namespace WebApp.Services
 
             var userDict = users.ToDictionary(u => u.Iduser, u => u.Username);
             var cityDict = cities.ToDictionary(c => c.Idcity, c => c.Name);
+            var citiesProfessional = await _cityProfessionalService.GetCityProfessionalsAsync();
+            var professionalCityDict = citiesProfessional
+                .GroupBy(cp => cp.ProfessionalId)
+                .ToDictionary(g => g.Key, g => g.Select(cp => cp.CityId).ToList());
 
             foreach (var p in professionals)
             {
+                p.Cities = professionalCityDict.TryGetValue(p.IdProfessional, out var cityIds)
+                    ? cityIds.Select(cityId => new CityVM
+                    {
+                        Idcity = cityId,
+                        Name = cityDict.TryGetValue(cityId, out var cityName) ? cityName : "Unknown"
+                    }).ToList()
+                    : new List<CityVM>();
                 p.UserName = p.UserId.HasValue && userDict.TryGetValue(p.UserId.Value, out var userName)
                     ? userName : "Unknown";
 
-                p.CityName = p.CityId.HasValue && cityDict.TryGetValue(p.CityId.Value, out var cityName)
-                    ? cityName : "Unknown";
+                p.CityNames = professionalCityDict.TryGetValue(p.IdProfessional, out var cityIdForNames)
+                     ? cityIdForNames
+                         .Where(cityId => cityId.HasValue && cityDict.ContainsKey(cityId.Value))
+                         .Select(cityId => cityDict[cityId.Value])
+                         .ToList()
+                     : new List<string>();
             }
 
             return new ProfessionalIndexVM

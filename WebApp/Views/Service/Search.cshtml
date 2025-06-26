@@ -69,7 +69,7 @@
             {
                 <tr>
                     <td>@service.ProfessionalName</td>
-                    <td>@service.CityName</td>
+                    <td>@string.Join(", ", service.CityNames ?? new List<string>())</td>
                     <td>@service.ServiceTypeName</td>
                     <td>@service.Description</td>
                     <td>@service.Price</td>

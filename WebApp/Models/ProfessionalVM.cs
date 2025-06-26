@@ -13,8 +13,9 @@ namespace WebApp.Models
     {
         public int IdProfessional { get; set; }
         public int? UserId { get; set; }
-        public int? CityId { get; set; }
+        //public List<int>? CityId { get; set; }
+        public List<CityVM> Cities { get; set; } = new List<CityVM>();
         public string? UserName { get; set; }
-        public string? CityName { get; set; }
+        public List<string>? CityNames { get; set; } = new List<string>();
     }
 }

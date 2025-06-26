@@ -17,7 +17,7 @@ namespace WebApp.Models
     {
         public int? IdService { get; set; }
         public string? ProfessionalName { get; set; }
-        public string? CityName { get; set; }
+        public List<string>? CityNames { get; set; }
         public string? ServiceTypeName { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }
@@ -29,7 +29,7 @@ namespace WebApp.Models
         public int? SelectedProfessionalId { get; set; }
         public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
         [Required]
-        public int SelectedCityId { get; set; }
+        public List<int>? SelectedCitiesIds { get; set; }
         [Required]
         public string? SelectedServiceTypeName { get; set; }
         public string? Description { get; set; }
@@ -44,7 +44,7 @@ namespace WebApp.Models
     {
         public int IdService { get; set; }
         public int? SelectedProfessionalId { get; set; }
-        public int SelectedCityId { get; set; }
+        public List<int>? SelectedCityId { get; set; }
         public string? SelectedServiceTypeName { get; set; }
         public string? Description { get; set; }
         public decimal? Price { get; set; }

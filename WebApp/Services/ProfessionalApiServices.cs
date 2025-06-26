@@ -15,14 +15,16 @@ namespace WebApp.Services
         private readonly IMapper _mapper;
         private readonly ICityService _cityService;
         private readonly IUserService _userService;
+        private readonly ICityProfessionalService _cityProfessionalService;
 
-        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper, ICityService cityService, IUserService userService)
+        public ProfessionalApiServices(IHttpClientFactory httpClientFactory, ApiFetchService apiFetchService, IMapper mapper, ICityService cityService, IUserService userService, ICityProfessionalService cityProfessional)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
             _apiFetchService = apiFetchService;
             _mapper = mapper;
             _cityService = cityService;
             _userService = userService;
+            _cityProfessionalService = cityProfessional;
         }
 
         async public Task<ProfessionalDto> GetSingleProfessional(int id)
@@ -65,6 +67,7 @@ namespace WebApp.Services
             var professinals = await GetProfessionals(count, start);
             List<CityDto> cities = await _cityService.GetCitiesAsync(cityName, 1, 1000);
             List<UserDto> users = _userService.GetUsers(1000).Result;
+            var cityProfessionalDtos = await _cityProfessionalService.GetCityProfessionalsAsync();
 
             CityDto city = null;
             List<int> userIds = null;
@@ -78,7 +81,20 @@ namespace WebApp.Services
             List<ProfessionalDto> result = new List<ProfessionalDto>();
 
             if (city != null)
-                result = professinals.Where(p => p.CityId == city?.Idcity).ToList();
+            {
+                var professionalIds = cityProfessionalDtos
+                    .Where(cp => cp.CityId == city.Idcity && cp?.ProfessionalId != null)
+                    .Select(cp => cp.ProfessionalId)
+                    .ToList();
+
+                result = professinals.Where(p => professionalIds.Contains(p.IdProfessional)).ToList();
+
+            }
+            else
+            {
+                result = professinals;
+            }
+
 
             if (userIds != null)
                 result = professinals.Where(p => userIds.Contains(p.UserId ?? -1)).ToList();
