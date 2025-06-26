@@ -62,10 +62,31 @@ namespace WebApp.Controllers
 
             var serviceResult = new List<ServiceResultVM>();
 
-            Dictionary<int, List<string>> listCitiesNames = new Dictionary<int, List<string>>();
-            foreach (var city in cityProfessionalDtos)
+            //Dictionary<int, List<string>> listCitiesNames = new Dictionary<int, List<string>>();
+            //foreach (var city in cityProfessionalDtos)
+            //{
+            //    listCitiesNames[city.ProfessionalId].Add(cities.FirstOrDefault(c => c.Idcity == city.CityId)?.Name ?? "Unknown City");
+            //}
+            var listCitiesNames = new Dictionary<int, List<string>>();
+
+            var cityNameLookup = cities.ToDictionary(c => c.Idcity, c => c.Name);
+
+            foreach (var cp in cityProfessionalDtos)
             {
-                listCitiesNames[city.ProfessionalId].Add(cities.FirstOrDefault(c => c.Idcity == city.CityId)?.Name ?? "Unknown City");
+                if (cp.ProfessionalId == null) continue;
+
+                int professionalId = cp.ProfessionalId;
+
+                if (!listCitiesNames.ContainsKey(professionalId))
+                {
+                    listCitiesNames[professionalId] = new List<string>();
+                }
+
+                var cityName = cp.CityId.HasValue && cityNameLookup.TryGetValue(cp.CityId.Value, out var name)
+                    ? name
+                    : "Unknown City";
+
+                listCitiesNames[professionalId].Add(cityName);
             }
 
             foreach (ServiceDto s in serviceDtos)
