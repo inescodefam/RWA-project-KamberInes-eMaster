@@ -33,7 +33,7 @@ namespace WebApp.Models
         [Required(ErrorMessage = "At least one city must be selected.")]
         [MinLength(1, ErrorMessage = "At least one city must be selected.")]
         [Display(Name = "Cities")]
-        public List<int>? SelectedCitiesIds { get; set; }
+        public List<int>? SelectedCitiesIds { get; set; } = new List<int>();
 
         [Required(ErrorMessage = "Service type selection is required.")]
         [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]

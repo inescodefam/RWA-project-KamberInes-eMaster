@@ -145,8 +145,7 @@ namespace WebApp.Controllers
         {
             var serviceTypes = await _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>("api/servicetype?count=1000&start=0") ?? new List<ServiceTypeVM>();
             var cities = await _apiFetchService.FetchDataList<CityDto, CityVM>("api/city?count=1000&start=0") ?? new List<CityVM>();
-            var professionalDtos = await _httpClient.GetFromJsonAsync<List<ProfessionalDto>>("api/professional?count=1000&start=0")
-                ?? new List<ProfessionalDto>();
+            var professionalDtos = await _professionalApiService.GetProfessionals(1000);
             var cityProfessionals = await _cityProfessionalService.GetCityProfessionalsAsync();
 
             var userDtos = await _httpClient.GetFromJsonAsync<List<UserDto>>("api/user?count=1000&start=0")
