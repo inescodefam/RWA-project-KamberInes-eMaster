@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
@@ -7,6 +8,8 @@ using WebApp.Services;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
+
     public class ServiceController : Controller
     {
 
@@ -273,6 +276,8 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _serviceApiService.DeleteService(id);

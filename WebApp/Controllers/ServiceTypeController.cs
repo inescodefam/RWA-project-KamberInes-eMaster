@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
@@ -7,6 +8,8 @@ using WebApp.Services;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
+
     public class ServiceTypeController : Controller
     {
         private readonly IMapper _mapper;

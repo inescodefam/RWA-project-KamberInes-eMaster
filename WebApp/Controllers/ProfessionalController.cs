@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
@@ -7,6 +8,7 @@ using WebApp.Services;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class ProfessionalController : Controller
     {
         private readonly HttpClient _httpClient;
@@ -164,11 +166,14 @@ namespace WebApp.Controllers
 
 
         // GET: ProfessionalController/Delete/5
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete() => View();
 
         // delete: ProfessionalController/Delete/5
         [Route("Professional/Delete/{id}")]
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             try
