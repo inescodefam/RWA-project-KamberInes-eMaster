@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using WebAPI.Context;
@@ -17,7 +16,7 @@ namespace Shared.BL.Services
             _mapper = mapper;
         }
 
-        public async Task<CityDto> CreateCityAsync(string cityName)
+        public CityDto CreateCity(string cityName)
         {
             if (string.IsNullOrEmpty(cityName))
             {
@@ -33,7 +32,7 @@ namespace Shared.BL.Services
             {
                 Name = cityName,
             };
-            await _context.Cities.AddAsync(city);
+            _context.Cities.Add(city);
             _context.SaveChanges();
 
             City c = _context.Cities.FirstOrDefault(x => x.Name == cityName);
@@ -42,7 +41,7 @@ namespace Shared.BL.Services
             return cityDto;
         }
 
-        public async Task<List<CityDto>> GetCitiesAsync(string searchTerm, int count, int start = 0)
+        public List<CityDto> GetCities(string searchTerm, int count, int start = 0)
         {
 
             var query = _context.Cities.AsQueryable();
@@ -51,40 +50,40 @@ namespace Shared.BL.Services
                 query = query.Where(c => c.Name.Contains(searchTerm));
             }
 
-            var result = await query.Skip(start).Take(count).ToListAsync();
+            var result = query.Skip(start).Take(count).ToList();
             var ciiyDtos = _mapper.Map<List<CityDto>>(result);
             return ciiyDtos;
         }
 
-        public async Task<List<CityDto>> GetAllCitiesAsync()
+        public List<CityDto> GetAllCities()
         {
-            var cities = await _context.Cities.ToListAsync();
+            var cities = _context.Cities.ToList();
             var citiesDtos = _mapper.Map<List<CityDto>>(cities);
             return citiesDtos;
         }
 
-        public async Task<bool> UpdateCityAsync(int id, string name)
+        public bool UpdateCity(int id, string name)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var city = _context.Cities.Find(id);
             if (city == null)
             {
                 return false;
             }
 
             city.Name = name;
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
 
-        public async Task<bool> DeleteCityAsync(int id)
+        public bool DeleteCity(int id)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var city = _context.Cities.Find(id);
             if (city == null)
             {
                 return false;
             }
             _context.Cities.Remove(city);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
     }

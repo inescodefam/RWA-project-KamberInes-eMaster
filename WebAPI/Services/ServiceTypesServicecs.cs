@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
@@ -18,9 +17,9 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<ServiceTypeDto>> GetServiceTypes(int count, int start)
+        public List<ServiceTypeDto> GetServiceTypes(int count, int start)
         {
-            var serviceTypes = await _context.ServiceTypes
+            var serviceTypes = _context.ServiceTypes
                      .Skip(start * count)
                      .Take(count)
                      .Select(st => new ServiceTypeDto
@@ -28,17 +27,17 @@ namespace WebAPI.Services
                          IdserviceType = st.IdserviceType,
                          ServiceTypeName = st.ServiceTypeName
                      })
-                     .ToListAsync();
+                     .ToList();
 
             var serviceTypesDto = _mapper.Map<List<ServiceTypeDto>>(serviceTypes);
             return serviceTypesDto;
         }
 
-        public Task<ServiceTypeDto> GetServiceTypeById(int id)
+        public ServiceTypeDto GetServiceTypeById(int id)
         {
             throw new NotImplementedException();
         }
-        public async Task<ServiceTypeDto> CreateServiceType(ServiceTypeDto serviceTypeDto)
+        public ServiceTypeDto CreateServiceType(ServiceTypeDto serviceTypeDto)
         {
             var entity = new ServiceType
             {
@@ -46,13 +45,13 @@ namespace WebAPI.Services
             };
 
             _context.ServiceTypes.Add(entity);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             serviceTypeDto.IdserviceType = entity.IdserviceType;
 
             return serviceTypeDto;
         }
-        public async Task<ServiceTypeDto> UpdateServiceType(ServiceTypeDto serviceTypeDto)
+        public ServiceTypeDto UpdateServiceType(ServiceTypeDto serviceTypeDto)
         {
             ServiceType entity = _context.ServiceTypes.FirstOrDefault(st => st.IdserviceType == serviceTypeDto.IdserviceType);
 
@@ -61,16 +60,16 @@ namespace WebAPI.Services
                 throw new KeyNotFoundException("Service type not found.");
             }
             entity.ServiceTypeName = serviceTypeDto.ServiceTypeName;
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             entity = _context.ServiceTypes.FirstOrDefault(st => st.IdserviceType == serviceTypeDto.IdserviceType);
             ServiceTypeDto updatedServiceTypeDto = _mapper.Map<ServiceTypeDto>(entity);
             return updatedServiceTypeDto;
         }
 
-        public async Task<bool> DeleteServiceType(int id)
+        public bool DeleteServiceType(int id)
         {
             _context.ServiceTypes.Remove(new ServiceType { IdserviceType = id });
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
 

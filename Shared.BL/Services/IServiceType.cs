@@ -4,11 +4,11 @@ namespace Shared.BL.Services
 {
     public interface IServiceType
     {
-        public Task<List<ServiceTypeDto>> GetServiceTypes(int count, int start);
-        public Task<ServiceTypeDto> GetServiceTypeById(int id);
+        public List<ServiceTypeDto> GetServiceTypes(int count, int start);
+        public ServiceTypeDto GetServiceTypeById(int id);
 
-        public Task<ServiceTypeDto> CreateServiceType(ServiceTypeDto serviceTypeDto);
-        public Task<ServiceTypeDto> UpdateServiceType(ServiceTypeDto serviceTypeDto);
-        public Task<bool> DeleteServiceType(int id);
+        public ServiceTypeDto CreateServiceType(ServiceTypeDto serviceTypeDto);
+        public ServiceTypeDto UpdateServiceType(ServiceTypeDto serviceTypeDto);
+        public bool DeleteServiceType(int id);
     }
 }

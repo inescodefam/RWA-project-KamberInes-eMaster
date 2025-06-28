@@ -19,66 +19,66 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<CityProfessionalDto> AddCityProfessionalAsync(CityProfessionalDto model)
+        public CityProfessionalDto AddCityProfessional(CityProfessionalDto model)
         {
-            var professionalExists = await ProfessionalExists(model.ProfessionalId);
-            var cityExists = await CityExists(model.CityId);
+            var professionalExists = ProfessionalExists(model.ProfessionalId);
+            var cityExists = CityExists(model.CityId);
             if (!professionalExists || !cityExists)
                 throw new ArgumentException("Professional or City does not exist.");
 
-            var exists = await ExsistsCityProfessional(model);
+            var exists = ExsistsCityProfessional(model);
             if (exists)
             {
                 throw new InvalidOperationException("This professional is already associated with this city.");
             }
             var entity = _mapper.Map<CityProfessional>(model);
 
-            await _context.CityProfessionals.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            _context.CityProfessionals.Add(entity);
+            _context.SaveChanges();
             return model;
         }
 
-        public async Task<IEnumerable<CityProfessionalDto>> GetCityProfessionalsAsync()
+        public IEnumerable<CityProfessionalDto> GetCityProfessionals()
         {
-            var cityProfessionals = await _context.CityProfessionals.ToListAsync();
+            var cityProfessionals = _context.CityProfessionals.ToList();
             return _mapper.Map<IEnumerable<CityProfessionalDto>>(cityProfessionals);
         }
 
-        public async Task<List<CityProfessionalDto?>> GetCitysByProfessionalAsync(int professionalId)
+        public List<CityProfessionalDto?> GetCitysByProfessional(int professionalId)
         {
-            var exists = await ProfessionalExists(professionalId);
+            var exists = ProfessionalExists(professionalId);
             if (!exists)
             {
                 throw new ArgumentException("Professional does not exist.");
             }
-            var cityProfessionals = await _context.CityProfessionals
+            var cityProfessionals = _context.CityProfessionals
                 .Where(cp => cp.ProfessionalId == professionalId)
                 .ToListAsync();
             return _mapper.Map<List<CityProfessionalDto?>>(cityProfessionals);
         }
 
-        public async Task<List<CityProfessionalDto>> GetProfessionalsByCityAsync(int cityId)
+        public List<CityProfessionalDto> GetProfessionalsByCity(int cityId)
         {
-            var exists = await CityExists(cityId);
+            var exists = CityExists(cityId);
             if (!exists)
             {
                 throw new ArgumentException("City does not exist.");
             }
-            var cityProfessionals = await _context.CityProfessionals
+            var cityProfessionals = _context.CityProfessionals
                 .Where(cp => cp.CityId == cityId)
                 .ToListAsync();
             return _mapper.Map<List<CityProfessionalDto>>(cityProfessionals);
         }
 
-        public async Task<CityProfessionalDto> UpdateCityProfessionalAsync(int id, CityProfessionalDto model)
+        public CityProfessionalDto UpdateCityProfessional(int id, CityProfessionalDto model)
         {
-            var existsId = await ExistCityProfessionalId(id);
+            var existsId = ExistCityProfessionalId(id);
             if (!existsId)
             {
                 throw new ArgumentException("CityProfessional does not exist.");
             }
 
-            var existingModel = await _context.CityProfessionals.FirstOrDefaultAsync(cp => cp.IdProfessionalCity == id);
+            var existingModel = _context.CityProfessionals.FirstOrDefault(cp => cp.IdProfessionalCity == id);
             if (existingModel == null)
             {
                 throw new ArgumentException("CityProfessional does not exist.");
@@ -86,49 +86,48 @@ namespace WebAPI.Services
 
             existingModel.ProfessionalId = model.ProfessionalId;
             existingModel.CityId = model.CityId;
-            //_context.CityProfessionals.Update(exist);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return _mapper.Map<CityProfessionalDto>(existingModel);
         }
 
-        public async Task<bool> DeleteCityProfessionalAsync(int idProfessionalCity)
+        public bool DeleteCityProfessional(int idProfessionalCity)
         {
-            var existsId = await ExistCityProfessionalId(idProfessionalCity);
+            var existsId = ExistCityProfessionalId(idProfessionalCity);
             if (!existsId)
             {
                 throw new ArgumentException("City Professional relation does not exist.");
             }
-            var cityProfessional = await _context.CityProfessionals.FirstOrDefaultAsync(cp => cp.IdProfessionalCity == idProfessionalCity);
+            var cityProfessional = _context.CityProfessionals.FirstOrDefault(cp => cp.IdProfessionalCity == idProfessionalCity);
             if (cityProfessional == null)
             {
                 throw new ArgumentException("City Professional relation does not exist.");
             }
             _context.CityProfessionals.Remove(cityProfessional);
-            return await _context.SaveChangesAsync() > 0;
+            return _context.SaveChanges() > 0;
         }
 
-        private async Task<bool> ExistCityProfessionalId(int idProfessionalCity)
+        private bool ExistCityProfessionalId(int idProfessionalCity)
         {
-            return await _context.CityProfessionals.AnyAsync(cp => cp.IdProfessionalCity == idProfessionalCity);
+            return _context.CityProfessionals.Any(cp => cp.IdProfessionalCity == idProfessionalCity);
         }
 
-        private async Task<bool> ExsistsCityProfessional(CityProfessionalDto model)
+        private bool ExsistsCityProfessional(CityProfessionalDto model)
         {
-            return await _context.CityProfessionals.AnyAsync(cp => cp.ProfessionalId == model.ProfessionalId && cp.CityId == model.CityId);
+            return _context.CityProfessionals.Any(cp => cp.ProfessionalId == model.ProfessionalId && cp.CityId == model.CityId);
         }
 
-        private async Task<bool> ProfessionalExists(int? professionalId)
+        private bool ProfessionalExists(int? professionalId)
         {
             if (professionalId == null)
                 return false;
-            return await _context.Professionals.AnyAsync(p => p.IdProfessional == professionalId);
+            return _context.Professionals.Any(p => p.IdProfessional == professionalId);
         }
 
-        private async Task<bool> CityExists(int? cityId)
+        private bool CityExists(int? cityId)
         {
             if (cityId == null)
                 return false;
-            return await _context.Cities.AnyAsync(c => c.Idcity == cityId);
+            return _context.Cities.Any(c => c.Idcity == cityId);
         }
 
     }

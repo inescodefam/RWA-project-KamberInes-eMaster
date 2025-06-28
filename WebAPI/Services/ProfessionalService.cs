@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
@@ -24,7 +23,7 @@ namespace WebAPI.Services
             _cityProfessionalService = cityProfessionalService;
             _cityService = cityService;
         }
-        public async Task<List<ProfessionalDto>> GetProfessionals(int count, int start = 0)
+        public List<ProfessionalDto> GetProfessionals(int count, int start = 0)
         {
             var professionals = _context.Professionals.Skip(start * count).Take(count).ToList();
 
@@ -34,8 +33,8 @@ namespace WebAPI.Services
                 return new List<ProfessionalDto>();
             }
 
-            var citiesProfessional = await _cityProfessionalService.GetCityProfessionalsAsync();
-            var cities = await _cityService.GetAllCitiesAsync();
+            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
+            var cities = _cityService.GetAllCities();
 
             var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
 
@@ -56,9 +55,9 @@ namespace WebAPI.Services
         }
 
 
-        public async Task<ProfessionalDto> GetSingleProfessional(int id)
+        public ProfessionalDto GetSingleProfessional(int id)
         {
-            var professional = await _context.Professionals.FindAsync(id);
+            var professional = _context.Professionals.Find(id);
             if (professional == null)
             {
                 _loggingService.Log($"Professional with ID {id} not found.", "warning");
@@ -66,8 +65,8 @@ namespace WebAPI.Services
             }
 
             var professionalDto = _mapper.Map<ProfessionalDto>(professional);
-            var citiesProfessional = await _cityProfessionalService.GetCityProfessionalsAsync();
-            var cities = await _cityService.GetAllCitiesAsync();
+            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
+            var cities = _cityService.GetAllCities();
             professionalDto.Cities = citiesProfessional
                 .Where(cp => cp.ProfessionalId == professionalDto.IdProfessional)
                 .Select(cp => new CityDto
@@ -80,7 +79,7 @@ namespace WebAPI.Services
             return professionalDto;
         }
 
-        public async Task<List<ProfessionalDto>> Search(string? name, string? cityName, int count, int start = 0)
+        public List<ProfessionalDto> Search(string? name, string? cityName, int count, int start = 0)
         {
             var query = _context.Professionals.AsQueryable();
             if (!string.IsNullOrEmpty(name))
@@ -88,7 +87,7 @@ namespace WebAPI.Services
                 query = query.Where(p => p.User.FirstName == name || p.User.LastName == name);
             }
 
-            var professionals = await query.Skip(start * count).Take(count).ToListAsync();
+            var professionals = query.Skip(start * count).Take(count).ToList();
 
             if (professionals == null || professionals.Count == 0)
             {
@@ -98,8 +97,8 @@ namespace WebAPI.Services
 
             var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
 
-            var citiesProfessional = await _cityProfessionalService.GetCityProfessionalsAsync();
-            var cities = await _cityService.GetAllCitiesAsync();
+            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
+            var cities = _cityService.GetAllCities();
             foreach (var professionalDto in professionalDtos)
             {
                 professionalDto.Cities = citiesProfessional
@@ -116,29 +115,29 @@ namespace WebAPI.Services
             return professionalDtos;
         }
 
-        public async Task<bool> CreateProfessional(ProfessionalDto professionalDto)
+        public bool CreateProfessional(ProfessionalDto professionalDto)
         {
             if (!_context.Users.Any(u => u.Iduser == professionalDto.UserId))
             {
                 throw new ArgumentException("Invalid User ID");
             }
 
-            var cities = await _cityService.GetAllCitiesAsync();
+            var cities = _cityService.GetAllCities();
 
             var professional = new Professional
             {
                 UserId = professionalDto.UserId
             };
-            await _context.Professionals.AddAsync(professional);
+            _context.Professionals.Add(professional);
             _context.SaveChanges();
 
-            await _context.CityProfessionals.AddRangeAsync(
-                professionalDto.CityIds.Select(cityId => new CityProfessional
-                {
-                    ProfessionalId = professional.IdProfessional,
-                    CityId = cityId
-                })
-            );
+            _context.CityProfessionals.AddRange(
+               professionalDto.CityIds.Select(cityId => new CityProfessional
+               {
+                   ProfessionalId = professional.IdProfessional,
+                   CityId = cityId
+               })
+           );
             _context.SaveChanges();
 
             _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
@@ -146,12 +145,12 @@ namespace WebAPI.Services
             return true;
         }
 
-        public async Task<bool> UpdateProfessional(int id, ProfessionalDto professionalDto)
+        public bool UpdateProfessional(int id, ProfessionalDto professionalDto)
         {
-            var professional = await _context.Professionals.FindAsync(id);
+            var professional = _context.Professionals.Find(id);
             var citiIds = professionalDto.CityIds;
 
-            var citiesDtos = await _cityService.GetAllCitiesAsync();
+            var citiesDtos = _cityService.GetAllCities();
 
             List<CityDto?> cities = citiIds?.Select(cityId => citiesDtos.FirstOrDefault(c => c.Idcity == cityId)).ToList() ?? new List<CityDto?>();
 
@@ -165,7 +164,7 @@ namespace WebAPI.Services
                         CityId = city.Idcity
                     };
 
-                    var cityProfessional = await _cityProfessionalService.AddCityProfessionalAsync(cityProfessionalDto);
+                    var cityProfessional = _cityProfessionalService.AddCityProfessional(cityProfessionalDto);
 
                     if (cityProfessional == null)
                     {
@@ -183,8 +182,7 @@ namespace WebAPI.Services
             }
             professional.UserId = professionalDto.UserId;
 
-            //_context.Professionals.Update(professional);
-            await _context.SaveChangesAsync();
+            _context.SaveChangesAsync();
             _loggingService.Log($"Professional with ID {id} updated successfully.", "info");
 
             return true;
@@ -216,7 +214,6 @@ namespace WebAPI.Services
                 _loggingService.Log($"Error deleting professional with ID {id}.", "error");
                 throw new Exception($"Error deleting professional with ID {id}.");
             }
-
         }
 
     }

@@ -28,7 +28,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var serviceTypesDto = _serviceTypeService.GetServiceTypes(count, start).Result;
+                var serviceTypesDto = _serviceTypeService.GetServiceTypes(count, start);
                 return Ok(serviceTypesDto);
             }
             catch (Exception)
@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ServiceTypeDto dto)
+        public IActionResult Post([FromBody] ServiceTypeDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
             try
             {
 
-                var entity = await _serviceTypeService.CreateServiceType(dto);
+                var entity = _serviceTypeService.CreateServiceType(dto);
 
                 return CreatedAtAction(nameof(Get), new { id = entity.IdserviceType }, dto);
             }
@@ -60,7 +60,7 @@ namespace WebAPI.Controllers
 
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] ServiceTypeDto dto)
+        public IActionResult Put([FromBody] ServiceTypeDto dto)
         {
             if (dto == null || dto.IdserviceType <= 0 || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -68,7 +68,7 @@ namespace WebAPI.Controllers
             }
             try
             {
-                var updatedServiceType = await _serviceTypeService.UpdateServiceType(dto);
+                var updatedServiceType = _serviceTypeService.UpdateServiceType(dto);
                 return Ok(updatedServiceType);
             }
             catch (Exception)
@@ -80,11 +80,11 @@ namespace WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                var result = await _serviceTypeService.DeleteServiceType(id);
+                var result = _serviceTypeService.DeleteServiceType(id);
                 if (result)
                 {
                     return NoContent();

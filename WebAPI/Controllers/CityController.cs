@@ -20,11 +20,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllCities()
+        public IActionResult GetAllCities()
         {
             try
             {
-                var result = await _cityService.GetAllCitiesAsync();
+                var result = _cityService.GetAllCities();
                 return Ok(result);
 
             }
@@ -35,11 +35,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<CityDto>>> GetCities(int count, int start = 0, string searchTerm = "")
+        public ActionResult<List<CityDto>> GetCities(int count, int start = 0, string searchTerm = "")
         {
             try
             {
-                var result = await _cityService.GetCitiesAsync(searchTerm, count, start);
+                var result = _cityService.GetCities(searchTerm, count, start);
 
                 return Ok(result);
             }
@@ -50,23 +50,22 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CityDto>> CreateCity([FromBody] CreateCityDto city)
+        public ActionResult<CityDto> CreateCity([FromBody] CreateCityDto city)
         {
             if (city.Name == null)
             {
                 return BadRequest("City data is required.");
             }
 
-            var cities = await _cityService.GetAllCitiesAsync();
+            var cities = _cityService.GetAllCities();
             if (cities.Any(c => c.Name.Equals(city.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new InvalidOperationException($"City '{city.Name}' already exists.");
-                //return Conflict($"City '{city.Name}' already exists.");
             }
 
             try
             {
-                var cityDto = await _cityService.CreateCityAsync(city.Name);
+                var cityDto = _cityService.CreateCity(city.Name);
 
                 return CreatedAtAction(nameof(GetCities), new { id = cityDto.Idcity }, cityDto);
             }
@@ -78,19 +77,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCity(int id, string name)
+        public ActionResult UpdateCity(int id, string name)
         {
-            var response = await _cityService.UpdateCityAsync(id, name);
+            var response = _cityService.UpdateCity(id, name);
             return Ok("City updated successfuly!");
         }
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCity(int id)
+        public ActionResult DeleteCity(int id)
         {
             try
             {
-                var response = await _cityService.DeleteCityAsync(id);
+                var response = _cityService.DeleteCity(id);
                 if (!response)
                 {
                     return NotFound();

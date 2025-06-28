@@ -23,13 +23,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProfessionalDto>>> GetAllProfessionals(int count, int start = 0)
+        public ActionResult<IEnumerable<ProfessionalDto>> GetAllProfessionals(int count, int start = 0)
         {
             if (count <= 0 || start < 0)
                 return BadRequest("Invalid paging parameters");
             try
             {
-                var professionals = await _professionalService.GetProfessionals(count, start);
+                var professionals = _professionalService.GetProfessionals(count, start);
 
                 if (professionals == null || !professionals.Any())
                 {
@@ -48,11 +48,11 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProfessionalDto>> GetSingleProfessionalById(int id)
+        public ActionResult<ProfessionalDto> GetSingleProfessionalById(int id)
         {
             try
             {
-                var professionalDto = await _professionalService.GetSingleProfessional(id);
+                var professionalDto = _professionalService.GetSingleProfessional(id);
                 return Ok(professionalDto);
             }
             catch (Exception ex)
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ProfessionalDto professionalDto)
+        public IActionResult Post([FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var response = await _professionalService.CreateProfessional(professionalDto);
+                var response = _professionalService.CreateProfessional(professionalDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
 
         // PUT api/<ProfessionalsController>/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProfessionalDto professionalDto)
+        public IActionResult Put(int id, [FromBody] ProfessionalDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var response = await _professionalService.UpdateProfessional(id, professionalDto);
+                var response = _professionalService.UpdateProfessional(id, professionalDto);
                 if (!response) return NotFound();
 
                 return Ok("Professional updated successfully");
@@ -132,7 +132,6 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-
             try
             {
                 var response = _professionalService.DeleteProfessional(id);

@@ -4,13 +4,13 @@ namespace Shared.BL.Services
 {
     public interface ICityProfessionalService
     {
-        public Task<IEnumerable<CityProfessionalDto>> GetCityProfessionalsAsync();
-        public Task<List<CityProfessionalDto?>> GetCitysByProfessionalAsync(int professionalId);
+        public IEnumerable<CityProfessionalDto> GetCityProfessionals();
+        public List<CityProfessionalDto?> GetCitysByProfessional(int professionalId);
 
-        public Task<List<CityProfessionalDto>> GetProfessionalsByCityAsync(int cityId);
+        public List<CityProfessionalDto> GetProfessionalsByCity(int cityId);
 
-        public Task<CityProfessionalDto> AddCityProfessionalAsync(CityProfessionalDto model);
-        public Task<CityProfessionalDto> UpdateCityProfessionalAsync(int id, CityProfessionalDto model);
-        public Task<bool> DeleteCityProfessionalAsync(int idProfessionalCity);
+        public CityProfessionalDto AddCityProfessional(CityProfessionalDto model);
+        public CityProfessionalDto UpdateCityProfessional(int id, CityProfessionalDto model);
+        public bool DeleteCityProfessional(int idProfessionalCity);
     }
 }

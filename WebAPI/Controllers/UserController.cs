@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebAPI.Controllers
 {
     [Route("api/user")]
@@ -21,11 +19,11 @@ namespace WebAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public async Task<ActionResult<List<UserDto>>> Get(int count, int start = 0)
+        public ActionResult<List<UserDto>> Get(int count, int start = 0)
         {
             try
             {
-                var userDtos = await _userService.GetUsers(count, start);
+                var userDtos = _userService.GetUsers(count, start);
 
                 return Ok(userDtos);
             }
@@ -38,12 +36,12 @@ namespace WebAPI.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUserById(int id)
+        public ActionResult<UserDto> GetUserById(int id)
         {
             try
             {
 
-                var userDto = await _userService.GetUserById(id);
+                var userDto = _userService.GetUserById(id);
                 return Ok(userDto);
             }
             catch
@@ -53,11 +51,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("email/{email}")]
-        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+        public ActionResult<UserDto> GetUserByEmail(string email)
         {
             try
             {
-                var user = await _userService.GetUserByEmail(email);
+                var user = _userService.GetUserByEmail(email);
 
                 return user != null
                 ? Ok(user)
@@ -70,7 +68,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Put([FromBody] UserDto userDto)
+        public IActionResult Put([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +77,7 @@ namespace WebAPI.Controllers
 
             try
             {
-                var updated = await _userService.UpdateUser(userDto);
+                var updated = _userService.UpdateUser(userDto);
                 return updated
                     ? Ok("User updated successfully")
                     : NotFound("User not found");
@@ -92,11 +90,11 @@ namespace WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                await _userService.DeleteUser(id);
+                _userService.DeleteUser(id);
                 return Ok("User deleted successfully");
 
             }

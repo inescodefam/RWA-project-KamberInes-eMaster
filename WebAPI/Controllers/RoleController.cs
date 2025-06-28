@@ -33,14 +33,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignRoleToUser(RoleDto roleDto)
+        public IActionResult AssignRoleToUser(RoleDto roleDto)
         {
             if (string.IsNullOrEmpty(roleDto.RoleName) || roleDto.UserId == null)
             {
                 return BadRequest("Role name cannot be empty.");
             }
 
-            var response = await _roleService.AssignRoleToUser(roleDto);
+            var response = _roleService.AssignRoleToUser(roleDto);
 
             if (!response)
             {
@@ -51,13 +51,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("api/role/{roleId}")]
-        public async Task<IActionResult> UpdateRole(int roleId, [FromBody] string newRoleName)
+        public IActionResult UpdateRole(int roleId, [FromBody] string newRoleName)
         {
             if (string.IsNullOrEmpty(newRoleName))
             {
                 return BadRequest("New role name cannot be empty.");
             }
-            var response = await _roleService.UpdateRole(roleId, newRoleName);
+            var response = _roleService.UpdateRole(roleId, newRoleName);
             if (!response)
             {
                 return NotFound("Role not found or could not be updated.");
@@ -67,9 +67,9 @@ namespace WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("api/role/{roleId}")]
-        public async Task<IActionResult> DeleteRole(int roleId)
+        public IActionResult DeleteRole(int roleId)
         {
-            var response = await _roleService.DeleteRole(roleId);
+            var response = _roleService.DeleteRole(roleId);
             if (!response)
             {
                 return NotFound("Role not found or could not be deleted.");

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Shared.BL.DTOs;
 using Shared.BL.Services;
 using WebAPI.Auth;
@@ -18,24 +17,24 @@ namespace WebAPI.Services
             _mapper = mapper;
         }
 
-        public async Task<List<UserDto>> GetUsers(int count, int start = 0)
+        public List<UserDto> GetUsers(int count, int start = 0)
         {
-            var users = await _context.Users.Skip(start * count).Take(count).ToListAsync();
+            var users = _context.Users.Skip(start * count).Take(count).ToList();
             return _mapper.Map<List<UserDto>>(users);
         }
 
-        public async Task<UserDto> GetUserById(int id)
+        public UserDto GetUserById(int id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Iduser == id);
+            var user = _context.Users.FirstOrDefault(x => x.Iduser == id);
             return _mapper.Map<UserDto>(user);
         }
 
-        public async Task<UserDto> GetUserByEmail(string email)
+        public UserDto GetUserByEmail(string email)
         {
             email = email.ToLowerInvariant().Trim();
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == email);
+                var user = _context.Users.FirstOrDefault(x => x.Email.ToLower() == email);
 
                 return _mapper.Map<UserDto>(user);
             }
@@ -46,9 +45,9 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<bool> UpdateUser(UserDto userDto)
+        public bool UpdateUser(UserDto userDto)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Iduser == userDto.Iduser);
+            var user = _context.Users.FirstOrDefault(x => x.Iduser == userDto.Iduser);
             if (user == null) return false;
 
             if (userDto.Password != null)
@@ -70,13 +69,13 @@ namespace WebAPI.Services
             return true;
         }
 
-        public async Task DeleteUser(int userId)
+        public void DeleteUser(int userId)
         {
             var user = _context.Users.FirstOrDefault(x => x.Iduser == userId);
             if (user == null) throw new Exception("User not found");
 
             _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
         }
 
     }

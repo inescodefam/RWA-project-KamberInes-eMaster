@@ -18,12 +18,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CityProfessionalDto model)
+        public IActionResult Create([FromBody] CityProfessionalDto model)
         {
 
             try
             {
-                var result = await _cityProfessionalService.AddCityProfessionalAsync(model);
+                var result = _cityProfessionalService.AddCityProfessional(model);
                 if (result == null)
                 {
                     return BadRequest("CityProfessional could not be created.");
@@ -37,11 +37,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet()]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             try
             {
-                var result = await _cityProfessionalService.GetCityProfessionalsAsync();
+                var result = _cityProfessionalService.GetCityProfessionals();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -51,11 +51,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("professional/{professionalId}")]
-        public async Task<IActionResult> GetCitiesForProfessional(int professionalId)
+        public IActionResult GetCitiesForProfessional(int professionalId)
         {
             try
             {
-                var result = await _cityProfessionalService.GetCitysByProfessionalAsync(professionalId);
+                var result = _cityProfessionalService.GetCitysByProfessional(professionalId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -65,11 +65,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("city/{cityId}")]
-        public async Task<IActionResult> GetProfessionalsFromCity(int cityId)
+        public IActionResult GetProfessionalsFromCity(int cityId)
         {
             try
             {
-                var result = await _cityProfessionalService.GetProfessionalsByCityAsync(cityId);
+                var result = _cityProfessionalService.GetProfessionalsByCity(cityId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -79,11 +79,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CityProfessionalDto model)
+        public IActionResult Update(int id, [FromBody] CityProfessionalDto model)
         {
             try
             {
-                var result = await _cityProfessionalService.UpdateCityProfessionalAsync(id, model);
+                var result = _cityProfessionalService.UpdateCityProfessional(id, model);
                 if (result == null)
                 {
                     return NotFound("CityProfessional not found.");
@@ -98,11 +98,11 @@ namespace WebAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
-                var result = await _cityProfessionalService.DeleteCityProfessionalAsync(id);
+                var result = _cityProfessionalService.DeleteCityProfessional(id);
                 if (!result)
                 {
                     return NotFound("Reference not found.");

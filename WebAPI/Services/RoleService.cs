@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Shared.BL.DTOs;
 using Shared.BL.Models;
 using Shared.BL.Services;
@@ -22,7 +21,7 @@ namespace WebAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetUserRole()
+        public string GetCurrentUserRole()
         {
             var user = _httpContextAccessor.HttpContext?.User;
             var userRole = user?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
@@ -34,9 +33,20 @@ namespace WebAPI.Services
             return userRole;
         }
 
-        public async Task<bool> AssignRoleToUser(RoleDto roleDto)
+        public List<Role> GetUserRole()
         {
-            var user = _context.Users.FirstOrDefaultAsync(u => u.Iduser == roleDto.UserId);
+            var userRole = _context.Roles.ToList();
+            if (userRole == null || userRole.Count() == 0)
+            {
+                return new List<Role>();
+            }
+
+            return userRole;
+        }
+
+        public bool AssignRoleToUser(RoleDto roleDto)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Iduser == roleDto.UserId);
 
             if (user == null || roleDto.RoleName.IsNullOrEmpty())
             {
@@ -48,12 +58,12 @@ namespace WebAPI.Services
                 RoleName = roleDto.RoleName,
                 UserId = roleDto.UserId,
             });
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return true;
         }
 
-        public async Task<bool> UpdateRole(int roleId, string newRoleName)
+        public bool UpdateRole(int roleId, string newRoleName)
         {
             Role roleToUpdate = _context.Roles.FirstOrDefault(r => r.Idrole == roleId);
             if (roleToUpdate == null)
@@ -62,12 +72,12 @@ namespace WebAPI.Services
             }
             roleToUpdate.RoleName = newRoleName;
             _context.Roles.Update(roleToUpdate);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
 
             return true;
         }
 
-        public async Task<bool> DeleteRole(int roleId)
+        public bool DeleteRole(int roleId)
         {
             Role roletoDelete = _context.Roles.FirstOrDefault(r => r.Idrole == roleId);
             if (roletoDelete == null)
@@ -76,7 +86,7 @@ namespace WebAPI.Services
             }
 
             _context.Roles.Remove(roletoDelete);
-            await _context.SaveChangesAsync();
+            _context.SaveChanges();
             return true;
         }
 

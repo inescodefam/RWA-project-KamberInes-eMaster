@@ -17,14 +17,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get/{n}")]
-        public async Task<ActionResult<IEnumerable<Log>>> GetLogs(int n)
+        public ActionResult<IEnumerable<Log>> GetLogs(int n)
         {
             try
             {
-                var logs = await _context.Logs
+                var logs = _context.Logs
                     .OrderByDescending(log => log.LogTimeStamp)
                     .Take(n)
-                    .ToListAsync();
+                    .ToList();
                 if (logs == null || !logs.Any())
                 {
                     return NotFound("No logs found.");
@@ -39,9 +39,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("count")]
-        public async Task<IActionResult> GetLogCount()
+        public IActionResult GetLogCount()
         {
-            var count = await _context.Logs.CountAsync();
+            var count = _context.Logs.CountAsync();
             return Ok(count);
         }
     }
