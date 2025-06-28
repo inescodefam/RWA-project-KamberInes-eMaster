@@ -32,7 +32,7 @@ public partial class EProfessionalContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("server=.;Database=eProfessional;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true");
+        => optionsBuilder.UseSqlServer("name=ConnectionStrings:ConnStr");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
