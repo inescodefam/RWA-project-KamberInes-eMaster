@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using eProfessional.BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CityProfessionalDto model)
+        public IActionResult Create([FromBody] CityProfessionalApiDto model)
         {
 
             try
@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var result = _cityProfessionalService.GetCitysByProfessional(professionalId);
+                var result = _cityProfessionalService.GetCitiesByProfessionalId(professionalId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -79,10 +79,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CityProfessionalDto model)
+        public IActionResult Update(int id, [FromBody] CityProfessionalApiDto model)
         {
             try
             {
+
                 var result = _cityProfessionalService.UpdateCityProfessional(id, model);
                 if (result == null)
                 {

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using eProfessional.BLL.Interfaces;
+using eProfessional.DAL.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
-using WebAPI.Context;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CityDto>> GetCities(int count, int start = 0, string searchTerm = "")
+        public ActionResult<List<CityApiDto>> GetCities(int count, int start = 0, string searchTerm = "")
         {
             try
             {
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<CityDto> CreateCity([FromBody] CreateCityDto city)
+        public ActionResult<CityApiDto> CreateCity([FromBody] CreateCityApiDto city)
         {
             if (city.Name == null)
             {

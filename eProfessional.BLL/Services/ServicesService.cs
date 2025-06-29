@@ -1,0 +1,145 @@
+﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Interfaces;
+using eProfessional.DAL.Interfaces;
+using eProfessional.DAL.Models;
+
+namespace eProfessional.BLL.Services
+{
+    public class ServicesService : IServiceService
+    {
+        private readonly IMapper _mapper;
+        private readonly IServiceRepository _serviceRepository;
+
+        public ServicesService(IServiceRepository serviceRepository, IMapper mapper)
+        {
+            _mapper = mapper;
+            _serviceRepository = serviceRepository;
+        }
+
+        public List<ServiceDto> SearchServices(string searchTerm, int count, int start)
+        {
+            var services = _serviceRepository.Search(searchTerm, count, start);
+            if (services == null || !services.Any())
+            {
+                return new List<ServiceDto>();
+            }
+
+            try
+            {
+                return _mapper.Map<List<ServiceDto>>(services);
+            }
+            catch (Exception ex)
+            {
+                return new List<ServiceDto>();
+            }
+        }
+
+        public List<ServiceDto> GetServicesCount(int count, int start = 0)
+        {
+            try
+            {
+                var services = _serviceRepository.GetServices(count, start);
+                var servicesDtos = _mapper.Map<List<ServiceDto>>(services);
+                return servicesDtos ?? new List<ServiceDto>();
+            }
+            catch (Exception)
+            {
+                throw new Exception("An error occurred while retrieving the services.");
+            }
+        }
+
+        public List<ServiceDto> GetServiceByServiceType(ServiceTypeDto type, int count, int start = 0)
+        {
+            try
+            {
+                var serviceType = _mapper.Map<ServiceType>(type);
+                var services = _serviceRepository.GetServiceByServiceType(serviceType, count, start);
+
+                var servicesDtos = _mapper.Map<List<ServiceDto>>(services);
+                return servicesDtos;
+            }
+            catch (Exception)
+            {
+                throw new Exception("An error occurred while retrieving the service by service type.");
+            }
+        }
+
+        public ServiceDto CreateService(ServiceDto serviceDto)
+        {
+            if (serviceDto == null)
+            {
+                throw new ArgumentNullException(nameof(serviceDto), "Service cannot be null.");
+            }
+            try
+            {
+                Service service = _mapper.Map<Service>(serviceDto);
+                _serviceRepository.Add(service);
+                _serviceRepository.Save();
+
+                serviceDto.IdService = service.IdService;
+                return serviceDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while creating the service.", ex);
+            }
+        }
+
+        public void UpdateService(int id, ServiceDto serviceDto)
+        {
+            if (serviceDto == null)
+            {
+                throw new ArgumentNullException(nameof(serviceDto), "Service cannot be null.");
+            }
+            try
+            {
+                Service service = _mapper.Map<Service>(serviceDto);
+                _serviceRepository.Update(service);
+                _serviceRepository.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the service.", ex);
+            }
+        }
+
+        public bool DeleteService(int id)
+        {
+            try
+            {
+                var service = _serviceRepository.GetById(id);
+
+                if (service == null)
+                {
+                    throw new KeyNotFoundException($"Service with ID {id} not found.");
+                }
+                _serviceRepository.Delete(service);
+                _serviceRepository.Save();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while deleting the service.", ex);
+            }
+            return true;
+        }
+
+        public ServiceDto GetServiceByServiceId(int? id)
+        {
+
+            if (id == null)
+            {
+                throw new ArgumentNullException(nameof(id), "Service id cannot be null.");
+            }
+            try
+            {
+                ServiceDto serviceDto = _mapper.Map<ServiceDto>(_serviceRepository.GetById(id));
+                return serviceDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while updating the service.", ex);
+            }
+        }
+    }
+}

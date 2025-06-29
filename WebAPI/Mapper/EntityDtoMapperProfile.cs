@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Shared.BL.DTOs;
-using Shared.BL.Models;
-using WebAPI.Models;
+using eProfessional.BLL.DTOs;
+
 
 namespace WebAPI.DTOs
 {
@@ -9,20 +8,8 @@ namespace WebAPI.DTOs
     {
         public EntityDtoMapperProfile()
         {
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
-            CreateMap<Professional, ProfessionalDto>();
-            CreateMap<ProfessionalDto, Professional>();
-            CreateMap<Service, ServiceDto>();
-            CreateMap<ServiceDto, Service>();
-            CreateMap<Role, RoleDto>();
-            CreateMap<RoleDto, Role>();
-            CreateMap<City, CityDto>();
-            CreateMap<CityDto, City>();
-            CreateMap<ServiceType, ServiceTypeDto>();
-            CreateMap<ServiceTypeDto, ServiceType>();
-            CreateMap<CityProfessional, CityProfessionalDto>();
-            CreateMap<CityProfessionalDto, CityProfessional>();
+            CreateMap<ServiceDto, ServiceApiDto>();
+            CreateMap<ServiceApiDto, ServiceDto>();
         }
     }
 }

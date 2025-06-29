@@ -1,10 +1,9 @@
 ﻿using AutoMapper;
+using eProfessional.BLL.Interfaces;
+using eProfessional.DAL.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.BL.DTOs;
-using Shared.BL.Services;
-using WebAPI.Context;
-
 namespace WebAPI.Controllers
 {
     [Route("api/servicetype")]

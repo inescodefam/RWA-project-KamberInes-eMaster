@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Models;
-using WebAPI.Services;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -12,14 +13,16 @@ namespace WebAPI.Controllers
     public class ServiceController : Controller
     {
         private readonly ServicesService _servicesService;
+        private readonly IMapper _mapper;
 
-        public ServiceController(ServicesService servicesService)
+        public ServiceController(ServicesService servicesService, IMapper mapper)
         {
             _servicesService = servicesService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public ActionResult<List<Service>> GetServices(int count, int start = 0)
+        public ActionResult<List<ServiceApiDto>> GetServices(int count, int start = 0)
         {
             try
             {
@@ -32,7 +35,7 @@ namespace WebAPI.Controllers
             }
         }
         [HttpGet("type/{type}")]
-        public ActionResult<Service> GetServiceByServiceType(string type)
+        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type)
         {
             try
             {
@@ -45,7 +48,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("id/{id}")]
-        public ActionResult<ServiceDto> GetServiceByServiceId(int id)
+        public ActionResult<ServiceApiDto> GetServiceByServiceId(int id)
         {
             try
             {
@@ -58,7 +61,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Service> CreateServiceFromDto(ServiceDto serviceDto)
+        public ActionResult<ServiceApiDto> CreateServiceFromDto(ServiceApiDto serviceDto)
         {
             try
             {
@@ -66,7 +69,9 @@ namespace WebAPI.Controllers
                 {
                     return BadRequest("Service cannot be null.");
                 }
-                _servicesService.CreateService(serviceDto);
+
+                var service = _mapper.Map<ServiceDto>(serviceDto);
+                _servicesService.CreateService(service);
                 return CreatedAtAction(nameof(GetServiceByServiceType), new { type = serviceDto.ServiceTypeId }, serviceDto);
             }
             catch (Exception ex)
@@ -76,16 +81,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateService(int id, ServiceDto service)
+        public ActionResult UpdateService(int id, ServiceApiDto serviceApiDto)
         {
-            if (id != service.IdService)
+            if (id != serviceApiDto.IdService)
             {
                 return BadRequest("Service ID mismatch.");
             }
             try
             {
-
-                _servicesService.UpdateService(id, service);
+                var serviceDto = _mapper.Map<ServiceDto>(serviceApiDto);
+                _servicesService.UpdateService(id, serviceDto);
                 return NoContent();
             }
             catch (Exception ex)

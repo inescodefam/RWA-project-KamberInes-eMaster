@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shared.BL.DTOs;
-using Shared.BL.Models;
-using WebAPI.Auth;
-using WebAPI.Context;
+﻿using eProfessional.BLL.Auth;
+using eProfessional.DAL.Context;
+using eProfessional.DAL.Models;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -21,7 +20,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<UserDto> Register(AuthDto userAuthDto)
+        public ActionResult Register(AuthApiDto userAuthDto)
         {
             try
             {
@@ -43,7 +42,7 @@ namespace WebAPI.Controllers
                 _context.Add(user);
                 _context.SaveChanges();
 
-                return Ok(userAuthDto);
+                return Ok();
 
             }
             catch (Exception ex)
@@ -53,7 +52,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult Login(AuthDto userAuthDto)
+        public ActionResult Login(AuthApiDto userAuthDto)
         {
             try
             {

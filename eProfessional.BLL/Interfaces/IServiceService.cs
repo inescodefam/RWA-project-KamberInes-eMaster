@@ -1,0 +1,21 @@
+﻿using eProfessional.BLL.DTOs;
+
+namespace eProfessional.BLL.Interfaces
+{
+    public interface IServiceService
+    {
+        public List<ServiceDto> SearchServices(string searchTerm, int count, int start);
+
+        public List<ServiceDto> GetServicesCount(int count, int start = 0);
+
+        public List<ServiceDto> GetServiceByServiceType(ServiceTypeDto type, int count, int start = 0);
+
+        public ServiceDto CreateService(ServiceDto serviceDto);
+
+        public void UpdateService(int id, ServiceDto serviceDto);
+
+        public bool DeleteService(int id);
+
+        public ServiceDto GetServiceByServiceId(int? id);
+    }
+}

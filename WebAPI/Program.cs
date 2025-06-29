@@ -1,13 +1,13 @@
+using eProfessional.BLL.Interfaces;
+using eProfessional.BLL.Services;
+using eProfessional.DAL.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Shared.BL.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WebAPI.Context;
-using WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -72,6 +72,7 @@ builder.Services.AddDbContext<EProfessionalContext>(options =>
 {
     options.UseSqlServer("name=ConnectionStrings:ConnStr");
 });
+
 builder.Services.AddScoped<LogService>();
 builder.Services.AddScoped<ServicesService>();
 builder.Services.AddScoped<ICityService, CityService>();

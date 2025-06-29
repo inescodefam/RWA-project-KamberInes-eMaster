@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Shared.BL.Models;
-using WebAPI.Context;
+﻿using eProfessional.DAL.Context;
+using Microsoft.AspNetCore.Mvc;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -17,7 +16,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("get/{n}")]
-        public ActionResult<IEnumerable<Log>> GetLogs(int n)
+        public ActionResult<IEnumerable<LogApiDto>> GetLogs(int n)
         {
             try
             {
@@ -41,7 +40,7 @@ namespace WebAPI.Controllers
         [HttpGet("count")]
         public IActionResult GetLogCount()
         {
-            var count = _context.Logs.CountAsync();
+            var count = _context.Logs.Count();
             return Ok(count);
         }
     }

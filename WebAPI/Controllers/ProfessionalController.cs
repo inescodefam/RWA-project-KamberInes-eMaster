@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using eProfessional.BLL.Interfaces;
+using eProfessional.BLL.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
-using WebAPI.Services;
+using WebAPI.DTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProfessionalDto>> GetAllProfessionals(int count, int start = 0)
+        public ActionResult<IEnumerable<ProfessionalApiDto>> GetAllProfessionals(int count, int start = 0)
         {
             if (count <= 0 || start < 0)
                 return BadRequest("Invalid paging parameters");
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public ActionResult<ProfessionalDto> GetSingleProfessionalById(int id)
+        public ActionResult<ProfessionalApiDto> GetSingleProfessionalById(int id)
         {
             try
             {
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
 
         // get professional by name name in user
         [HttpGet("search")]
-        public ActionResult<IEnumerable<ProfessionalDto>> Search(
+        public ActionResult<IEnumerable<ProfessionalApiDto>> Search(
             [FromQuery] string? name,
             [FromQuery] string? city,
             [FromQuery] int count,
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProfessionalDto professionalDto)
+        public IActionResult Post([FromBody] ProfessionalApiDto professionalDto)
         {
             if (!ModelState.IsValid)
             {
@@ -94,6 +94,7 @@ namespace WebAPI.Controllers
 
             try
             {
+
                 var response = _professionalService.CreateProfessional(professionalDto);
                 return Ok();
             }

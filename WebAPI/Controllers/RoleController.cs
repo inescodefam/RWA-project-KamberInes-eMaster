@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using eProfessional.BLL.Interfaces;
+using eProfessional.DAL.Context;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
-using WebAPI.Context;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AssignRoleToUser(RoleDto roleDto)
+        public IActionResult AssignRoleToUser(RoleApiDto roleDto)
         {
             if (string.IsNullOrEmpty(roleDto.RoleName) || roleDto.UserId == null)
             {

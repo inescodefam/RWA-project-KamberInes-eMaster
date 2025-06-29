@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
 
 namespace WebAPI.Controllers
 {
