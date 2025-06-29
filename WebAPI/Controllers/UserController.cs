@@ -1,7 +1,9 @@
-﻿using eProfessional.BLL.DTOs;
+﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
@@ -11,10 +13,12 @@ namespace WebAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         // GET: api/<UserController>
@@ -43,6 +47,7 @@ namespace WebAPI.Controllers
 
                 var userDto = _userService.GetUserById(id);
                 return Ok(userDto);
+
             }
             catch
             {
@@ -68,7 +73,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult Put([FromBody] UserDto userDto)
+        public IActionResult Put([FromBody] UserApiDto userDto)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +82,8 @@ namespace WebAPI.Controllers
 
             try
             {
-                var updated = _userService.UpdateUser(userDto);
+                var user = _mapper.Map<UserDto>(userDto);
+                var updated = _userService.UpdateUser(user);
                 return updated
                     ? Ok("User updated successfully")
                     : NotFound("User not found");

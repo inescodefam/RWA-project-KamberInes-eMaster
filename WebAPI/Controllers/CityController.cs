@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using eProfessional.BLL.Interfaces;
-using eProfessional.DAL.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
@@ -14,7 +13,7 @@ namespace WebAPI.Controllers
     {
         private readonly ICityService _cityService;
 
-        public CityController(EProfessionalContext context, IMapper mapper, ICityService cityService)
+        public CityController(IMapper mapper, ICityService cityService)
         {
             _cityService = cityService;
         }
@@ -39,7 +38,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var result = _cityService.GetCities(searchTerm, count, start);
+                var result = _cityService.SearchCities(searchTerm, count, start);
 
                 return Ok(result);
             }
@@ -55,12 +54,6 @@ namespace WebAPI.Controllers
             if (city.Name == null)
             {
                 return BadRequest("City data is required.");
-            }
-
-            var cities = _cityService.GetAllCities();
-            if (cities.Any(c => c.Name.Equals(city.Name, StringComparison.OrdinalIgnoreCase)))
-            {
-                throw new InvalidOperationException($"City '{city.Name}' already exists.");
             }
 
             try

@@ -1,4 +1,6 @@
-﻿using eProfessional.BLL.Interfaces;
+﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
@@ -11,10 +13,13 @@ namespace WebAPI.Controllers
     {
 
         private readonly ICityProfessionalService _cityProfessionalService;
+        private readonly IMapper _mapper;
 
-        public CityProfessionalController(ICityProfessionalService cityProfessionalService)
+        public CityProfessionalController(ICityProfessionalService cityProfessionalService,
+            IMapper mapper)
         {
             _cityProfessionalService = cityProfessionalService;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -23,7 +28,9 @@ namespace WebAPI.Controllers
 
             try
             {
-                var result = _cityProfessionalService.AddCityProfessional(model);
+                var cityProfessionalDto = _mapper.Map<CityProfessionalDto>(model);
+                var result = _cityProfessionalService.AddCityProfessional(cityProfessionalDto);
+
                 if (result == null)
                 {
                     return BadRequest("CityProfessional could not be created.");
@@ -50,20 +57,6 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("professional/{professionalId}")]
-        public IActionResult GetCitiesForProfessional(int professionalId)
-        {
-            try
-            {
-                var result = _cityProfessionalService.GetCitiesByProfessionalId(professionalId);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpGet("city/{cityId}")]
         public IActionResult GetProfessionalsFromCity(int cityId)
         {
@@ -78,13 +71,27 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("professional/{professionalId}")]
+        public IActionResult GetCitiesByProfessionalId(int professionalId)
+        {
+            try
+            {
+                var result = _cityProfessionalService.GetCitiesByProfessionalId(professionalId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("{id}")]
         public IActionResult Update(int id, [FromBody] CityProfessionalApiDto model)
         {
             try
             {
-
-                var result = _cityProfessionalService.UpdateCityProfessional(id, model);
+                var cityProfessionalDto = _mapper.Map<CityProfessionalDto>(model);
+                var result = _cityProfessionalService.UpdateCityProfessional(id, cityProfessionalDto);
                 if (result == null)
                 {
                     return NotFound("CityProfessional not found.");

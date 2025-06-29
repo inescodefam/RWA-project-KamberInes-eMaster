@@ -1,4 +1,5 @@
-﻿using eProfessional.DAL.Context;
+﻿
+using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
 
@@ -8,11 +9,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class LogController : ControllerBase
     {
-        private readonly EProfessionalContext _context;
 
-        public LogController(EProfessionalContext context)
+        private readonly ILogService _logService;
+        public LogController(ILogService logService)
         {
-            _context = context;
+            _logService = logService;
         }
 
         [HttpGet("get/{n}")]
@@ -20,10 +21,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var logs = _context.Logs
-                    .OrderByDescending(log => log.LogTimeStamp)
-                    .Take(n)
-                    .ToList();
+                var logs = _logService.GetLogs(n);
                 if (logs == null || !logs.Any())
                 {
                     return NotFound("No logs found.");
@@ -40,7 +38,7 @@ namespace WebAPI.Controllers
         [HttpGet("count")]
         public IActionResult GetLogCount()
         {
-            var count = _context.Logs.Count();
+            var count = _logService.GetLogCount();
             return Ok(count);
         }
     }

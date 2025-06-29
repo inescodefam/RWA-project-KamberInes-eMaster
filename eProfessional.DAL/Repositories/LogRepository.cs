@@ -26,5 +26,11 @@ namespace eProfessional.DAL.Repositories
         {
             return _context.Logs.Skip(start * count).Take(count).ToList();
         }
+
+        public int GetCount()
+        {
+            return _context.Logs.Count();
+
+        }
     }
 }

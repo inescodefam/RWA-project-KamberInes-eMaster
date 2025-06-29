@@ -26,7 +26,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var services = _servicesService.GetServices(count, start);
+                var services = _servicesService.GetServicesCount(count, start);
                 return Ok(services);
             }
             catch (Exception)
@@ -35,11 +35,11 @@ namespace WebAPI.Controllers
             }
         }
         [HttpGet("type/{type}")]
-        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type)
+        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type, int count)
         {
             try
             {
-                return Ok(_servicesService.GetServiceByServiceType(type));
+                return Ok(_servicesService.GetServiceByServiceType(type, count));
             }
             catch (Exception)
             {

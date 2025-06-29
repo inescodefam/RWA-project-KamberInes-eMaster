@@ -35,5 +35,14 @@ namespace eProfessional.DAL.Repositories
             }
             return query.Skip(start).Take(count).ToList();
         }
+
+        public List<City> GetCitiesByIds(List<int> ids)
+        {
+            if (ids == null || !ids.Any())
+            {
+                return new List<City>();
+            }
+            return _context.Cities.Where(c => ids.Contains(c.Idcity)).ToList();
+        }
     }
 }

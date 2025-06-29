@@ -39,7 +39,7 @@ namespace eProfessional.BLL.Services
                 _cityRepository.Add(city);
                 _cityRepository.Save();
             }
-            catch (Exception EX)
+            catch (Exception)
             {
 
                 throw new InvalidOperationException($"City {cityName} can not be added");

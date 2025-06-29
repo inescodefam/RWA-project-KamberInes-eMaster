@@ -10,6 +10,8 @@ namespace eProfessional.BLL.Services
     {
         private readonly IMapper _mapper;
         private readonly ICityProfessionalRepository _cityProfessionalRepository;
+        private readonly ICityRepository _cityRepository;
+        private readonly IProfessionalRepository _professionalRepository;
 
         public CityProfessionalService(
             IMapper mapper,
@@ -45,7 +47,7 @@ namespace eProfessional.BLL.Services
             return _mapper.Map<IEnumerable<CityProfessionalDto>>(cityProfessionals);
         }
 
-        public List<CityProfessionalDto> GetCitiesByProfessionalId(int professionalId)
+        public List<CityDto> GetCitiesByProfessionalId(int professionalId)
         {
             var exists = ProfessionalExists(professionalId);
             if (!exists)
@@ -57,15 +59,23 @@ namespace eProfessional.BLL.Services
 
                 var cityProfessionals = _cityProfessionalRepository.GetCitiesByProfessionalId(professionalId);
 
-                return _mapper.Map<List<CityProfessionalDto>>(cityProfessionals);
+                if (cityProfessionals == null || !cityProfessionals.Any())
+                {
+                    return new List<CityDto>();
+                }
+                var cityIds = cityProfessionals.Select(cp => cp.CityId).Distinct().ToList();
+
+                var cities = _cityRepository.GetCitiesByIds(cityIds);
+
+                return _mapper.Map<List<CityDto>>(cities);
             }
             catch (Exception)
             {
-                return new List<CityProfessionalDto>();
+                return new List<CityDto>();
             }
         }
 
-        public List<CityProfessionalDto> GetProfessionalsByCity(int cityId)
+        public List<ProfessionalDto> GetProfessionalsByCity(int cityId)
         {
             var exists = CityExists(cityId);
             if (!exists)
@@ -76,12 +86,18 @@ namespace eProfessional.BLL.Services
             try
             {
                 var cityProfessionals = _cityProfessionalRepository.GetProfessionalsByCity(cityId);
+                var professionalIds = cityProfessionals.Select(cp => cp.ProfessionalId).Distinct().ToList();
+                if (professionalIds == null || !professionalIds.Any())
+                {
+                    return new List<ProfessionalDto>();
+                }
+                var professionals = _professionalRepository.GetProfessionalsByIds(professionalIds);
 
-                return _mapper.Map<List<CityProfessionalDto>>(cityProfessionals);
+                return _mapper.Map<List<ProfessionalDto>>(professionals);
             }
             catch (Exception)
             {
-                return new List<CityProfessionalDto>();
+                return new List<ProfessionalDto>();
             }
 
         }

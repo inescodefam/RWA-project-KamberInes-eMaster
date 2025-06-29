@@ -29,7 +29,7 @@ namespace eProfessional.BLL.Services
             {
                 return _mapper.Map<List<ServiceDto>>(services);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new List<ServiceDto>();
             }
@@ -49,12 +49,11 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public List<ServiceDto> GetServiceByServiceType(ServiceTypeDto type, int count, int start = 0)
+        public List<ServiceDto> GetServiceByServiceType(string type, int count, int start = 0)
         {
             try
             {
-                var serviceType = _mapper.Map<ServiceType>(type);
-                var services = _serviceRepository.GetServiceByServiceType(serviceType, count, start);
+                var services = _serviceRepository.GetServiceByServiceType(type, count, start);
 
                 var servicesDtos = _mapper.Map<List<ServiceDto>>(services);
                 return servicesDtos;
@@ -124,7 +123,7 @@ namespace eProfessional.BLL.Services
             return true;
         }
 
-        public ServiceDto GetServiceByServiceId(int? id)
+        public ServiceDto GetServiceByServiceId(int id)
         {
 
             if (id == null)

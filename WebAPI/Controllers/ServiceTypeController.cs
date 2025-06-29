@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
-using eProfessional.DAL.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
+using WebAPI.DTOs;
 namespace WebAPI.Controllers
 {
     [Route("api/servicetype")]
@@ -11,19 +11,17 @@ namespace WebAPI.Controllers
     [Authorize]
     public class ServiceTypeController : Controller
     {
-        private readonly EProfessionalContext _context;
         private readonly IMapper _mapper;
         private readonly IServiceType _serviceTypeService;
 
-        public ServiceTypeController(EProfessionalContext context, IMapper mapper, IServiceType serviceType)
+        public ServiceTypeController(IMapper mapper, IServiceType serviceType)
         {
-            _context = context;
             _mapper = mapper;
             _serviceTypeService = serviceType;
         }
 
         [HttpGet]
-        public ActionResult<List<ServiceTypeDto>> Get(int count, int start = 0)
+        public ActionResult<List<ServiceTypeApiDto>> Get(int count, int start = 0)
         {
             try
             {
@@ -37,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] ServiceTypeDto dto)
+        public IActionResult Post([FromBody] ServiceTypeApiDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -46,8 +44,8 @@ namespace WebAPI.Controllers
 
             try
             {
-
-                var entity = _serviceTypeService.CreateServiceType(dto);
+                var serviceType = _mapper.Map<ServiceTypeDto>(dto);
+                var entity = _serviceTypeService.CreateServiceType(serviceType);
 
                 return CreatedAtAction(nameof(Get), new { id = entity.IdserviceType }, dto);
             }
@@ -84,9 +82,9 @@ namespace WebAPI.Controllers
             try
             {
                 var result = _serviceTypeService.DeleteServiceType(id);
-                if (result)
+                if (!result)
                 {
-                    return NoContent();
+                    return NotFound();
                 }
                 return NotFound($"Service type with ID {id} not found.");
             }

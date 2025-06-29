@@ -6,6 +6,7 @@ namespace eProfessional.DAL.Interfaces
     {
         public void CreateLog(string level, string message);
         public IEnumerable<Log> GetLogs(int count, int start);
+        public int GetCount();
 
     }
 }

@@ -8,6 +8,6 @@ namespace eProfessional.DAL.Interfaces
 
         public List<Service> GetServices(int count, int start = 0);
 
-        public List<Service> GetServiceByServiceType(ServiceType type, int count, int start = 0);
+        public List<Service> GetServiceByServiceType(string type, int count, int start = 0);
     }
 }

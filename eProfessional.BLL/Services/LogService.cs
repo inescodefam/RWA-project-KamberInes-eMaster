@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Interfaces;
 using eProfessional.DAL.Interfaces;
 
 namespace eProfessional.BLL.Services
 {
-    public class LogService
+    public class LogService : ILogService
     {
         private readonly ILogRepository _logRepository;
         private readonly IMapper _mapper;
@@ -24,6 +25,12 @@ namespace eProfessional.BLL.Services
         {
             var logs = _logRepository.GetLogs(count, start);
             return _mapper.Map<IEnumerable<LogDto>>(logs);
+        }
+
+        public int GetLogCount()
+        {
+            return _logRepository.GetCount();
+
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using eProfessional.BLL.Interfaces;
-using eProfessional.DAL.Context;
+﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
+using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
@@ -13,11 +14,13 @@ namespace WebAPI.Controllers
     {
 
         private readonly IRoleService _roleService;
+        private readonly IMapper _mapper;
 
-        public RoleController(IConfiguration configuration, EProfessionalContext context, IRoleService roleService)
+        public RoleController(IRoleService roleService, IMapper mapper)
         {
 
             _roleService = roleService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -33,13 +36,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult AssignRoleToUser(RoleApiDto roleDto)
+        public IActionResult AssignRoleToUser(RoleApiDto roleApiDto)
         {
-            if (string.IsNullOrEmpty(roleDto.RoleName) || roleDto.UserId == null)
+            if (string.IsNullOrEmpty(roleApiDto.RoleName) || roleApiDto.UserId == null)
             {
                 return BadRequest("Role name cannot be empty.");
             }
 
+            var roleDto = _mapper.Map<RoleDto>(roleApiDto);
             var response = _roleService.AssignRoleToUser(roleDto);
 
             if (!response)
@@ -57,7 +61,13 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("New role name cannot be empty.");
             }
-            var response = _roleService.UpdateRole(roleId, newRoleName);
+            RoleDto newRole = new RoleDto
+            {
+                Idrole = roleId,
+                RoleName = newRoleName
+            };
+
+            var response = _roleService.UpdateRole(newRole);
             if (!response)
             {
                 return NotFound("Role not found or could not be updated.");

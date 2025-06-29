@@ -8,7 +8,7 @@ namespace eProfessional.BLL.Interfaces
 
         public List<ServiceDto> GetServicesCount(int count, int start = 0);
 
-        public List<ServiceDto> GetServiceByServiceType(ServiceTypeDto type, int count, int start = 0);
+        public List<ServiceDto> GetServiceByServiceType(string type, int count, int start = 0);
 
         public ServiceDto CreateService(ServiceDto serviceDto);
 
@@ -16,6 +16,6 @@ namespace eProfessional.BLL.Interfaces
 
         public bool DeleteService(int id);
 
-        public ServiceDto GetServiceByServiceId(int? id);
+        public ServiceDto GetServiceByServiceId(int id);
     }
 }

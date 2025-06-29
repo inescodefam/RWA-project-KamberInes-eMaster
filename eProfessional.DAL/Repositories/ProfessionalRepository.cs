@@ -16,6 +16,13 @@ namespace eProfessional.DAL.Repositories
             return professionals;
         }
 
+        public List<Professional> GetProfessionalsByIds(List<int> ids)
+        {
+            return _context.Professionals
+                .Where(p => ids.Contains(p.IdProfessional))
+                .ToList();
+        }
+
         public List<Professional> SearchProfessionals(string? searchTerm, string? cityName, int count, int start = 0)
         {
             var query = _context.Professionals.AsQueryable();

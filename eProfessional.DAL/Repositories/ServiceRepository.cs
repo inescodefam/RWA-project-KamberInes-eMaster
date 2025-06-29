@@ -9,21 +9,33 @@ namespace eProfessional.DAL.Repositories
         public ServiceRepository(EProfessionalContext context) : base(context)
         { }
 
-        public List<Service> GetServiceByServiceType(ServiceType type, int count, int start = 0)
+        public List<Service> GetServiceByServiceType(string type, int count, int start = 0)
         {
-            var list = _dbSet
-                .Where(s => s.ServiceTypeId == type.IdserviceType)
-                .ToList();
-
-            if (list == null)
+            if (string.IsNullOrWhiteSpace(type))
             {
-                new List<Service>();
+                return new List<Service>();
             }
+            var typeEntity = _context.ServiceTypes
+                .FirstOrDefault(t => t.ServiceTypeName.Equals(type, StringComparison.OrdinalIgnoreCase));
 
-            return list
-                .Skip(start * count)
-                .Take(count)
+            if (typeEntity != null)
+            {
+                var list = _dbSet
+                .Where(s => s.ServiceTypeId == typeEntity.IdserviceType)
                 .ToList();
+
+                if (list == null)
+                {
+                    new List<Service>();
+                }
+
+                return list
+                    .Skip(start * count)
+                    .Take(count)
+                    .ToList();
+            }
+            return new List<Service>();
+
         }
 
         public List<Service> GetServices(int count, int start = 0)
