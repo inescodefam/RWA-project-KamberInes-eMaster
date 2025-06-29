@@ -12,17 +12,15 @@ namespace WebAPI.Services
         private readonly EProfessionalContext _context;
         private readonly IMapper _mapper;
         private readonly LogService _loggingService;
-        private readonly ICityProfessionalService _cityProfessionalService;
-        private readonly ICityService _cityService;
 
-        public ProfessionalService(EProfessionalContext context, IMapper mapper, LogService logService, ICityProfessionalService cityProfessionalService, ICityService cityService)
+        public ProfessionalService(EProfessionalContext context, IMapper mapper, LogService logService)
         {
             _context = context;
             _mapper = mapper;
             _loggingService = logService;
-            _cityProfessionalService = cityProfessionalService;
-            _cityService = cityService;
+
         }
+
         public List<ProfessionalDto> GetProfessionals(int count, int start = 0)
         {
             var professionals = _context.Professionals.Skip(start * count).Take(count).ToList();
@@ -33,21 +31,7 @@ namespace WebAPI.Services
                 return new List<ProfessionalDto>();
             }
 
-            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
-            var cities = _cityService.GetAllCities();
-
             var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
-
-            foreach (var professionalDto in professionalDtos)
-            {
-                professionalDto.Cities = citiesProfessional
-                    .Where(cp => cp.ProfessionalId == professionalDto.IdProfessional)
-                    .Select(cp => new CityDto
-                    {
-                        Idcity = cp.CityId,
-                        Name = cities.FirstOrDefault(c => c.Idcity == cp.CityId)?.Name
-                    }).ToList();
-            }
 
             _loggingService.Log($"Retrieved {professionalDtos.Count} professionals from the database.", "info");
 
@@ -65,15 +49,6 @@ namespace WebAPI.Services
             }
 
             var professionalDto = _mapper.Map<ProfessionalDto>(professional);
-            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
-            var cities = _cityService.GetAllCities();
-            professionalDto.Cities = citiesProfessional
-                .Where(cp => cp.ProfessionalId == professionalDto.IdProfessional)
-                .Select(cp => new CityDto
-                {
-                    Idcity = cp.CityId,
-                    Name = cities.FirstOrDefault(c => c.Idcity == cp.CityId)?.Name
-                }).ToList();
 
             _loggingService.Log($"Retrieved professional with ID {id} from the database.", "info");
             return professionalDto;
@@ -97,19 +72,6 @@ namespace WebAPI.Services
 
             var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
 
-            var citiesProfessional = _cityProfessionalService.GetCityProfessionals();
-            var cities = _cityService.GetAllCities();
-            foreach (var professionalDto in professionalDtos)
-            {
-                professionalDto.Cities = citiesProfessional
-                    .Where(cp => cp.ProfessionalId == professionalDto.IdProfessional)
-                    .Select(cp => new CityDto
-                    {
-                        Idcity = cp.CityId,
-                        Name = cities.FirstOrDefault(c => c.Idcity == cp.CityId)?.Name
-                    }).ToList();
-            }
-
             _loggingService.Log($"Retrieved {professionalDtos.Count} professionals for name '{name}' and city '{cityName}'.", "info");
 
             return professionalDtos;
@@ -122,22 +84,11 @@ namespace WebAPI.Services
                 throw new ArgumentException("Invalid User ID");
             }
 
-            var cities = _cityService.GetAllCities();
-
             var professional = new Professional
             {
                 UserId = professionalDto.UserId
             };
             _context.Professionals.Add(professional);
-            _context.SaveChanges();
-
-            _context.CityProfessionals.AddRange(
-               professionalDto.CityIds.Select(cityId => new CityProfessional
-               {
-                   ProfessionalId = professional.IdProfessional,
-                   CityId = cityId
-               })
-           );
             _context.SaveChanges();
 
             _loggingService.Log($"Professional with ID {professional.IdProfessional} added successfully.", "info");
@@ -148,32 +99,7 @@ namespace WebAPI.Services
         public bool UpdateProfessional(int id, ProfessionalDto professionalDto)
         {
             var professional = _context.Professionals.Find(id);
-            var citiIds = professionalDto.CityIds;
 
-            var citiesDtos = _cityService.GetAllCities();
-
-            List<CityDto?> cities = citiIds?.Select(cityId => citiesDtos.FirstOrDefault(c => c.Idcity == cityId)).ToList() ?? new List<CityDto?>();
-
-            if (cities != null && cities.Count > 0)
-            {
-                foreach (var city in cities)
-                {
-                    var cityProfessionalDto = new CityProfessionalDto
-                    {
-                        ProfessionalId = professional.IdProfessional,
-                        CityId = city.Idcity
-                    };
-
-                    var cityProfessional = _cityProfessionalService.AddCityProfessional(cityProfessionalDto);
-
-                    if (cityProfessional == null)
-                    {
-                        _loggingService.Log($"CityProfessional with Professional ID {professional.IdProfessional} and City ID {city.Idcity} can not be added.", "warning");
-                        return false;
-                    }
-
-                }
-            }
 
             if (professional == null)
             {

@@ -21,7 +21,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<UserDto> Register(UserAuthDto userAuthDto)
+        public ActionResult<UserDto> Register(AuthDto userAuthDto)
         {
             try
             {
@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("login")]
-        public ActionResult Login(UserAuthDto userAuthDto)
+        public ActionResult Login(AuthDto userAuthDto)
         {
             try
             {
