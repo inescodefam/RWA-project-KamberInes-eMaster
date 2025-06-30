@@ -33,7 +33,7 @@ namespace eProfessional.DAL.Repositories
             {
                 query = query.Where(c => c.Name.Contains(searchTerm));
             }
-            return query.Skip(start).Take(count).ToList();
+            return query.Skip(start).Take(count).ToList() ?? new List<City>();
         }
 
         public List<City> GetCitiesByIds(List<int> ids)
@@ -42,7 +42,8 @@ namespace eProfessional.DAL.Repositories
             {
                 return new List<City>();
             }
-            return _context.Cities.Where(c => ids.Contains(c.Idcity)).ToList();
+            return _context.Cities.Where(c => ids.Contains(c.Idcity)).ToList()
+                ?? new List<City>();
         }
     }
 }

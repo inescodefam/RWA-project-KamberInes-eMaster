@@ -10,11 +10,19 @@ namespace eProfessional.BLL.Services
     {
         private readonly IMapper _mapper;
         private readonly IServiceRepository _serviceRepository;
+        private readonly IProfessionalRepository _professionalRepository;
+        private readonly IServiceTypeRepository _serviceTypeRepository;
 
-        public ServicesService(IServiceRepository serviceRepository, IMapper mapper)
+        public ServicesService(
+            IServiceRepository serviceRepository,
+            IProfessionalRepository professionalRepository,
+            IServiceTypeRepository serviceType,
+            IMapper mapper)
         {
             _mapper = mapper;
             _serviceRepository = serviceRepository;
+            _professionalRepository = professionalRepository;
+            _serviceTypeRepository = serviceType;
         }
 
         public List<ServiceDto> SearchServices(string searchTerm, int count, int start)
@@ -70,6 +78,12 @@ namespace eProfessional.BLL.Services
             {
                 throw new ArgumentNullException(nameof(serviceDto), "Service cannot be null.");
             }
+            if (_professionalRepository.GetById(serviceDto.ProfessionalId) == null)
+                throw new InvalidOperationException("Professional doesn't exist.");
+
+            if (_serviceTypeRepository.GetById(serviceDto.ServiceTypeId) == null)
+                throw new InvalidOperationException("Service type doesn't exist");
+
             try
             {
                 Service service = _mapper.Map<Service>(serviceDto);

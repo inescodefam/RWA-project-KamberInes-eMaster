@@ -3,7 +3,6 @@ using eProfessional.BLL.Auth;
 using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
 using eProfessional.DAL.Interfaces;
-using eProfessional.DAL.Models;
 
 
 namespace eProfessional.BLL.Services
@@ -55,8 +54,7 @@ namespace eProfessional.BLL.Services
 
         public bool UpdateUser(UserDto userDto)
         {
-            User user = _mapper.Map<User>(userDto);
-            var userExists = _userRepository.GetById(user.Iduser);
+            var userExists = _userRepository.GetById(userDto.Iduser);
 
             if (userExists == null) return false;
 
@@ -64,17 +62,17 @@ namespace eProfessional.BLL.Services
             {
                 var b64salt = HashPwd.GetSalt();
                 var b64hash = HashPwd.GetHash(userDto.Password, b64salt);
-                user.PasswordHash = b64hash;
-                user.PasswordSalt = b64salt;
+                userExists.PasswordHash = b64hash;
+                userExists.PasswordSalt = b64salt;
             }
 
-            user.Username = userDto.Username ?? userExists.Username;
-            user.FirstName = userDto.FirstName ?? userExists.FirstName;
-            user.LastName = userDto.LastName ?? userExists.LastName;
-            user.Email = userDto.Email ?? userExists.Email;
-            user.Phone = userDto.Phone ?? userExists.Phone;
+            userExists.Username = userDto.Username ?? userExists.Username;
+            userExists.FirstName = userDto.FirstName ?? userExists.FirstName;
+            userExists.LastName = userDto.LastName ?? userExists.LastName;
+            userExists.Email = userDto.Email ?? userExists.Email;
+            userExists.Phone = userDto.Phone ?? userExists.Phone;
 
-            _mapper.Map(user, userExists);
+            _mapper.Map(userDto, userExists);
             _userRepository.Save();
             return true;
         }

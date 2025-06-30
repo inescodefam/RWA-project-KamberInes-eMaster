@@ -16,10 +16,14 @@ namespace eProfessional.BLL.Services
         {
             var existingUser = _authRepository.GetUserByEmail(userAuthDto.Email);
 
+            if (existingUser == null)
+                throw new InvalidOperationException("User not found");
+
             var b64hash = HashPwd.GetHash(userAuthDto.Password, existingUser.PasswordSalt);
 
-            if (existingUser == null || b64hash != existingUser.PasswordHash)
+            if (b64hash != existingUser.PasswordHash)
                 throw new InvalidOperationException("User not found");
+
 
             var roles = _authRepository.GetUserRole(existingUser.Iduser);
 

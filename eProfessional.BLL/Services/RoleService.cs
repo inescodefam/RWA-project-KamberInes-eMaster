@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
-using eProfessional.DAL.Context;
 using eProfessional.DAL.Interfaces;
 using eProfessional.DAL.Models;
 using Microsoft.AspNetCore.Http;
@@ -16,12 +15,19 @@ namespace eProfessional.BLL.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IRoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository;
 
-        public RoleService(EProfessionalContext context, IHttpContextAccessor httpContextAccessor, IMapper mapper, IRoleRepository roleRepository)
+        public RoleService(
+            IHttpContextAccessor httpContextAccessor,
+            IMapper mapper,
+            IRoleRepository roleRepository,
+            IUserRepository userRepository
+            )
         {
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
 
         public string GetCurrentUserRole()
@@ -50,6 +56,9 @@ namespace eProfessional.BLL.Services
 
         public bool AssignRoleToUser(RoleDto roleDto)
         {
+            var user = _userRepository.GetById(roleDto.UserId);
+            if (user == null) throw new InvalidOperationException("User does not exist");
+
             _roleRepository.AddUserRole(_mapper.Map<Role>(roleDto));
             return true;
         }
@@ -61,6 +70,10 @@ namespace eProfessional.BLL.Services
                 return false;
             }
             var role = _roleRepository.GetById(newRole.Idrole);
+            newRole.UserId = role.UserId;
+
+            if (role == null) throw new InvalidOperationException("Role does not exist!");
+
             _mapper.Map(newRole, role);
             _roleRepository.Save();
             return true;
@@ -71,7 +84,7 @@ namespace eProfessional.BLL.Services
             Role roletoDelete = _roleRepository.GetById(roleId);
             if (roletoDelete == null)
             {
-                return false;
+                throw new InvalidOperationException("Role does not exist!");
             }
 
             _roleRepository.Delete(roletoDelete);

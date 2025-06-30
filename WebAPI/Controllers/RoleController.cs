@@ -43,15 +43,18 @@ namespace WebAPI.Controllers
                 return BadRequest("Role name cannot be empty.");
             }
 
-            var roleDto = _mapper.Map<RoleDto>(roleApiDto);
-            var response = _roleService.AssignRoleToUser(roleDto);
-
-            if (!response)
+            try
             {
-                return BadRequest("Failed to assign role to user.");
+                var roleDto = _mapper.Map<RoleDto>(roleApiDto);
+                var response = _roleService.AssignRoleToUser(roleDto);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Failed to assign role to user. Error: {ex.Message}");
             }
 
-            return Ok();
         }
 
         [HttpPut("api/role/{roleId}")]

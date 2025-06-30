@@ -10,11 +10,11 @@ public partial class Role
     public int Idrole { get; set; }
 
     [Column("userId")]
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     [Column("roleName")]
     [StringLength(50)]
-    public string? RoleName { get; set; }
+    public string RoleName { get; set; }
 
     [ForeignKey("UserId")]
     [InverseProperty("Roles")]

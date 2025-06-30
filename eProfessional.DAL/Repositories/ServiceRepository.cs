@@ -15,27 +15,12 @@ namespace eProfessional.DAL.Repositories
             {
                 return new List<Service>();
             }
-            var typeEntity = _context.ServiceTypes
-                .FirstOrDefault(t => t.ServiceTypeName.Equals(type, StringComparison.OrdinalIgnoreCase));
-
-            if (typeEntity != null)
-            {
-                var list = _dbSet
-                .Where(s => s.ServiceTypeId == typeEntity.IdserviceType)
+            var services = _context.Services
+                .Where(s => s.ServiceType.ServiceTypeName.Contains(type))
                 .ToList();
 
-                if (list == null)
-                {
-                    new List<Service>();
-                }
 
-                return list
-                    .Skip(start * count)
-                    .Take(count)
-                    .ToList();
-            }
-            return new List<Service>();
-
+            return services.Skip(start).Take(count).ToList() ?? new List<Service>();
         }
 
         public List<Service> GetServices(int count, int start = 0)

@@ -89,8 +89,24 @@ namespace eProfessional.BLL.Services
             var user = _userRepository.GetById(professionalDto.UserId);
             if (user == null)
             {
-                _loggingRepository.CreateLog($"User with ID {professionalDto.UserId} not found for professional creation.", "warning");
-                throw new Exception($"User with ID {professionalDto.UserId} not found.");
+                UserDto newUserDto = MapUserFromProfessionalData(professionalDto);
+
+                User newUser = _mapper.Map<User>(newUserDto);
+                _userRepository.Add(newUser);
+
+                professionalDto.UserId = newUser.Iduser;
+
+                // i will create user instead of forcing user creatin first
+                //_loggingRepository.CreateLog($"User with username {professionalDto.UserName} not found for professional creation. Create user for professional.", "warning");
+                //throw new Exception($"User with ID {professionalDto.UserId} not found.");
+            }
+            else
+            {
+                UserDto userUpdated = MapUserFromProfessionalData(professionalDto);
+                _mapper.Map(userUpdated, user);
+                _userRepository.Save();
+                professionalDto.UserId = userUpdated.Iduser;
+
             }
 
             var professional = new Professional

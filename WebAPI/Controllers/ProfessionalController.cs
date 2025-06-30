@@ -98,7 +98,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProfessionalApiDataDto professionalApiDataDto)
+        public IActionResult Post([FromBody] CreateProfessionalApiDataDto professionalApiDataDto)
         {
             if (!ModelState.IsValid)
             {
@@ -108,6 +108,7 @@ namespace WebAPI.Controllers
             try
             {
                 var professionalDataDto = _mapper.Map<ProfessionalDataDto>(professionalApiDataDto);
+
                 var response = _professionalService.CreateProfessional(professionalDataDto);
                 if (!response)
                 {

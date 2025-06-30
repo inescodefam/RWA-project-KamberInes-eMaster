@@ -35,7 +35,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] ServiceTypeApiDto dto)
+        public IActionResult Post([FromBody] CreateServiceTypeApiDto dto)
         {
             if (dto == null || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
 
 
         [HttpPut]
-        public IActionResult Put([FromBody] ServiceTypeDto dto)
+        public IActionResult Put([FromBody] ServiceTypeApiDto dto)
         {
             if (dto == null || dto.IdserviceType <= 0 || string.IsNullOrWhiteSpace(dto.ServiceTypeName))
             {
@@ -65,7 +65,8 @@ namespace WebAPI.Controllers
             }
             try
             {
-                var updatedServiceType = _serviceTypeService.UpdateServiceType(dto);
+                ServiceTypeDto serviceDto = _mapper.Map<ServiceTypeDto>(dto);
+                var updatedServiceType = _serviceTypeService.UpdateServiceType(serviceDto);
                 return Ok(updatedServiceType);
             }
             catch (Exception)
