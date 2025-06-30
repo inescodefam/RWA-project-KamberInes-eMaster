@@ -10,5 +10,9 @@ namespace eProfessional.DAL.Interfaces
         bool CityExists(int cityId);
         List<CityProfessional> GetCitiesByProfessionalId(int professionalId);
         List<CityProfessional> GetProfessionalsByCity(int cityId);
+        List<CityProfessional> UpdateCitiesForProfessional(int id, List<City> cities);
+        List<CityProfessional> UpdateProfessionalsForCity(int id, List<Professional> professionals);
+        bool DeleteCitiesForProfessional(int id);
+        bool DeleteProfessionalsForCity(int id);
     }
 }

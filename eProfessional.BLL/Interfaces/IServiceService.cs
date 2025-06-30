@@ -12,7 +12,7 @@ namespace eProfessional.BLL.Interfaces
 
         public ServiceDto CreateService(ServiceDto serviceDto);
 
-        public void UpdateService(int id, ServiceDto serviceDto);
+        public void UpdateService(ServiceDto serviceDto);
 
         public bool DeleteService(int id);
 

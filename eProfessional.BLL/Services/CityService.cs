@@ -63,34 +63,28 @@ namespace eProfessional.BLL.Services
             return citiesDtos;
         }
 
-        public bool UpdateCity(int id, string name)
+        public bool UpdateCity(CityDto cityDto)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException("City name cannot be null or empty.", nameof(name));
-            }
-
-            var city = _cityRepository.GetById(id);
+            var city = _cityRepository.GetById(cityDto.Idcity);
             if (city == null)
             {
-                throw new InvalidOperationException($"City with id {id} does not exsist");
+                throw new InvalidOperationException($"City does not exsist");
             }
-            if (_cityRepository.GetIdByName(name) != -1 && _cityRepository.GetIdByName(name) != id)
+            if (_cityRepository.GetIdByName(cityDto.Name) != -1 && _cityRepository.GetIdByName(cityDto.Name) != cityDto.Idcity)
             {
-                throw new InvalidOperationException($"City with name {name} already exists");
+                throw new InvalidOperationException($"City with name {cityDto.Name} already exists");
             }
 
-            city.Name = name;
             try
             {
-                _cityRepository.Update(city);
+                _mapper.Map(cityDto, city);
                 _cityRepository.Save();
+                return true;
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException($"City {name} can not be updated", ex);
+                throw new InvalidOperationException($"City {cityDto.Name} can not be updated", ex);
             }
-            return true;
         }
 
         public bool DeleteCity(int id)

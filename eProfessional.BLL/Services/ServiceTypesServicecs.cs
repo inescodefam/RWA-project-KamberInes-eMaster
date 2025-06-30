@@ -63,8 +63,7 @@ namespace eProfessional.BLL.Services
             {
                 throw new KeyNotFoundException("Service type not found.");
             }
-            entity.ServiceTypeName = serviceTypeDto.ServiceTypeName;
-            _serviceTypeRepository.Update(entity);
+            _mapper.Map(serviceTypeDto, entity);
             _serviceTypeRepository.Save();
 
             entity = _serviceTypeRepository.GetById(serviceTypeDto.IdserviceType);

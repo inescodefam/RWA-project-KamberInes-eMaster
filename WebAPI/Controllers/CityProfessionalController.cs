@@ -9,6 +9,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/city-professional")]
     [ApiController]
+    [Authorize]
     public class CityProfessionalController : ControllerBase
     {
 
@@ -20,27 +21,6 @@ namespace WebAPI.Controllers
         {
             _cityProfessionalService = cityProfessionalService;
             _mapper = mapper;
-        }
-
-        [HttpPost]
-        public IActionResult Create([FromBody] CityProfessionalApiDto model)
-        {
-
-            try
-            {
-                var cityProfessionalDto = _mapper.Map<CityProfessionalDto>(model);
-                var result = _cityProfessionalService.AddCityProfessional(cityProfessionalDto);
-
-                if (result == null)
-                {
-                    return BadRequest("CityProfessional could not be created.");
-                }
-                return CreatedAtAction(nameof(Get), new { id = result.IdProfessionalCity }, result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
         }
 
         [HttpGet()]
@@ -85,18 +65,115 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] CityProfessionalApiDto model)
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateCityProfessionalApiDto model)
+        {
+
+            try
+            {
+                var cityProfessionalDto = _mapper.Map<CityProfessionalDto>(model);
+                var result = _cityProfessionalService.AddCityProfessional(cityProfessionalDto);
+
+                if (result == null)
+                {
+                    return BadRequest("CityProfessional could not be created.");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public IActionResult Update([FromBody] CreateCityProfessionalApiDto model)
         {
             try
             {
                 var cityProfessionalDto = _mapper.Map<CityProfessionalDto>(model);
-                var result = _cityProfessionalService.UpdateCityProfessional(id, cityProfessionalDto);
+                var result = _cityProfessionalService.UpdateCityProfessional(cityProfessionalDto);
                 if (result == null)
                 {
                     return NotFound("CityProfessional not found.");
                 }
                 return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("professional/{professionalId}")]
+        public IActionResult UpdateCitiesByProfessionalId(int professionalId, [FromBody] List<CreateCityApiDto> citiesDtos)
+        {
+            try
+            {
+                var cityDtos = _mapper.Map<List<CityDto>>(citiesDtos);
+                var result = _cityProfessionalService.UpdateCitiesByProfessionalId(professionalId, cityDtos);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No cities found for the given professional.");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("city/{cityId}")]
+        public IActionResult UpdateProfessionalsByCityId(int cityId, [FromBody] List<ProfessionalApiDto> professionalsDtos)
+        {
+            try
+            {
+                var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionalsDtos);
+                var result = _cityProfessionalService.UpdateProfessionalsByCityId(cityId, professionalDtos);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No professionals found for the given city.");
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("professional/{professionalId}")]
+        public IActionResult DeleteCitiesForProfessional(int id)
+        {
+            try
+            {
+                var result = _cityProfessionalService.DeleteCitiesForProfessional(id);
+                if (!result)
+                {
+                    return NotFound("Reference not found.");
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("city/{cityId}")]
+        public IActionResult DeletePRofessionalsForCities(int cityId)
+        {
+            try
+            {
+                var result = _cityProfessionalService.DeleteProfessionalsForCity(cityId);
+                if (!result)
+                {
+                    return NotFound("Reference not found.");
+                }
+                return NoContent();
             }
             catch (Exception ex)
             {

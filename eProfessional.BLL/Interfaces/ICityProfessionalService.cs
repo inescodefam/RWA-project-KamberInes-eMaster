@@ -10,7 +10,12 @@ namespace eProfessional.BLL.Interfaces
         public List<ProfessionalDto> GetProfessionalsByCity(int cityId);
 
         public CityProfessionalDto AddCityProfessional(CityProfessionalDto model);
-        public CityProfessionalDto UpdateCityProfessional(int id, CityProfessionalDto model);
+        public CityProfessionalDto UpdateCityProfessional(CityProfessionalDto model);
+
+        public List<CityProfessionalDto> UpdateCitiesByProfessionalId(int professionalId, List<CityDto> citiesDtos);
+        public List<CityProfessionalDto> UpdateProfessionalsByCityId(int cityId, List<ProfessionalDto> professionalsDtos);
         public bool DeleteCityProfessional(int idProfessionalCity);
+        public bool DeleteCitiesForProfessional(int professionalId);
+        public bool DeleteProfessionalsForCity(int cityId);
     }
 }

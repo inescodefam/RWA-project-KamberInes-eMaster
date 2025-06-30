@@ -11,68 +11,88 @@ namespace eProfessional.BLL.Services
         private readonly IMapper _mapper;
         private readonly IProfessionalRepository _professionalRepository;
         private readonly ILogRepository _loggingRepository;
+        private readonly IUserRepository _userRepository;
 
-        public ProfessionalService(IProfessionalRepository professionalRepository, IMapper mapper, ILogRepository loggingRepository)
+        public ProfessionalService(
+            IProfessionalRepository professionalRepository,
+            IMapper mapper,
+            ILogRepository loggingRepository,
+            IUserRepository userRepository
+            )
         {
             _mapper = mapper;
             _professionalRepository = professionalRepository;
             _loggingRepository = loggingRepository;
+            _userRepository = userRepository;
         }
 
-        public List<ProfessionalDto> GetProfessionals(int count, int start = 0)
+        public List<ProfessionalDataDto> GetProfessionals(int count, int start = 0)
         {
             var professionals = _professionalRepository.GetProfessionals(count, start).ToList();
+            var users = _userRepository.GetAll().ToList();
 
             if (!professionals.Any())
             {
                 _loggingRepository.CreateLog("No professionals found in the database.", "info");
-                return new List<ProfessionalDto>();
+                return new List<ProfessionalDataDto>();
             }
 
-            var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
+            List<ProfessionalDataDto> professionalDtos = MapUserProfessionalList(professionals, users);
 
             _loggingRepository.CreateLog($"Retrieved {professionalDtos.Count} professionals from the database.", "info");
 
             return professionalDtos;
         }
 
-
-        public ProfessionalDto GetSingleProfessional(int id)
+        public ProfessionalDataDto GetSingleProfessional(int id)
         {
             var professional = _professionalRepository.GetById(id);
+            var user = _userRepository.GetById(professional.UserId);
+
             if (professional == null)
             {
                 _loggingRepository.CreateLog($"Professional with ID {id} not found.", "warning");
                 throw new Exception($"Professional with ID {id} not found.");
             }
 
-            var professionalDto = _mapper.Map<ProfessionalDto>(professional);
+            var professionalDataDto = MapUserProfessional(professional, user);
 
             _loggingRepository.CreateLog($"Retrieved professional with ID {id} from the database.", "info");
-            return professionalDto;
+            return professionalDataDto;
         }
 
-        public List<ProfessionalDto> Search(string? name, string? cityName, int count, int start = 0)
+        public List<ProfessionalDataDto> Search(string? name, string? serviceType, int count, int start = 0)
         {
 
-            var professionals = _professionalRepository.SearchProfessionals(name, cityName, count, start);
+            var professionals = _professionalRepository.SearchProfessionals(name, serviceType, count, start);
 
             if (professionals == null || professionals.Count == 0)
             {
-                _loggingRepository.CreateLog($"No professionals found for name '{name}' and city '{cityName}'.", "info");
+                _loggingRepository.CreateLog($"No professionals found for name '{name}'.", "info");
 
-                return new List<ProfessionalDto>();
+                return new List<ProfessionalDataDto>();
             }
+            var users = _userRepository.GetAll().ToList();
 
-            var professionalDtos = _mapper.Map<List<ProfessionalDto>>(professionals);
+            List<ProfessionalDataDto> professionalDtos = MapUserProfessionalList(
+                professionals,
+               users
+            );
 
-            _loggingRepository.CreateLog($"Retrieved {professionalDtos.Count} professionals for name '{name}' and city '{cityName}'.", "info");
+            _loggingRepository.CreateLog($"Retrieved {professionalDtos.Count} professionals for name '{name}'.", "info");
 
             return professionalDtos;
         }
 
-        public bool CreateProfessional(ProfessionalDto professionalDto)
+        public bool CreateProfessional(ProfessionalDataDto professionalDto)
         {
+            var user = _userRepository.GetById(professionalDto.UserId);
+            if (user == null)
+            {
+                _loggingRepository.CreateLog($"User with ID {professionalDto.UserId} not found for professional creation.", "warning");
+                throw new Exception($"User with ID {professionalDto.UserId} not found.");
+            }
+
             var professional = new Professional
             {
                 UserId = professionalDto.UserId
@@ -86,20 +106,37 @@ namespace eProfessional.BLL.Services
             return true;
         }
 
-        public bool UpdateProfessional(int id, ProfessionalDto professionalDto)
+        public bool UpdateProfessional(ProfessionalDataDto professionalDataDto)
         {
-            var professional = _professionalRepository.GetById(id);
+            var professional = _professionalRepository.GetById(professionalDataDto.IdProfessional);
 
             if (professional == null)
             {
-                _loggingRepository.CreateLog($"Professional with ID {id} not found for update.", "warning");
+                _loggingRepository.CreateLog($"Professional with ID {professionalDataDto.IdProfessional} not found for update.", "warning");
                 return false;
             }
-            professional.UserId = professionalDto.UserId;
 
-            _professionalRepository.Update(professional);
+            var user = _userRepository.GetById(professionalDataDto.UserId);
+            if (user == null)
+            {
+                _loggingRepository.CreateLog($"User with ID {professionalDataDto.UserId} not found for professional update.", "warning");
+                throw new Exception($"User with ID {professionalDataDto.UserId} not found.");
+            }
+
+            var newUserDto = MapUserFromProfessionalData(professionalDataDto);
+            _mapper.Map(newUserDto, user);
+            _userRepository.Save();
+
+
+            ProfessionalDto professionalDto = new ProfessionalDto
+            {
+                IdProfessional = professionalDataDto.IdProfessional,
+                UserId = professionalDataDto.UserId
+            };
+            _mapper.Map(professionalDto, professional);
             _professionalRepository.Save();
-            _loggingRepository.CreateLog($"Professional with ID {id} updated successfully.", "info");
+
+            _loggingRepository.CreateLog($"Professional with ID {professionalDto.IdProfessional} updated successfully.", "info");
 
             return true;
         }
@@ -129,5 +166,73 @@ namespace eProfessional.BLL.Services
             }
         }
 
+
+        // --------------- private methods ---------------
+
+        private List<ProfessionalDataDto> MapUserProfessionalList(
+            List<Professional> professionals,
+            List<User> users
+            )
+        {
+            List<ProfessionalDataDto> professionalDtos = new List<ProfessionalDataDto>();
+
+            foreach (var professional in professionals)
+            {
+                var user = users.FirstOrDefault(u => u.Iduser == professional.UserId);
+                if (user != null)
+                {
+                    var professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
+                    professionalDto.UserName = user.Username;
+                    professionalDto.Email = user.Email;
+                    professionalDto.PhoneNumber = user.Phone ?? "";
+                    professionalDto.FirstName = user.FirstName ?? "";
+                    professionalDto.LastName = user.LastName ?? "";
+                    professionalDtos.Add(professionalDto);
+                }
+            }
+
+            return professionalDtos;
+        }
+
+
+        private ProfessionalDataDto MapUserProfessional(
+            Professional professional,
+            User user
+            )
+        {
+            ProfessionalDataDto professionalDto;
+
+            if (user == null)
+            {
+                _loggingRepository.CreateLog($"User with ID {professional.UserId} not found for professional ID {professional.IdProfessional}.", "warning");
+                throw new Exception($"User with ID {professional.UserId} not found.");
+            }
+
+            professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
+            professionalDto.UserName = user.Username;
+            professionalDto.Email = user.Email;
+            professionalDto.PhoneNumber = user.Phone ?? "";
+            professionalDto.FirstName = user.FirstName ?? "";
+            professionalDto.LastName = user.LastName ?? "";
+
+            return professionalDto;
+
+        }
+
+        private UserDto MapUserFromProfessionalData(
+            ProfessionalDataDto professionalDto
+            )
+        {
+            return new UserDto
+            {
+                Iduser = professionalDto.UserId,
+                Username = professionalDto.UserName,
+                Email = professionalDto.Email,
+                Phone = professionalDto.PhoneNumber,
+                FirstName = professionalDto.FirstName,
+                LastName = professionalDto.LastName
+            };
+
+        }
     }
 }

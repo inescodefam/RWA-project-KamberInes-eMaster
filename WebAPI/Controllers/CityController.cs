@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,10 +70,23 @@ namespace WebAPI.Controllers
 
         }
 
-        [HttpPut("{id}")]
-        public ActionResult UpdateCity(int id, string name)
+        [HttpPut]
+        public ActionResult UpdateCity(CityDto city)
         {
-            var response = _cityService.UpdateCity(id, name);
+            if (string.IsNullOrEmpty(city.Name))
+            {
+                return BadRequest("City name cannot be null or empty.");
+            }
+            try
+            {
+                var response = _cityService.UpdateCity(city);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
             return Ok("City updated successfuly!");
         }
 

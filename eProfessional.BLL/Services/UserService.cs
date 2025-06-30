@@ -72,9 +72,9 @@ namespace eProfessional.BLL.Services
             user.FirstName = userDto.FirstName ?? userExists.FirstName;
             user.LastName = userDto.LastName ?? userExists.LastName;
             user.Email = userDto.Email ?? userExists.Email;
-            user.Phone = userDto.PhoneNumber ?? userExists.Phone;
+            user.Phone = userDto.Phone ?? userExists.Phone;
 
-            _userRepository.Update(userExists);
+            _mapper.Map(user, userExists);
             _userRepository.Save();
             return true;
         }

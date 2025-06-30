@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using eProfessional.BLL.DTOs;
 using eProfessional.BLL.Interfaces;
-using eProfessional.BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
@@ -13,11 +12,11 @@ namespace WebAPI.Controllers
     [ApiController]
     public class ProfessionalController : ControllerBase
     {
-        private readonly LogService _loggingService;
+        private readonly ILogService _loggingService;
         private readonly IMapper _mapper;
         private readonly IProfessionalService _professionalService;
         public ProfessionalController(
-            LogService logService,
+            ILogService logService,
             IProfessionalService professionalService,
             IMapper mapper)
         {
@@ -27,7 +26,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProfessionalApiDto>> GetAllProfessionals(int count, int start = 0)
+        public ActionResult<IEnumerable<ProfessionalApiDataDto>> GetAllProfessionals(int count, int start = 0)
         {
             if (count <= 0 || start < 0)
                 return BadRequest("Invalid paging parameters");
@@ -40,6 +39,7 @@ namespace WebAPI.Controllers
                     _loggingService.CreateLog("No professionals found in the database.", "info");
                     return NoContent();
                 }
+                _mapper.Map<IEnumerable<ProfessionalApiDataDto>>(professionals);
 
                 _loggingService.CreateLog($"Retrieved {professionals.Count} professionals from the database.", "info");
                 return Ok(professionals);
@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
 
         // GET api/<ProfessionalsController>/5
         [HttpGet("{id}")]
-        public ActionResult<ProfessionalApiDto> GetSingleProfessionalById(int id)
+        public ActionResult<ProfessionalApiDataDto> GetSingleProfessionalById(int id)
         {
             try
             {
@@ -63,23 +63,23 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
                 _loggingService.CreateLog($"Error retrieving professional with ID {id}: {ex.Message}", "error");
+                return StatusCode(500, ex.Message);
             }
         }
 
         // get professional by name name in user
         [HttpGet("search")]
-        public ActionResult<IEnumerable<ProfessionalApiDto>> Search(
+        public ActionResult<IEnumerable<ProfessionalApiDataDto>> Search(
             [FromQuery] string? name,
-            [FromQuery] string? city,
+            [FromQuery] string? serviceType,
             [FromQuery] int count,
             [FromQuery] int start = 0
             )
         {
             try
             {
-                var professionalDtos = _professionalService.Search(name, city, count, start);
+                var professionalDtos = _professionalService.Search(name, serviceType, count, start);
                 if (professionalDtos == null || !professionalDtos.Any())
                 {
                     _loggingService.CreateLog("No professionals found matching the search criteria.", "info");
@@ -98,7 +98,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProfessionalApiDto professionalApiDto)
+        public IActionResult Post([FromBody] ProfessionalApiDataDto professionalApiDataDto)
         {
             if (!ModelState.IsValid)
             {
@@ -107,8 +107,8 @@ namespace WebAPI.Controllers
 
             try
             {
-                var professionalDto = _mapper.Map<ProfessionalDto>(professionalApiDto);
-                var response = _professionalService.CreateProfessional(professionalDto);
+                var professionalDataDto = _mapper.Map<ProfessionalDataDto>(professionalApiDataDto);
+                var response = _professionalService.CreateProfessional(professionalDataDto);
                 if (!response)
                 {
                     _loggingService.CreateLog("Failed to create professional.", "error");
@@ -125,8 +125,8 @@ namespace WebAPI.Controllers
         }
 
         // PUT api/<ProfessionalsController>/5
-        [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] ProfessionalApiDto professionalApiDto)
+        [HttpPut]
+        public IActionResult Put([FromBody] ProfessionalApiDataDto professionalApiDto)
         {
             if (!ModelState.IsValid)
             {
@@ -135,20 +135,20 @@ namespace WebAPI.Controllers
 
             try
             {
-                var professionalDto = _mapper.Map<ProfessionalDto>(professionalApiDto);
-                var response = _professionalService.UpdateProfessional(id, professionalDto);
+                var professionalDto = _mapper.Map<ProfessionalDataDto>(professionalApiDto);
+                var response = _professionalService.UpdateProfessional(professionalDto);
                 if (!response)
                 {
-                    _loggingService.CreateLog($"Failed to update professional with ID {id}.", "error");
+                    _loggingService.CreateLog($"Failed to update professional with ID {professionalApiDto.IdProfessional}.", "error");
                     return NotFound();
                 }
 
-                _loggingService.CreateLog($"Professional with ID {id} updated successfully.", "info");
+                _loggingService.CreateLog($"Professional with ID {professionalApiDto.IdProfessional} updated successfully.", "info");
                 return Ok("Professional updated successfully");
             }
             catch (Exception ex)
             {
-                _loggingService.CreateLog($"Error updating professional with ID {id}: {ex.Message}", "error");
+                _loggingService.CreateLog($"Error updating professional with ID {professionalApiDto.IdProfessional}: {ex.Message}", "error");
                 return StatusCode(500, ex.Message);
             }
         }

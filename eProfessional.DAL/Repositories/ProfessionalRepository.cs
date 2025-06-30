@@ -23,15 +23,21 @@ namespace eProfessional.DAL.Repositories
                 .ToList();
         }
 
-        public List<Professional> SearchProfessionals(string? searchTerm, string? cityName, int count, int start = 0)
+        public List<Professional> SearchProfessionals(string? searchTerm, string? serviceType, int count, int start = 0)
         {
             var query = _context.Professionals.AsQueryable();
+
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 query = query.Where(p => p.User.FirstName == searchTerm || p.User.LastName == searchTerm);
             }
 
-            var professionals = query.Skip(start * count).Take(count).ToList();
+            if (!string.IsNullOrEmpty(serviceType))
+            {
+                query = query.Where(p => p.Services.Any(s => s.ServiceType.ServiceTypeName == serviceType));
+            }
+
+            var professionals = query.Skip(start * count).Take(count).Distinct().ToList();
 
             return professionals ?? new List<Professional>();
         }

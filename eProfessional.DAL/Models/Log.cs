@@ -10,9 +10,7 @@ public partial class Log
 
     public DateTime? LogTimeStamp { get; set; }
 
-    [StringLength(200)]
     public string? LogMessage { get; set; }
 
-    [StringLength(50)]
     public string? LogLevel { get; set; }
 }

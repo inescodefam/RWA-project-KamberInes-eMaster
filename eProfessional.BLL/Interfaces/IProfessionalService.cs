@@ -4,11 +4,11 @@ namespace eProfessional.BLL.Interfaces
 {
     public interface IProfessionalService
     {
-        List<ProfessionalDto> GetProfessionals(int count, int start = 0);
-        ProfessionalDto GetSingleProfessional(int id);
-        List<ProfessionalDto> Search(string? Name, string? cityName, int count, int start = 0);
-        bool CreateProfessional(ProfessionalDto professionalDto);
-        bool UpdateProfessional(int id, ProfessionalDto professionalDto);
+        List<ProfessionalDataDto> GetProfessionals(int count, int start = 0);
+        ProfessionalDataDto GetSingleProfessional(int id);
+        List<ProfessionalDataDto> Search(string? Name, string? serviceType, int count, int start = 0);
+        bool CreateProfessional(ProfessionalDataDto professionalDto);
+        bool UpdateProfessional(ProfessionalDataDto professionalDto);
         bool DeleteProfessional(int id);
     }
 }

@@ -42,5 +42,99 @@ namespace eProfessional.DAL.Repositories
                 .Where(cp => cp.CityId == cityId)
                 .ToList();
         }
+
+        public List<CityProfessional> UpdateCitiesForProfessional(int id, List<City> cities)
+        {
+            var cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.ProfessionalId == id)
+                .ToList();
+
+            foreach (var cityProfessional in cityProfessionals)
+            {
+                _context.CityProfessionals.Remove(cityProfessional);
+            }
+
+            foreach (var city in cities)
+            {
+                var newCityProfessional = new CityProfessional
+                {
+                    ProfessionalId = id,
+                    CityId = city.Idcity
+                };
+                _context.CityProfessionals.Add(newCityProfessional);
+            }
+            _context.SaveChanges();
+
+
+            cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.ProfessionalId == id)
+                .ToList();
+
+            return cityProfessionals;
+        }
+
+
+        public List<CityProfessional> UpdateProfessionalsForCity(int id, List<Professional> professionals)
+        {
+            var cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.CityId == id)
+                .ToList();
+            foreach (var cityProfessional in cityProfessionals)
+            {
+                _context.CityProfessionals.Remove(cityProfessional);
+            }
+            foreach (var professional in professionals)
+            {
+                var newCityProfessional = new CityProfessional
+                {
+                    CityId = id,
+                    ProfessionalId = professional.IdProfessional
+                };
+                _context.CityProfessionals.Add(newCityProfessional);
+            }
+            _context.SaveChanges();
+            cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.CityId == id)
+                .ToList();
+
+            return cityProfessionals;
+
+        }
+
+        public bool DeleteCitiesForProfessional(int id)
+        {
+            var cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.ProfessionalId == id)
+                .ToList();
+            if (!cityProfessionals.Any())
+            {
+                return false;
+            }
+            foreach (var cityProfessional in cityProfessionals)
+            {
+                _context.CityProfessionals.Remove(cityProfessional);
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
+
+        public bool DeleteProfessionalsForCity(int id)
+        {
+            var cityProfessionals = _context.CityProfessionals
+                .Where(cp => cp.CityId == id)
+                .ToList();
+            if (!cityProfessionals.Any())
+            {
+                return false;
+            }
+            foreach (var cityProfessional in cityProfessionals)
+            {
+                _context.CityProfessionals.Remove(cityProfessional);
+            }
+            _context.SaveChanges();
+            return true;
+        }
+
     }
 }

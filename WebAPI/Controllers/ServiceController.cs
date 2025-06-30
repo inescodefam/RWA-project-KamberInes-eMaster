@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using eProfessional.BLL.DTOs;
-using eProfessional.BLL.Services;
+using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
@@ -12,10 +12,10 @@ namespace WebAPI.Controllers
     [Authorize]
     public class ServiceController : Controller
     {
-        private readonly ServicesService _servicesService;
+        private readonly IServiceService _servicesService;
         private readonly IMapper _mapper;
 
-        public ServiceController(ServicesService servicesService, IMapper mapper)
+        public ServiceController(IServiceService servicesService, IMapper mapper)
         {
             _servicesService = servicesService;
             _mapper = mapper;
@@ -34,6 +34,7 @@ namespace WebAPI.Controllers
                 return StatusCode(500, "An error occurred while retrieving the services.");
             }
         }
+
         [HttpGet("type/{type}")]
         public ActionResult<ServiceApiDto> GetServiceByServiceType(string type, int count)
         {
@@ -61,7 +62,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ServiceApiDto> CreateServiceFromDto(ServiceApiDto serviceDto)
+        public ActionResult<ServiceApiDto> CreateServiceFromDto(CreateServiceApiDto serviceDto)
         {
             try
             {
@@ -83,14 +84,15 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public ActionResult UpdateService(int id, ServiceApiDto serviceApiDto)
         {
-            if (id != serviceApiDto.IdService)
+            ServiceDto exists = _servicesService.GetServiceByServiceId(serviceApiDto.IdService);
+            if (exists == null)
             {
-                return BadRequest("Service ID mismatch.");
+                return BadRequest("Service does not exist.");
             }
             try
             {
                 var serviceDto = _mapper.Map<ServiceDto>(serviceApiDto);
-                _servicesService.UpdateService(id, serviceDto);
+                _servicesService.UpdateService(serviceDto);
                 return NoContent();
             }
             catch (Exception ex)

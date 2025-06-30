@@ -8,7 +8,7 @@ namespace eProfessional.BLL.Interfaces
         public CityDto CreateCity(string cityName);
 
         public List<CityDto> GetAllCities();
-        public bool UpdateCity(int id, string name);
+        public bool UpdateCity(CityDto cityDto);
         bool DeleteCity(int id);
     }
 }

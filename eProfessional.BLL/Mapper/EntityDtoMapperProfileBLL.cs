@@ -5,14 +5,16 @@ using eProfessional.DAL.Models;
 
 namespace WebAPI.DTOs
 {
-    public class EntityDtoMapperProfile : Profile
+    public class EntityDtoMapperProfileBLL : Profile
     {
-        public EntityDtoMapperProfile()
+        public EntityDtoMapperProfileBLL()
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
             CreateMap<Professional, ProfessionalDto>();
             CreateMap<ProfessionalDto, Professional>();
+            CreateMap<ProfessionalDataDto, Professional>();
+            CreateMap<Professional, ProfessionalDataDto>();
             CreateMap<Service, ServiceDto>();
             CreateMap<ServiceDto, Service>();
             CreateMap<Role, RoleDto>();
@@ -23,6 +25,8 @@ namespace WebAPI.DTOs
             CreateMap<ServiceTypeDto, ServiceType>();
             CreateMap<CityProfessional, CityProfessionalDto>();
             CreateMap<CityProfessionalDto, CityProfessional>();
+            CreateMap<Log, LogDto>();
+            CreateMap<LogDto, Log>();
         }
     }
 }

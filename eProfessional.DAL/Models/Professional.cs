@@ -10,7 +10,7 @@ public partial class Professional
     public int IdProfessional { get; set; }
 
     [Column("UserID")]
-    public int? UserId { get; set; }
+    public int UserId { get; set; }
 
     [Column("experienceYears")]
     public int? ExperienceYears { get; set; }

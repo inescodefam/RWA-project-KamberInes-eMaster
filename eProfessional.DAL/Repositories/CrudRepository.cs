@@ -17,7 +17,6 @@ namespace eProfessional.DAL.Repositories
         public T GetById(int id) => _dbSet.Find(id);
         public IEnumerable<T> GetAll() => _dbSet.ToList();
         public void Add(T entity) => _dbSet.Add(entity);
-        public void Update(T entity) => _context.Update(entity);
         public void Delete(T entity) => _dbSet.Remove(entity);
         public void Save() => _context.SaveChanges();
     }

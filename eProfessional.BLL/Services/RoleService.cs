@@ -60,8 +60,8 @@ namespace eProfessional.BLL.Services
             {
                 return false;
             }
-            var role = _mapper.Map<Role>(newRole);
-            _roleRepository.Update(role);
+            var role = _roleRepository.GetById(newRole.Idrole);
+            _mapper.Map(newRole, role);
             _roleRepository.Save();
             return true;
         }

@@ -10,11 +10,14 @@ using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using WebAPI.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(
+    typeof(Program),
+    typeof(EntityDtoMapperProfileBLL));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -103,8 +106,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
-
 
 var app = builder.Build();
 

@@ -85,7 +85,7 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public void UpdateService(int id, ServiceDto serviceDto)
+        public void UpdateService(ServiceDto serviceDto)
         {
             if (serviceDto == null)
             {
@@ -93,8 +93,12 @@ namespace eProfessional.BLL.Services
             }
             try
             {
-                Service service = _mapper.Map<Service>(serviceDto);
-                _serviceRepository.Update(service);
+                var existingService = _serviceRepository.GetById(serviceDto.IdService);
+                if (existingService == null)
+                    throw new Exception($"Service with ID {serviceDto.IdService} not found.");
+
+                _mapper.Map(serviceDto, existingService);
+
                 _serviceRepository.Save();
             }
             catch (Exception ex)
@@ -126,9 +130,9 @@ namespace eProfessional.BLL.Services
         public ServiceDto GetServiceByServiceId(int id)
         {
 
-            if (id == null)
+            if (id == 0)
             {
-                throw new ArgumentNullException(nameof(id), "Service id cannot be null.");
+                throw new ArgumentNullException(nameof(id), "Service id cannot be 0.");
             }
             try
             {
