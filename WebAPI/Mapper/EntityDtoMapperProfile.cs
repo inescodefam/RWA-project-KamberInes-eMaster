@@ -17,6 +17,8 @@ namespace WebAPI.DTOs
             CreateMap<CityProfessionalApiDto, CityProfessionalDto>();
             CreateMap<CityProfessionalDto, CityProfessionalApiDto>();
             CreateMap<CreateCityProfessionalApiDto, CityProfessionalDto>();
+            CreateMap<CityProfessionalDataDto, CityProfessionalDataApiDto>();
+            CreateMap<CityProfessionalDataApiDto, CityProfessionalDataDto>();
 
             CreateMap<LogApiDto, LogDto>();
             CreateMap<LogDto, LogApiDto>();

@@ -24,16 +24,34 @@ namespace eProfessional.DAL.Repositories
             return _context.Professionals.Any(p => p.IdProfessional == professionalId);
         }
 
+        public Professional ProfessionalExists(string name)
+        {
+            var professional = _context.Professionals
+                .Where(p => p.User.FirstName == name || p.User.Username == name)
+                .FirstOrDefault();
+            return professional;
+        }
+
         public bool CityExists(int cityId)
         {
             return _context.Cities.Any(c => c.Idcity == cityId);
         }
+
+        public City CityExists(string city) => _context.Cities.FirstOrDefault(c => c.Name == city);
 
         public List<CityProfessional> GetCitiesByProfessionalId(int professionalId)
         {
             return _context.CityProfessionals
                 .Where(cp => cp.ProfessionalId == professionalId)
                 .ToList();
+        }
+        public List<CityProfessional> GetAllCityProfessionals(int count, int start)
+        {
+            var query = _context.CityProfessionals
+                .Skip(start)
+                .Take(count)
+                .ToList();
+            return query;
         }
 
         public List<CityProfessional> GetProfessionalsByCity(int cityId)
@@ -43,7 +61,7 @@ namespace eProfessional.DAL.Repositories
                 .ToList();
         }
 
-        public List<CityProfessional> UpdateCitiesForProfessional(int id, List<City> cities)
+        public List<CityProfessional> UpdateCitiesForProfessional(int id, List<int> citiesIds)
         {
             var cityProfessionals = _context.CityProfessionals
                 .Where(cp => cp.ProfessionalId == id)
@@ -54,12 +72,17 @@ namespace eProfessional.DAL.Repositories
                 _context.CityProfessionals.Remove(cityProfessional);
             }
 
+            var cities = _context.Cities
+                .Where(c => citiesIds.Contains(c.Idcity))
+                .Select(c => c.Idcity)
+                .ToList();
+
             foreach (var city in cities)
             {
                 var newCityProfessional = new CityProfessional
                 {
                     ProfessionalId = id,
-                    CityId = city.Idcity
+                    CityId = city
                 };
                 _context.CityProfessionals.Add(newCityProfessional);
             }
@@ -74,15 +97,21 @@ namespace eProfessional.DAL.Repositories
         }
 
 
-        public List<CityProfessional> UpdateProfessionalsForCity(int id, List<Professional> professionals)
+        public List<CityProfessional> UpdateProfessionalsForCity(int id, List<int> professionalsIds)
         {
             var cityProfessionals = _context.CityProfessionals
                 .Where(cp => cp.CityId == id)
                 .ToList();
+
             foreach (var cityProfessional in cityProfessionals)
             {
                 _context.CityProfessionals.Remove(cityProfessional);
             }
+
+            var professionals = _context.Professionals
+                .Where(p => professionalsIds.Contains(p.IdProfessional))
+                .ToList();
+
             foreach (var professional in professionals)
             {
                 var newCityProfessional = new CityProfessional
@@ -92,6 +121,7 @@ namespace eProfessional.DAL.Repositories
                 };
                 _context.CityProfessionals.Add(newCityProfessional);
             }
+
             _context.SaveChanges();
             cityProfessionals = _context.CityProfessionals
                 .Where(cp => cp.CityId == id)

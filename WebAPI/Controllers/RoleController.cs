@@ -38,7 +38,7 @@ namespace WebAPI.Controllers
         [HttpPost]
         public IActionResult AssignRoleToUser(RoleApiDto roleApiDto)
         {
-            if (string.IsNullOrEmpty(roleApiDto.RoleName) || roleApiDto.UserId == null)
+            if (string.IsNullOrEmpty(roleApiDto.RoleName) || roleApiDto?.UserId == null)
             {
                 return BadRequest("Role name cannot be empty.");
             }

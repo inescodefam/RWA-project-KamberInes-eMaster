@@ -12,24 +12,28 @@ namespace eProfessional.BLL.Services
         private readonly ICityProfessionalRepository _cityProfessionalRepository;
         private readonly ICityRepository _cityRepository;
         private readonly IProfessionalRepository _professionalRepository;
+        private readonly IUserRepository _userRepository;
+
 
         public CityProfessionalService(
             IMapper mapper,
             ICityProfessionalRepository cityProfessionalRepository,
             ICityRepository cityRepository,
-            IProfessionalRepository professionalRepository
+            IProfessionalRepository professionalRepository,
+            IUserRepository userRepository
             )
         {
             _mapper = mapper;
             _cityProfessionalRepository = cityProfessionalRepository;
             _cityRepository = cityRepository;
             _professionalRepository = professionalRepository;
+            _userRepository = userRepository;
         }
 
         public CityProfessionalDto AddCityProfessional(CityProfessionalDto model)
         {
-            var professionalExists = ProfessionalExists(model.ProfessionalId);
-            var cityExists = CityExists(model.CityId);
+            var professionalExists = _cityProfessionalRepository.ProfessionalExists(model.ProfessionalId);
+            var cityExists = _cityProfessionalRepository.CityExists(model.CityId);
 
             if (!professionalExists || !cityExists)
                 throw new ArgumentException("Professional or City does not exist.");
@@ -46,23 +50,32 @@ namespace eProfessional.BLL.Services
             return model;
         }
 
-        public IEnumerable<CityProfessionalDto> GetCityProfessionals()
+        public List<CityProfessionalDataDto> GetCityProfessionals(int count, int start)
         {
-            var cityProfessionals = _cityProfessionalRepository.GetAll();
-            return _mapper.Map<IEnumerable<CityProfessionalDto>>(cityProfessionals);
+            List<CityProfessional> cityProfessionals = _cityProfessionalRepository.GetAllCityProfessionals(count, start);
+            List<CityProfessionalDataDto> cityProfessionalDto = new List<CityProfessionalDataDto>();
+
+            if (cityProfessionals.Count() == 0)
+            {
+                return cityProfessionalDto;
+            }
+            cityProfessionalDto = MapToCityProfessionalDataDto(cityProfessionals);
+
+            return cityProfessionalDto;
         }
 
-        public List<CityDto> GetCitiesByProfessionalId(int professionalId)
+
+        public List<CityDto> GetCitiesByProfessional(string professionalName)
         {
-            var exists = ProfessionalExists(professionalId);
-            if (!exists)
+            var exists = _cityProfessionalRepository.ProfessionalExists(professionalName);
+            if (exists == null)
             {
                 throw new ArgumentException("Professional does not exist.");
             }
             try
             {
 
-                var cityProfessionals = _cityProfessionalRepository.GetCitiesByProfessionalId(professionalId);
+                var cityProfessionals = _cityProfessionalRepository.GetCitiesByProfessionalId(exists.IdProfessional);
 
                 if (cityProfessionals == null || !cityProfessionals.Any())
                 {
@@ -80,41 +93,43 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public List<ProfessionalDto> GetProfessionalsByCity(int cityId)
+        public List<ProfessionalDataDto> GetProfessionalsByCity(string city)
         {
-            var exists = CityExists(cityId);
-            if (!exists)
+            var exists = _cityProfessionalRepository.CityExists(city);
+            if (exists == null)
             {
                 throw new ArgumentException("City does not exist.");
             }
 
             try
             {
-                var cityProfessionals = _cityProfessionalRepository.GetProfessionalsByCity(cityId);
+                var cityProfessionals = _cityProfessionalRepository.GetProfessionalsByCity(exists.Idcity);
+
                 var professionalIds = cityProfessionals.Select(cp => cp.ProfessionalId).Distinct().ToList();
+
                 if (professionalIds == null || !professionalIds.Any())
                 {
-                    return new List<ProfessionalDto>();
+                    return new List<ProfessionalDataDto>();
                 }
-                var professionals = _professionalRepository.GetProfessionalsByIds(professionalIds);
 
-                return _mapper.Map<List<ProfessionalDto>>(professionals);
+                var professionals = _professionalRepository.GetProfessionalsByIds(professionalIds);
+                List<ProfessionalDataDto> professionalData = MapUserDataToProfeassionals(professionals);
+
+                return professionalData;
             }
             catch (Exception)
             {
-                return new List<ProfessionalDto>();
+                return new List<ProfessionalDataDto>();
             }
 
         }
 
-        public CityProfessionalDto UpdateCityProfessional(CityProfessionalDto model)
+        public CityProfessionalDataDto UpdateCityProfessional(CityProfessionalDto model)
         {
-            var existsId = ExistCityProfessionalId(model.IdProfessionalCity);
-            if (!existsId)
+            if (model == null || model.IdProfessionalCity <= 0)
             {
-                throw new ArgumentException("CityProfessional does not exist.");
+                throw new ArgumentException("Invalid CityProfessional data.");
             }
-
             var existingModel = _cityProfessionalRepository.GetById(model.IdProfessionalCity);
             if (existingModel == null)
             {
@@ -123,11 +138,10 @@ namespace eProfessional.BLL.Services
 
             try
             {
-
                 _mapper.Map(model, existingModel);
                 _cityProfessionalRepository.Save();
 
-                return _mapper.Map<CityProfessionalDto>(existingModel);
+                return MapToCityProfessionalDataDto(existingModel);
             }
             catch (Exception)
             {
@@ -135,56 +149,54 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public List<CityProfessionalDto> UpdateCitiesByProfessionalId(int professionalId, List<CityDto> citiesDtos)
+        public List<CityProfessionalDataDto> UpdateCitiesByProfessional(int professionalId, List<int> citiesIds)
         {
-            var exists = ProfessionalExists(professionalId);
+            var exists = _cityProfessionalRepository.ProfessionalExists(professionalId);
             if (!exists)
             {
                 throw new ArgumentException("Professional does not exist.");
             }
             try
             {
-                var cities = _mapper.Map<List<City>>(citiesDtos);
 
-                var cityProfessionals = _cityProfessionalRepository.UpdateCitiesForProfessional(professionalId, cities);
+                var cityProfessionals = _cityProfessionalRepository.UpdateCitiesForProfessional(professionalId, citiesIds);
 
                 if (cityProfessionals == null || !cityProfessionals.Any())
                 {
-                    return new List<CityProfessionalDto>();
+                    return new List<CityProfessionalDataDto>();
                 }
 
-                return _mapper.Map<List<CityProfessionalDto>>(cityProfessionals);
+                return MapToCityProfessionalDataDto(cityProfessionals);
             }
             catch (Exception)
             {
-                return new List<CityProfessionalDto>();
+                return new List<CityProfessionalDataDto>();
             }
         }
 
 
-        public List<CityProfessionalDto> UpdateProfessionalsByCityId(int cityId, List<ProfessionalDto> professionalsDtos)
+        public List<CityProfessionalDataDto> UpdateProfessionalsByCity(int cityId, List<int> professionalsIds)
         {
-            var exists = CityExists(cityId);
+            var exists = _cityProfessionalRepository.CityExists(cityId);
             if (!exists)
             {
                 throw new ArgumentException("Professional does not exist.");
             }
             try
             {
-                var professionals = _mapper.Map<List<Professional>>(professionalsDtos);
 
-                var cityProfessionals = _cityProfessionalRepository.UpdateProfessionalsForCity(cityId, professionals);
+                var cityProfessionals = _cityProfessionalRepository.UpdateProfessionalsForCity(cityId, professionalsIds);
 
                 if (cityProfessionals == null || !cityProfessionals.Any())
                 {
-                    return new List<CityProfessionalDto>();
+                    return new List<CityProfessionalDataDto>();
                 }
 
-                return _mapper.Map<List<CityProfessionalDto>>(cityProfessionals);
+                return MapToCityProfessionalDataDto(cityProfessionals);
             }
             catch (Exception)
             {
-                return new List<CityProfessionalDto>();
+                return new List<CityProfessionalDataDto>();
             }
         }
 
@@ -213,7 +225,7 @@ namespace eProfessional.BLL.Services
 
         public bool DeleteCitiesForProfessional(int professionalId)
         {
-            var exists = ProfessionalExists(professionalId);
+            var exists = _cityProfessionalRepository.ProfessionalExists(professionalId);
             if (!exists)
             {
                 throw new ArgumentException("Professional does not exist.");
@@ -223,10 +235,10 @@ namespace eProfessional.BLL.Services
 
         public bool DeleteProfessionalsForCity(int cityId)
         {
-            var exists = CityExists(cityId);
+            var exists = _cityProfessionalRepository.CityExists(cityId);
             if (!exists)
             {
-                throw new ArgumentException("Professional does not exist.");
+                throw new ArgumentException("City does not exist.");
             }
 
             return _cityProfessionalRepository.DeleteProfessionalsForCity(cityId);
@@ -250,15 +262,79 @@ namespace eProfessional.BLL.Services
             return exists;
         }
 
-        private bool ProfessionalExists(int professionalId)
+
+        private List<CityProfessionalDataDto> MapToCityProfessionalDataDto(List<CityProfessional> cityProfessionals)
         {
-            return _cityProfessionalRepository.ProfessionalExists(professionalId);
+            List<CityProfessionalDataDto> cityProfessionalDataDto = new List<CityProfessionalDataDto>();
+
+            foreach (var cityProfessional in cityProfessionals)
+            {
+                var cityDto = _mapper.Map<CityDto>(_cityRepository.GetById(cityProfessional.CityId));
+                var professionalDto = _mapper.Map<ProfessionalDto>(_professionalRepository.GetById(cityProfessional.ProfessionalId));
+                var userDto = _mapper.Map<UserDto>(_userRepository.GetById(professionalDto.UserId));
+
+                cityProfessionalDataDto.Add(new CityProfessionalDataDto
+                {
+                    IdProfessionalCity = cityProfessional.IdProfessionalCity,
+                    ProfessionalId = cityProfessional.ProfessionalId,
+                    City = cityDto.Name,
+                    CityId = cityProfessional.CityId,
+                    Username = userDto.Username,
+                    FirstName = userDto.FirstName,
+                    LastName = userDto.LastName,
+                    Email = userDto.Email,
+                    Phone = userDto.Phone
+                });
+            }
+            return cityProfessionalDataDto;
         }
 
-        private bool CityExists(int cityId)
+        private CityProfessionalDataDto MapToCityProfessionalDataDto(CityProfessional cityProfessional)
         {
-            return _cityProfessionalRepository.CityExists(cityId);
+            CityProfessionalDataDto cityProfessionalDataDto;
+
+            var cityDto = _mapper.Map<CityDto>(_cityRepository.GetById(cityProfessional.CityId));
+            var professionalDto = _mapper.Map<ProfessionalDto>(_professionalRepository.GetById(cityProfessional.ProfessionalId));
+            var userDto = _mapper.Map<UserDto>(_userRepository.GetById(professionalDto.UserId));
+
+            cityProfessionalDataDto = new CityProfessionalDataDto
+            {
+                IdProfessionalCity = cityProfessional.IdProfessionalCity,
+                ProfessionalId = cityProfessional.ProfessionalId,
+                City = cityDto.Name,
+                CityId = cityProfessional.CityId,
+                Username = userDto.Username,
+                FirstName = userDto.FirstName,
+                LastName = userDto.LastName,
+                Email = userDto.Email,
+                Phone = userDto.Phone
+            };
+
+            return cityProfessionalDataDto;
         }
 
+
+        private List<ProfessionalDataDto> MapUserDataToProfeassionals(List<Professional> professionals)
+        {
+            List<User> users = _userRepository.GetAll().ToList();
+            List<ProfessionalDataDto> professionalDtos = new List<ProfessionalDataDto>();
+
+            foreach (var professional in professionals)
+            {
+                var user = users.FirstOrDefault(u => u.Iduser == professional.UserId);
+                if (user != null)
+                {
+                    var professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
+                    professionalDto.UserName = user.Username;
+                    professionalDto.Email = user.Email;
+                    professionalDto.PhoneNumber = user.Phone ?? "";
+                    professionalDto.FirstName = user.FirstName ?? "";
+                    professionalDto.LastName = user.LastName ?? "";
+                    professionalDtos.Add(professionalDto);
+                }
+            }
+
+            return professionalDtos;
+        }
     }
 }

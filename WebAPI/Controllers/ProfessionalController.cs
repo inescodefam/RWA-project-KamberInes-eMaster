@@ -80,6 +80,7 @@ namespace WebAPI.Controllers
             try
             {
                 var professionalDtos = _professionalService.Search(name, serviceType, count, start);
+
                 if (professionalDtos == null || !professionalDtos.Any())
                 {
                     _loggingService.CreateLog("No professionals found matching the search criteria.", "info");

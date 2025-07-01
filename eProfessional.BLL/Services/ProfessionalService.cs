@@ -72,10 +72,11 @@ namespace eProfessional.BLL.Services
 
                 return new List<ProfessionalDataDto>();
             }
+
             var users = _userRepository.GetAll().ToList();
 
             List<ProfessionalDataDto> professionalDtos = MapUserProfessionalList(
-                professionals,
+               professionals,
                users
             );
 

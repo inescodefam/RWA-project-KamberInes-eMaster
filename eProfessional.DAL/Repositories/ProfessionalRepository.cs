@@ -29,12 +29,12 @@ namespace eProfessional.DAL.Repositories
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(p => p.User.FirstName == searchTerm || p.User.LastName == searchTerm);
+                query = query.Where(p => p.User.FirstName.Contains(searchTerm) || p.User.LastName.Contains(searchTerm) || p.User.Username.Contains(searchTerm));
             }
 
             if (!string.IsNullOrEmpty(serviceType))
             {
-                query = query.Where(p => p.Services.Any(s => s.ServiceType.ServiceTypeName == serviceType));
+                query = query.Where(p => p.Services.Any(s => s.ServiceType.ServiceTypeName.Contains(serviceType)));
             }
 
             var professionals = query.Skip(start * count).Take(count).Distinct().ToList();
