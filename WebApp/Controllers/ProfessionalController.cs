@@ -19,7 +19,7 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController
         [HttpGet]
-        public IActionResult Index(int count, int start)
+        public IActionResult Index(int count = 50, int start = 0)
         {
             var model = _professionalService.GetProfessionals(count, start);
 
@@ -46,7 +46,7 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController/AddProfessional
         [HttpGet]
-        public IActionResult Create() => View(new ProfessionalIndexVM());
+        public IActionResult Create() => View(_professionalService.GetProfessionals(50, 0));
 
         [HttpPost]
         public IActionResult Create([FromBody] CreateProfessionalVM professionalVM)

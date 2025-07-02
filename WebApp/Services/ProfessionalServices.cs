@@ -41,7 +41,7 @@ namespace WebApp.Services
             return response;
         }
 
-        public bool CreateProfessional(CreateProfessionalVM professionalDto)
+        public bool CreateProfessional(CreateProfessionalVM professionalDto) // ProfessionalVM
         {
             var response = _apiService.PostData<CreateProfessionalApiDataDto, CreateProfessionalVM>("api/professional", professionalDto);
             return response != null;
@@ -69,7 +69,7 @@ namespace WebApp.Services
             return professionalIndexVM;
         }
 
-        public List<ProfessionalDataVM> Search(string? Name, string? cityName, int pageSize, int page)
+        public ProfessionalIndexVM Search(string? Name, string? cityName, int pageSize, int page)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
@@ -88,12 +88,20 @@ namespace WebApp.Services
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
             if (response == null || !response.Any())
             {
-                return new List<ProfessionalDataVM>();
+                return new ProfessionalIndexVM
+                {
+                    Professionals = new List<ProfessionalVM>(),
+                    Users = new List<SelectListItem>(),
+                    Cities = new List<SelectListItem>()
+                };
             }
-            return response;
+            ProfessionalIndexVM professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
+
+
+            return professionalIndexVM;
         }
 
-        public bool UpdateProfessional(ProfessionalDataVM professionalDto)
+        public bool UpdateProfessional(ProfessionalDataVM professionalDto) //ProfessisionalVM
         {
             var resposne = _apiService.PutData<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional", professionalDto);
 
