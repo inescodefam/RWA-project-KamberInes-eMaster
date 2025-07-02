@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using eProfessional.BLL.DTOs;
+using WebAPI.DTOs;
 using WebApp.Interfaces;
 using WebApp.Models;
 
@@ -19,7 +19,7 @@ namespace WebApp.Services
         public ServiceTypeVM CreateServiceType(ServiceTypeVM model)
         {
 
-            var response = _apiFetchService.PostData<ServiceTypeDto, ServiceTypeVM>("api/servicetype", model);
+            var response = _apiFetchService.PostData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", model);
 
             if (response == null)
             {
@@ -36,7 +36,7 @@ namespace WebApp.Services
 
         public ServiceTypeVM GetServiceTypeById(int id)
         {
-            var response = _apiFetchService.Fetch<ServiceTypeDto, ServiceTypeVM>($"api/servicetype/{id}");
+            var response = _apiFetchService.Fetch<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype/{id}");
             if (response != null)
             {
                 return response;
@@ -52,13 +52,13 @@ namespace WebApp.Services
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
             var start = (page - 1) * pageSize;
-            var serviceTypes = _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>($"api/servicetype?count={pageSize}&start={start}");
+            var serviceTypes = _apiFetchService.FetchDataList<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype?count={pageSize}&start={start}");
             return serviceTypes ?? new List<ServiceTypeVM>();
         }
 
         public ServiceTypeVM UpdateServiceType(ServiceTypeVM serviceTypeDto)
         {
-            var response = _apiFetchService.PostData<ServiceTypeDto, ServiceTypeVM>("api/servicetype", serviceTypeDto);
+            var response = _apiFetchService.PostData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", serviceTypeDto);
             if (response != null)
             {
                 return response;

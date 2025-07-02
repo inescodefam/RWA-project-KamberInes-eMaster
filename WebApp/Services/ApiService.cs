@@ -72,7 +72,8 @@ namespace WebApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var stream = response.Content.ReadAsStream();
-                    var resultDto = JsonSerializer.Deserialize<TVm>(stream);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var resultDto = JsonSerializer.Deserialize<TVm>(stream, options);
                     return _mapper.Map<TVm>(resultDto);
                 }
                 else
@@ -121,7 +122,8 @@ namespace WebApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var stream = response.Content.ReadAsStream();
-                    var resultDto = JsonSerializer.Deserialize<TVm>(stream);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var resultDto = JsonSerializer.Deserialize<TVm>(stream, options);
                     return _mapper.Map<TVm>(resultDto);
                 }
                 else
@@ -148,7 +150,8 @@ namespace WebApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var stream = response.Content.ReadAsStream();
-                    var resultDto = JsonSerializer.Deserialize<TVm>(stream);
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var resultDto = JsonSerializer.Deserialize<TVm>(stream, options);
                     return _mapper.Map<TVm>(resultDto);
                 }
                 else

@@ -10,11 +10,23 @@ namespace WebApp.Services
 
         private readonly IMapper _mapper;
         private readonly ApiService _apiFetchService;
+        private readonly ICityProfessionalService _cpService;
+        private readonly IProfessionalService _professionalService;
+        private readonly IServiceType _serviceType;
 
-        public ServiceService(HttpClient httpClient, IMapper mapper, ApiService apiFetchService)
+        public ServiceService(
+            IMapper mapper,
+            ApiService apiFetchService,
+            ICityProfessionalService cpService,
+            IProfessionalService pofessionalService,
+            IServiceType serviceType
+            )
         {
             _mapper = mapper;
             _apiFetchService = apiFetchService;
+            _cpService = cpService;
+            _professionalService = pofessionalService;
+            _serviceType = serviceType;
         }
 
         public ServiceCreateVM CreateService(ServiceCreateVM vm)
@@ -129,8 +141,10 @@ namespace WebApp.Services
 
         private ServiceResultVM MapServiceToResult(ServiceVM service)
         {
-            var professionalsDataVM = _apiFetchService.Fetch<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/{service.ProfessionalId}");
-            var serviceTypesDataVM = _apiFetchService.Fetch<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype/{service.ServiceTypeId}");
+            var professionalsDataVM = _professionalService.GetSingleProfessional(service.ProfessionalId);
+            var serviceTypesDataVM = _serviceType.GetServiceTypeById(service.ServiceTypeId);
+            List<CityVM> cities = _cpService.GetCitysByProfessional(service.ProfessionalId);
+            List<string> cityNames = cities.Select(c => c.Name).ToList();
 
             return new ServiceResultVM
             {
@@ -138,7 +152,8 @@ namespace WebApp.Services
                 Description = service.Description,
                 Price = service.Price,
                 ProfessionalName = professionalsDataVM.UserName,
-                ServiceTypeName = serviceTypesDataVM.ServiceTypeName
+                ServiceTypeName = serviceTypesDataVM.ServiceTypeName,
+                CityNames = cityNames
             };
         }
     }

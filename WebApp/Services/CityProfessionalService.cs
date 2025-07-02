@@ -25,14 +25,14 @@ namespace WebApp.Services
 
         public List<ProfessionalDataVM> GetProfessionalsByCity(int city)
         {
-            var url = $"api/city-professional/city={city}";
+            var url = $"api/city-professional/city/{city}";
             var response = _apiFetchService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>(url);
             return response;
         }
 
         public List<CityVM> GetCitysByProfessional(int professionalId)
         {
-            var url = $"api/city-professional/professional={professionalId}";
+            var url = $"api/city-professional/professional/{professionalId}";
             var response = _apiFetchService.FetchDataList<CityApiDto, CityVM>(url);
             return response;
         }

@@ -10,9 +10,9 @@ namespace WebAPI.DTOs
         [Required]
         public int ServiceTypeId { get; set; }
         [Required]
-        public string? Description { get; set; }
+        public string Description { get; set; }
         [Required]
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
     }
 
     public class CreateServiceApiDto
@@ -22,8 +22,8 @@ namespace WebAPI.DTOs
         [Required]
         public int ServiceTypeId { get; set; }
         [Required]
-        public string? Description { get; set; }
+        public string Description { get; set; }
         [Required]
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

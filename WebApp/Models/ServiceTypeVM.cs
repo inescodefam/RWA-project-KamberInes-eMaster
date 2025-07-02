@@ -4,10 +4,10 @@ namespace WebApp.Models
 {
     public class ServiceTypeVM
     {
-        public int? IdserviceType { get; set; }
+        public int IdserviceType { get; set; }
         [Required(ErrorMessage = "Service type name is required.")]
         [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]
         [Display(Name = "Service type name")]
-        public string? ServiceTypeName { get; set; }
+        public string ServiceTypeName { get; set; }
     }
 }

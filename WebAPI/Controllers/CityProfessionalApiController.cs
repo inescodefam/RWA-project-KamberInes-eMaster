@@ -42,8 +42,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("city")]
-        public IActionResult GetProfessionalsFromCity([FromQuery] int cityId)
+        [HttpGet("city/{cityId}")]
+        public IActionResult GetProfessionalsFromCity(int cityId)
         {
             try
             {
@@ -61,8 +61,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("professional")]
-        public IActionResult GetCitiesByProfessional([FromQuery] int professionalId)
+        [HttpGet("professional/{id}")]
+        public IActionResult GetCitiesByProfessional(int professionalId)
         {
             try
             {
