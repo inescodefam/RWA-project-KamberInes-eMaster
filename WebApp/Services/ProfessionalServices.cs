@@ -48,7 +48,7 @@ namespace WebApp.Services
         }
 
 
-        public List<ProfessionalIndexVM> GetProfessionals(int pageSize, int page)
+        public ProfessionalIndexVM GetProfessionals(int pageSize, int page)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
@@ -57,9 +57,14 @@ namespace WebApp.Services
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
             if (response == null || !response.Any())
             {
-                return new List<ProfessionalIndexVM>();
+                return new ProfessionalIndexVM
+                {
+                    Professionals = new List<ProfessionalVM>(),
+                    Users = new List<SelectListItem>(),
+                    Cities = new List<SelectListItem>()
+                };
             }
-            List<ProfessionalIndexVM> professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
+            ProfessionalIndexVM professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
 
             return professionalIndexVM;
         }
@@ -106,13 +111,13 @@ namespace WebApp.Services
 
         // ---------- private methods ----------------------------------------------------------------------------------------------------------------------
         // -------------------------------------------------------------------------------------------------------------------------------------------------
-        private List<ProfessionalIndexVM> MapProfessionalDataModelToIndexModel(List<ProfessionalDataVM> professionalData)
+        private ProfessionalIndexVM MapProfessionalDataModelToIndexModel(List<ProfessionalDataVM> professionalData)
         {
             List<ProfessionalVM> professionals = new List<ProfessionalVM>();
             List<UserVM> users = _userService.GetAllUsers();
             List<CityVM> cities = _cityService.GetAllCities();
 
-            List<ProfessionalIndexVM> model = new List<ProfessionalIndexVM>();
+            ProfessionalIndexVM model = new();
 
             foreach (var professional in professionalData)
             {
@@ -131,21 +136,21 @@ namespace WebApp.Services
                     }
                     );
 
-                model.Add(new ProfessionalIndexVM
-                {
-                    Professionals = professionals,
-                    Users = users.Select(u => new SelectListItem
-                    {
-                        Value = u.Iduser.ToString(),
-                        Text = $"{u.FirstName} {u.LastName} ({u.Username})"
-                    }).ToList(),
-                    Cities = cities.Select(c => new SelectListItem
-                    {
-                        Value = c.Idcity.ToString(),
-                        Text = c.Name
-                    }).ToList()
-                });
             }
+            model = new ProfessionalIndexVM
+            {
+                Professionals = professionals,
+                Users = users.Select(u => new SelectListItem
+                {
+                    Value = u.Iduser.ToString(),
+                    Text = $"{u.FirstName} {u.LastName} ({u.Username})"
+                }).ToList(),
+                Cities = cities.Select(c => new SelectListItem
+                {
+                    Value = c.Idcity.ToString(),
+                    Text = c.Name
+                }).ToList()
+            };
 
             return model;
         }

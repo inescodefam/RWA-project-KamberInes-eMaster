@@ -23,7 +23,7 @@ namespace WebApp.Controllers
         {
             var model = _professionalService.GetProfessionals(count, start);
 
-            if (model == null || model.Count == 0)
+            if (model == null)
             {
                 ModelState.AddModelError("", "No professionals found.");
                 return View(new ProfessionalIndexVM
