@@ -27,6 +27,16 @@ namespace eProfessional.BLL.Services
             return _mapper.Map<List<UserDto>>(users);
         }
 
+        public List<UserDto> GetUsers()
+        {
+            var users = _userRepository.GetUsers();
+            if (users == null || !users.Any())
+            {
+                return new List<UserDto>();
+            }
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
         public UserDto GetUserById(int id)
         {
             var user = _userRepository.GetById(id);

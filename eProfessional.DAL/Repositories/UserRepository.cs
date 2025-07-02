@@ -24,6 +24,11 @@ namespace eProfessional.DAL.Repositories
         {
             return _context.Users.Skip(start * count).Take(count).ToList();
         }
+
+        public List<User> GetUsers()
+        {
+            return _context.Users.ToList();
+        }
     }
 
 }

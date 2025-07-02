@@ -38,6 +38,22 @@ namespace WebAPI.Controllers
 
         }
 
+        [HttpGet("all")]
+        public ActionResult<List<UserDto>> Get()
+        {
+            try
+            {
+                var userDtos = _userService.GetUsers();
+                var userApiDtos = _mapper.Map<List<UserApiDto>>(userDtos);
+                return Ok(userApiDtos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+        }
+
         // GET api/<UserController>/5
         [HttpGet("{id}")]
         public ActionResult<UserDto> GetUserById(int id)

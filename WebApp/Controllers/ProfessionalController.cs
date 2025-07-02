@@ -35,10 +35,6 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        // GET: ProfessionalApiController/AddProfessional
-        [HttpGet]
-        public IActionResult Create() => View(new ProfessionalDataVM());
-
         // GET: ProfessionalApiController/Search
         [HttpGet]
         public IActionResult Search(string username, string? city, int count, int start)
@@ -48,6 +44,9 @@ namespace WebApp.Controllers
             return View(response);
         }
 
+        // GET: ProfessionalApiController/AddProfessional
+        [HttpGet]
+        public IActionResult Create() => View(new ProfessionalIndexVM());
 
         [HttpPost]
         public IActionResult Create([FromBody] CreateProfessionalVM professionalVM)

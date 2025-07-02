@@ -5,6 +5,7 @@ namespace eProfessional.BLL.Interfaces
     public interface IUserService
     {
         List<UserDto> GetUsers(int count, int start = 0);
+        List<UserDto> GetUsers();
         UserDto GetUserById(int id);
         UserDto GetUserByEmail(string email);
         bool UpdateUser(UserDto userDto);

@@ -25,6 +25,12 @@ namespace WebApp.Services
             return response ?? new List<UserVM>();
         }
 
+        public List<UserVM> GetAllUsers()
+        {
+            var response = _apiFetchService.FetchDataList<UserApiDto, UserVM>($"api/user/all");
+            return response ?? new List<UserVM>();
+        }
+
         public UserVM GetUserById(int id)
         {
             var resposne = _apiFetchService.Fetch<UserApiDto, UserVM>($"api/user/{id}");

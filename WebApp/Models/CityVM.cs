@@ -19,7 +19,7 @@ namespace WebApp.Models
     public class CityVM
     {
 
-        public int? Idcity { get; set; }
+        public int Idcity { get; set; }
         [StringLength(100, ErrorMessage = "City name too long.")]
         [Display(Name = "City name")]
         public string Name { get; set; }

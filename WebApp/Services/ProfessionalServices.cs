@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using WebAPI.DTOs;
 using WebApp.Interfaces;
 using WebApp.Models;
@@ -47,7 +48,7 @@ namespace WebApp.Services
         }
 
 
-        public List<ProfessionalDataVM> GetProfessionals(int pageSize, int page)
+        public List<ProfessionalIndexVM> GetProfessionals(int pageSize, int page)
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
@@ -56,11 +57,12 @@ namespace WebApp.Services
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
             if (response == null || !response.Any())
             {
-                return new List<ProfessionalDataVM>();
+                return new List<ProfessionalIndexVM>();
             }
-            return response;
-        }
+            List<ProfessionalIndexVM> professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
 
+            return professionalIndexVM;
+        }
 
         public List<ProfessionalDataVM> Search(string? Name, string? cityName, int pageSize, int page)
         {
@@ -100,6 +102,52 @@ namespace WebApp.Services
                 throw new Exception($"Professional with ID {id} not found.");
             }
             return response;
+        }
+
+        // ---------- private methods ----------------------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------------------------------------------
+        private List<ProfessionalIndexVM> MapProfessionalDataModelToIndexModel(List<ProfessionalDataVM> professionalData)
+        {
+            List<ProfessionalVM> professionals = new List<ProfessionalVM>();
+            List<UserVM> users = _userService.GetAllUsers();
+            List<CityVM> cities = _cityService.GetAllCities();
+
+            List<ProfessionalIndexVM> model = new List<ProfessionalIndexVM>();
+
+            foreach (var professional in professionalData)
+            {
+                List<CityVM> cityList = _cityProfessionalService.GetCitysByProfessional(professional.IdProfessional);
+                List<int> cityIds = cityList.Select(c => c.Idcity).ToList();
+                List<string> cityNames = cityList.Select(c => c.Name).ToList(); // i dont know why i did this.... but let it be separate for now: TODO!!
+
+                professionals.Add(
+                    new ProfessionalVM
+                    {
+                        IdProfessional = professional.IdProfessional,
+                        UserId = professional.UserId,
+                        UserName = professional.UserName,
+                        CityIds = cityIds,
+                        CityNames = cityNames
+                    }
+                    );
+
+                model.Add(new ProfessionalIndexVM
+                {
+                    Professionals = professionals,
+                    Users = users.Select(u => new SelectListItem
+                    {
+                        Value = u.Iduser.ToString(),
+                        Text = $"{u.FirstName} {u.LastName} ({u.Username})"
+                    }).ToList(),
+                    Cities = cities.Select(c => new SelectListItem
+                    {
+                        Value = c.Idcity.ToString(),
+                        Text = c.Name
+                    }).ToList()
+                });
+            }
+
+            return model;
         }
     }
 }
