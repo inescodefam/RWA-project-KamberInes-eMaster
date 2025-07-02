@@ -75,11 +75,12 @@
             $('#noResultsMessage').removeClass('d-none');
             
             $('#searchProfessionalForm').submit(function(e) {
+                console.log('Search form submitted');
                 e.preventDefault();
                 var username = $('#searchUsername').val();
                 var cityName = $('#searchCityName').val();
 
-                $.ajax({
+                $.ajax
                     url: '@Url.Action("Search", "Professional")',
                     type: 'GET',
                     data: { 

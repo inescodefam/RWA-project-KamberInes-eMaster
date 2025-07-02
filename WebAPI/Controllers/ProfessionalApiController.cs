@@ -10,12 +10,12 @@ namespace WebAPI.Controllers
     [Route("api/professional")]
     [Authorize]
     [ApiController]
-    public class ProfessionalController : ControllerBase
+    public class ProfessionalApiController : ControllerBase
     {
         private readonly ILogService _loggingService;
         private readonly IMapper _mapper;
         private readonly IProfessionalService _professionalService;
-        public ProfessionalController(
+        public ProfessionalApiController(
             ILogService logService,
             IProfessionalService professionalService,
             IMapper mapper)

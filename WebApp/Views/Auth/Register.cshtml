@@ -5,7 +5,7 @@
         <div class="card shadow">
             <div class="card-body">
                 <h3 class="card-title text-center mb-4">Create Account</h3>
-                <form asp-action="Register" method="post" autocomplete="off">
+                <form asp-controller="Auth" asp-action="Register" method="post" autocomplete="off">
                     <div class="mb-3">
                         <label asp-for="Email" class="form-label"></label>
                         <input asp-for="Email" class="form-control" placeholder="Email" />

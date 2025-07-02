@@ -39,7 +39,7 @@ namespace WebApp.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                var json = response.ToString();
+                var json = Task.Run(async () => await response.Content.ReadAsStringAsync()).GetAwaiter().GetResult();
                 var token = JsonDocument.Parse(json).RootElement.GetProperty("token").GetString();
 
                 var handler = new JwtSecurityTokenHandler();
@@ -115,7 +115,7 @@ namespace WebApp.Controllers
         [Authorize]
         public ActionResult Logout()
         {
-            Task.Run(async () => HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)).GetAwaiter().GetResult();
+            Task.Run(async () => await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)).GetAwaiter().GetResult();
             Response.Cookies.Delete("jwt");
             return RedirectToAction("Login");
         }

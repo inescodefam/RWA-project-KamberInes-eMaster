@@ -20,7 +20,7 @@ namespace WebApp.Models
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
 
         [Display(Name = "Email address")]
-        public required string Email { get; set; }
+        public string Email { get; set; }
         [Phone(ErrorMessage = "Invalid phone number format.")]
         [Display(Name = "Phone number")]
         public string? PhoneNumber { get; set; }

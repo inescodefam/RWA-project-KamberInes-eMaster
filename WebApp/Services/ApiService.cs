@@ -20,9 +20,14 @@ namespace WebApp.Services
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 var response = _httpClient.Send(request);
-
+                if (!response.IsSuccessStatusCode || response == null)
+                {
+                    return new List<TVm>();
+                }
                 var stream = response.Content.ReadAsStream();
-                var dtos = JsonSerializer.Deserialize<List<TDto>>(stream);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var dtos = JsonSerializer.Deserialize<List<TDto>>(stream, options);
+                //var dtos = JsonSerializer.Deserialize<List<TDto>>(stream);
                 var vms = _mapper.Map<List<TVm>>(dtos);
                 return vms;
             }
@@ -38,9 +43,11 @@ namespace WebApp.Services
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 var response = _httpClient.Send(request);
+                response.EnsureSuccessStatusCode();
 
                 var stream = response.Content.ReadAsStream();
-                var dtos = JsonSerializer.Deserialize<TDto>(stream);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var dtos = JsonSerializer.Deserialize<TDto>(stream, options);
 
                 var vm = _mapper.Map<TVm>(dtos);
                 return vm;

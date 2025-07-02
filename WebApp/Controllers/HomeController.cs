@@ -14,6 +14,8 @@ namespace WebApp.Controllers
         public IActionResult Index()
         {
             return RedirectToAction("Login", "Auth");
+            //return Redirect("/Auth/Login");
+
         }
     }
 }

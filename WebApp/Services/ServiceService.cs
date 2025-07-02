@@ -89,12 +89,17 @@ namespace WebApp.Services
 
             if (response == null || !response.Any())
             {
+                return new List<ServiceResultVM>();
                 throw new Exception("No services found.");
             }
             var serviceResults = new List<ServiceResultVM>();
 
             foreach (var service in response)
             {
+                if (service.ProfessionalId <= 0 || service.ServiceTypeId <= 0)
+                {
+                    return new List<ServiceResultVM>();
+                }
                 var serviceResultVM = MapServiceToResult(service);
                 serviceResults.Add(serviceResultVM);
             }
@@ -104,11 +109,12 @@ namespace WebApp.Services
         public List<ServiceResultVM> Search(string serviceTypeName, int count, int start = 0)
         {
             var url = $"api/service/search?serviceTypeName={serviceTypeName}&count={count}&start={start}";
+
             var response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
 
             if (response == null || !response.Any())
             {
-                throw new Exception("No services found matching the search criteria.");
+                return new List<ServiceResultVM>();
             }
             var serviceResults = new List<ServiceResultVM>();
             foreach (var service in response)
@@ -124,7 +130,8 @@ namespace WebApp.Services
         private ServiceResultVM MapServiceToResult(ServiceVM service)
         {
             var professionalsDataVM = _apiFetchService.Fetch<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/{service.ProfessionalId}");
-            var serviceTypesDataVM = _apiFetchService.Fetch<ServiceTypeApiDto, ServiceTypeVM>($"api/service/{service.ServiceTypeId}");
+            var serviceTypesDataVM = _apiFetchService.Fetch<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype/{service.ServiceTypeId}");
+
             return new ServiceResultVM
             {
                 IdService = service.IdService,

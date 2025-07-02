@@ -47,13 +47,13 @@ namespace eProfessional.BLL.Services
         public ProfessionalDataDto GetSingleProfessional(int id)
         {
             var professional = _professionalRepository.GetById(id);
-            var user = _userRepository.GetById(professional.UserId);
-
             if (professional == null)
             {
                 _loggingRepository.CreateLog($"Professional with ID {id} not found.", "warning");
                 throw new Exception($"Professional with ID {id} not found.");
             }
+
+            var user = _userRepository.GetById(professional.UserId);
 
             var professionalDataDto = MapUserProfessional(professional, user);
 
@@ -219,7 +219,6 @@ namespace eProfessional.BLL.Services
             User user
             )
         {
-            ProfessionalDataDto professionalDto;
 
             if (user == null)
             {
@@ -227,7 +226,11 @@ namespace eProfessional.BLL.Services
                 throw new Exception($"User with ID {professional.UserId} not found.");
             }
 
-            professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
+            ProfessionalDataDto professionalDto = new ProfessionalDataDto
+            {
+                IdProfessional = professional.IdProfessional,
+                UserId = professional.UserId,
+            };
             professionalDto.UserName = user.Username;
             professionalDto.Email = user.Email;
             professionalDto.PhoneNumber = user.Phone ?? "";

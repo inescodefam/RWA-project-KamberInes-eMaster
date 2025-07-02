@@ -23,17 +23,29 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Index(int count, int start)
         {
-            var response = _serviceService.GetServiceIndex(count, start);
-            return Ok(response);
+            var vm = new ServiceSearchVM
+            {
+                Services = _serviceService.GetServiceIndex(50, 0)
+            };
+            return View(vm);
         }
 
         [HttpGet]
-        public ActionResult Search(string serviceTypeName, int count, int start)
+        public IActionResult Search()
+        {
+            var vm = new ServiceSearchVM
+            {
+                Services = _serviceService.GetServiceIndex(50, 0)
+            };
+            return View(vm);
+        }
+
+        [HttpPost]
+        public ActionResult Search(string serviceTypeName, int count = 50, int start = 0)
         {
             if (string.IsNullOrEmpty(serviceTypeName))
             {
-                ModelState.AddModelError("serviceTypeName", "Service type name cannot be empty.");
-                return View(new ServiceSearchVM());
+                serviceTypeName = string.Empty;
             }
 
             var vm = new ServiceSearchVM

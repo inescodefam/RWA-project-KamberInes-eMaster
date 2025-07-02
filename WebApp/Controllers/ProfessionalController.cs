@@ -17,7 +17,7 @@ namespace WebApp.Controllers
             _cityProfessionalService = cityProfessionalService;
         }
 
-        // GET: ProfessionalController
+        // GET: ProfessionalApiController
         [HttpGet]
         public IActionResult Index(int count, int start)
         {
@@ -35,11 +35,11 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        // GET: ProfessionalController/AddProfessional
+        // GET: ProfessionalApiController/AddProfessional
         [HttpGet]
         public IActionResult Create() => View(new ProfessionalDataVM());
 
-        // GET: ProfessionalController/Search
+        // GET: ProfessionalApiController/Search
         [HttpGet]
         public IActionResult Search(string username, string? city, int count, int start)
         {
@@ -76,7 +76,7 @@ namespace WebApp.Controllers
 
 
 
-        // GET: ProfessionalController/Edit/5
+        // GET: ProfessionalApiController/Edit/5
         public ActionResult Edit(int id)
         {
             var professional = _professionalService.GetSingleProfessional(id);
@@ -84,7 +84,7 @@ namespace WebApp.Controllers
             return View(professional);
         }
 
-        // POST: ProfessionalController/Edit/5
+        // POST: ProfessionalApiController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, [FromForm] ProfessionalDataVM professionalVm)
@@ -107,12 +107,12 @@ namespace WebApp.Controllers
         }
 
 
-        // GET: ProfessionalController/Delete/5
+        // GET: ProfessionalApiController/Delete/5
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public ActionResult Delete() => View();
 
-        // delete: ProfessionalController/Delete/5
+        // delete: ProfessionalApiController/Delete/5
         [Route("Professional/Delete/{id}")]
         [HttpDelete]
         [Authorize(Roles = "Admin")]

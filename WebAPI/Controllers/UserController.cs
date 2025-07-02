@@ -10,12 +10,12 @@ namespace WebAPI.Controllers
     [Route("api/user")]
     [ApiController]
     [Authorize]
-    public class UserController : ControllerBase
+    public class UserApiController : ControllerBase
     {
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public UserController(IUserService userService, IMapper mapper)
+        public UserApiController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;

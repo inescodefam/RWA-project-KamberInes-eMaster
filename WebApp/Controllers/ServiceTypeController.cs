@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.Interfaces;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -30,7 +30,7 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    var response = _serviceTypeService.CreateServiceType(model);
+                    var response = _serviceTypeService.UpdateServiceType(model);
                     return RedirectToAction("Search", "Service");
 
                 }

@@ -10,12 +10,12 @@ namespace WebAPI.Controllers
     [Route("api/service")]
     [ApiController]
     [Authorize]
-    public class ServiceController : Controller
+    public class ServiceApiController : Controller
     {
         private readonly IServiceService _servicesService;
         private readonly IMapper _mapper;
 
-        public ServiceController(IServiceService servicesService, IMapper mapper)
+        public ServiceApiController(IServiceService servicesService, IMapper mapper)
         {
             _servicesService = servicesService;
             _mapper = mapper;
@@ -41,11 +41,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("search")]
-        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type, int count, int start)
+        public ActionResult<ServiceApiDto> GetServiceByServiceType(string serviceTypeName, int count, int start)
         {
             try
             {
-                var response = _servicesService.GetServiceByServiceType(type, count, start);
+                var response = _servicesService.GetServiceByServiceType(serviceTypeName, count, start);
+
                 if (response == null || !response.Any())
                 {
                     return NotFound("No services found for the specified type.");

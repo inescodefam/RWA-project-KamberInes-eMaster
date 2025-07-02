@@ -18,16 +18,18 @@ builder.Services.AddSession();
 builder.Services.AddAutoMapper(typeof(Program), typeof(EntityDtoMapperProfileBLL));
 
 // Add to your services configuration
+
 builder.Services.AddTransient<JwtAuthorizationHandler>();
 builder.Services.AddScoped<ApiService>();
-builder.Services.AddScoped<ProfessionalViewModelService>();
-builder.Services.AddScoped<IProfessionalService, ProfessionalServices>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICityService, CityService>();
+
+
 builder.Services.AddScoped<ICityProfessionalService, CityProfessionalService>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalServices>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceType, ServiceTypeService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("http://localhost:5020/")
@@ -82,7 +84,8 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+    );
 
 app.MapRazorPages();
 

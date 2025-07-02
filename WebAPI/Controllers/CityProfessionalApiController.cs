@@ -10,13 +10,13 @@ namespace WebAPI.Controllers
     [Route("api/city-professional")]
     [ApiController]
     [Authorize]
-    public class CityProfessionalController : ControllerBase
+    public class CityProfessionalApiController : ControllerBase
     {
 
         private readonly ICityProfessionalService _cityProfessionalService;
         private readonly IMapper _mapper;
 
-        public CityProfessionalController(ICityProfessionalService cityProfessionalService,
+        public CityProfessionalApiController(ICityProfessionalService cityProfessionalService,
             IMapper mapper)
         {
             _cityProfessionalService = cityProfessionalService;

@@ -10,13 +10,13 @@ namespace WebAPI.Controllers
     [Route("api/role")]
     [ApiController]
     [Authorize]
-    public class RoleController : Controller
+    public class RoleApiController : Controller
     {
 
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
 
-        public RoleController(IRoleService roleService, IMapper mapper)
+        public RoleApiController(IRoleService roleService, IMapper mapper)
         {
 
             _roleService = roleService;

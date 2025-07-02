@@ -10,8 +10,8 @@ namespace eProfessional.BLL.DTOs
         [Required(ErrorMessage = "Service type is required!")]
         public int ServiceTypeId { get; set; }
         [Required(ErrorMessage = "Description is required!")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
         [Required(ErrorMessage = "Price is required!")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
     }
 }

@@ -9,13 +9,13 @@ namespace WebAPI.Controllers
 {
     [Route("api/auth")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthApiController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
 
-        public AuthController(IConfiguration configuration, IAuthService authService, IMapper mapper)
+        public AuthApiController(IConfiguration configuration, IAuthService authService, IMapper mapper)
         {
             _configuration = configuration;
             _authService = authService;

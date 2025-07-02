@@ -44,7 +44,7 @@ namespace WebApp.Services
         public bool DeleteUser(int userId)
         {
             var response = _apiFetchService.DeleteData($"api/user/delete/{userId}");
-            if (response == null)
+            if (response)
             {
                 throw new Exception("Failed to delete user.");
             }

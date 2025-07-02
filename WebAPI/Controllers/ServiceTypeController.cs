@@ -9,12 +9,12 @@ namespace WebAPI.Controllers
     [Route("api/servicetype")]
     [ApiController]
     [Authorize]
-    public class ServiceTypeController : Controller
+    public class ServiceTypeApiController : Controller
     {
         private readonly IMapper _mapper;
         private readonly IServiceType _serviceTypeService;
 
-        public ServiceTypeController(IMapper mapper, IServiceType serviceType)
+        public ServiceTypeApiController(IMapper mapper, IServiceType serviceType)
         {
             _mapper = mapper;
             _serviceTypeService = serviceType;
