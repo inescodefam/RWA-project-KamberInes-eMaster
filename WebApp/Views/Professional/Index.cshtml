@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating">
-                        <select id="searchCityName" name="cityNeme" class="form-select">
+                        <select id="searchCityName" name="cityName" class="form-select">
                             <option value="">All cities</option>
                             @foreach (var city in Model.Cities)
                             {
@@ -39,6 +39,7 @@
                     <button type="submit" class="btn btn-primary w-100 py-2">
                         <i class="bi bi-search me-2"></i>Search Professionals
                     </button>
+                 
                 </div>
             </form>
         </div>
@@ -71,26 +72,29 @@
 </div>
 @section Scripts {
     <script>
+        console.log('Unready');
         $(document).ready(function() {
+            console.log('Ready');
+            alert(JSON.stringify(Model));
             $('#noResultsMessage').removeClass('d-none');
-            
+
             $('#searchProfessionalForm').submit(function(e) {
                 console.log('Search form submitted');
                 e.preventDefault();
                 var username = $('#searchUsername').val();
                 var cityName = $('#searchCityName').val();
 
-                $.ajax
+                $.ajax({
                     url: '@Url.Action("Search", "Professional")',
                     type: 'GET',
-                    data: { 
+                    data: {
                         username: username,
                         city: cityName,
-                        count: 100, 
+                        count: 100,
                         start: 0
                     },
                     success: function(results) {
-                         var professionals = results.professionals;
+                        var professionals = results.Professionals;
                         var $tbody = $('#searchProfessionalsTable tbody');
                         $tbody.empty();
 
@@ -112,9 +116,9 @@
                         console.error('Search error:', xhr.responseText);
                         alert('Error searching professionals. Please try again.');
                     }
-                });
-            });
-        });
+                }); 
+            }); 
+        }); 
     </script>
 }
 

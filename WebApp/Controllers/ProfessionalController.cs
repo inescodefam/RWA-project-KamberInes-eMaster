@@ -37,7 +37,7 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController/Search
         [HttpGet]
-        public IActionResult Search(string username, string? city, int count, int start)
+        public IActionResult Search(string username, string city, int count, int start)
         {
             var response = _professionalService.Search(username, city, count, start);
 
