@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
+using WebApp.Interfaces;
 using WebApp.Models;
 
 namespace WebApp.Controllers
@@ -22,20 +21,19 @@ namespace WebApp.Controllers
         }
 
         //GET: UserController
-        public async Task<IActionResult> Index(int count = 50, int start = 0)
+        public IActionResult Index(int count = 50, int start = 0)
         {
-            List<UserDto> users = await _userService.GetUsers(count, start);
-            List<UserVM> userVMs = _mapper.Map<List<UserVM>>(users);
-            return View(userVMs);
+            List<UserVM> users = _userService.GetUsers(count, start);
+            return View(users);
         }
 
 
         // GET: UserController/Details/5
-        public async Task<ActionResult> Details(int id)
+        public ActionResult Details(int id)
         {
             try
             {
-                var user = await _userService.GetUserById(id);
+                var user = _userService.GetUserById(id);
                 if (user == null)
                 {
                     return NotFound();
@@ -50,14 +48,13 @@ namespace WebApp.Controllers
             }
         }
 
-
         // GET: UserController/Edit/5
-        public async Task<ActionResult> Edit()
+        public ActionResult Edit()
         {
             var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email");
             var userEmail = emailClaim?.Value;
 
-            UserDto user = await _userService.GetUserByEmail(userEmail);
+            UserVM user = _userService.GetUserByEmail(userEmail);
             if (user == null)
                 return NotFound();
 
@@ -68,7 +65,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<JsonResult> Edit(UserVM model)
+        public JsonResult Edit(UserVM model)
         {
             if (!ModelState.IsValid)
             {
@@ -81,8 +78,7 @@ namespace WebApp.Controllers
 
             try
             {
-                var userDto = _mapper.Map<UserDto>(model);
-                var result = await _userService.UpdateUser(userDto);
+                var result = _userService.UpdateUser(model);
 
                 return result
                     ? Json(new { success = true, redirectUrl = Url.Action("Search", "Service") })
@@ -96,9 +92,9 @@ namespace WebApp.Controllers
 
 
         // GET: UserController/Delete/5
-        public async Task<ActionResult> Delete(int id)
+        public ActionResult Delete(int id)
         {
-            var userDto = await _userService.GetUserById(id);
+            var userDto = _userService.GetUserById(id);
             if (userDto == null)
                 return NotFound();
 
@@ -110,15 +106,15 @@ namespace WebApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult> DeleteUser(int id)
+        public ActionResult DeleteUser(int id)
         {
             try
             {
-                var userDto = await _userService.GetUserById(id);
+                var userDto = _userService.GetUserById(id);
                 if (userDto == null)
                     return NotFound();
 
-                await _userService.DeleteUser(id);
+                _userService.DeleteUser(id);
                 return RedirectToAction("Index");
             }
             catch
@@ -130,16 +126,16 @@ namespace WebApp.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
 
-        public async Task<IActionResult> UpdateRole(int userId, string roleName)
+        public IActionResult UpdateRole(int userId, string roleName)
         {
             try
             {
-                RoleDto roleDto = new RoleDto
+                RoleVM role = new RoleVM
                 {
                     UserId = userId,
                     RoleName = roleName
                 };
-                var response = await _roleService.AssignRoleToUser(roleDto);
+                var response = _roleService.AssignRoleToUser(role);
 
                 if (!response)
                 {

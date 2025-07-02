@@ -13,10 +13,12 @@ namespace WebAPI.Controllers
     public class CityController : Controller
     {
         private readonly ICityService _cityService;
+        private readonly IMapper _mapper;
 
         public CityController(IMapper mapper, ICityService cityService)
         {
             _cityService = cityService;
+            _mapper = mapper;
         }
 
         [HttpGet("all")]
@@ -25,7 +27,13 @@ namespace WebAPI.Controllers
             try
             {
                 var result = _cityService.GetAllCities();
-                return Ok(result);
+
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No cities found.");
+                }
+                var cityDtos = _mapper.Map<List<CityApiDto>>(result);
+                return Ok(cityDtos);
 
             }
             catch (Exception)
@@ -40,8 +48,13 @@ namespace WebAPI.Controllers
             try
             {
                 var result = _cityService.SearchCities(searchTerm, count, start);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No cities found.");
+                }
+                var cityDtos = _mapper.Map<List<CityApiDto>>(result);
 
-                return Ok(result);
+                return Ok(cityDtos);
             }
             catch (Exception)
             {
@@ -61,7 +74,7 @@ namespace WebAPI.Controllers
             {
                 var cityDto = _cityService.CreateCity(city.Name);
 
-                return CreatedAtAction(nameof(GetCities), new { id = cityDto.Idcity }, cityDto);
+                return CreatedAtAction(nameof(GetCities), new { id = cityDto.Idcity }, cityDto.Name);
             }
             catch (Exception)
             {
@@ -71,15 +84,16 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
-        public ActionResult UpdateCity(CityDto city)
+        public ActionResult UpdateCity([FromBody] CityApiDto city)
         {
-            if (string.IsNullOrEmpty(city.Name))
+            if (string.IsNullOrEmpty(city.Name) || city.Idcity == null || city.Idcity <= 0)
             {
-                return BadRequest("City name cannot be null or empty.");
+                return BadRequest("Invalid data.");
             }
             try
             {
-                var response = _cityService.UpdateCity(city);
+                var cityDto = _mapper.Map<CityDto>(city);
+                var response = _cityService.UpdateCity(cityDto);
 
             }
             catch (Exception ex)

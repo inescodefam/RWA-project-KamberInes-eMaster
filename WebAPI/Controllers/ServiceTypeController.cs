@@ -26,7 +26,31 @@ namespace WebAPI.Controllers
             try
             {
                 var serviceTypesDto = _serviceTypeService.GetServiceTypes(count, start);
-                return Ok(serviceTypesDto);
+                if (serviceTypesDto == null || !serviceTypesDto.Any())
+                {
+                    return NotFound("No service types found.");
+                }
+                var serviceTypesApiDto = _mapper.Map<List<ServiceTypeApiDto>>(serviceTypesDto);
+                return Ok(serviceTypesApiDto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the service types.");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<ServiceTypeApiDto> GetById(int id)
+        {
+            try
+            {
+                var serviceTypeDto = _serviceTypeService.GetServiceTypeById(id);
+                if (serviceTypeDto == null)
+                {
+                    return NotFound($"Service type with ID {id} not found.");
+                }
+                var serviceTypeApiDto = _mapper.Map<ServiceTypeApiDto>(serviceTypeDto);
+                return Ok(serviceTypeApiDto);
             }
             catch (Exception)
             {
@@ -67,7 +91,13 @@ namespace WebAPI.Controllers
             {
                 ServiceTypeDto serviceDto = _mapper.Map<ServiceTypeDto>(dto);
                 var updatedServiceType = _serviceTypeService.UpdateServiceType(serviceDto);
-                return Ok(updatedServiceType);
+                if (updatedServiceType == null)
+                {
+                    return NotFound($"Service type with ID {dto.IdserviceType} not found.");
+                }
+
+                var serviceTypeApiDto = _mapper.Map<ServiceTypeApiDto>(updatedServiceType);
+                return Ok(serviceTypeApiDto);
             }
             catch (Exception)
             {

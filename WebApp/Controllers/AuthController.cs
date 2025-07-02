@@ -22,23 +22,24 @@ namespace WebApp.Controllers
 
         public ActionResult Index()
         {
-            return HttpContext.Request.Cookies["jwt"] == null ? (ActionResult)View() : RedirectToAction("Search", "Services");
+            return HttpContext.Request.Cookies["jwt"] == null ? RedirectToAction("Login", "Auth") : RedirectToAction("Search", "Services");
         }
 
         [HttpGet]
         public ActionResult Login() => View();
 
         [HttpPost]
-        public async Task<ActionResult> Login(AuthVM model)
+        public ActionResult Login(AuthVM model)
         {
             if (!ModelState.IsValid) return View(model);
+            var jsonContent = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync("api/auth/login",
-                new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json"));
+
+            var response = Task.Run(async () => await _httpClient.PostAsync("api/auth/login", jsonContent)).GetAwaiter().GetResult();
 
             if (response.IsSuccessStatusCode)
             {
-                var json = await response.Content.ReadAsStringAsync();
+                var json = response.ToString();
                 var token = JsonDocument.Parse(json).RootElement.GetProperty("token").GetString();
 
                 var handler = new JwtSecurityTokenHandler();
@@ -56,14 +57,15 @@ namespace WebApp.Controllers
                     ClaimTypes.Name,
                     ClaimTypes.Role);
 
-                await HttpContext.SignInAsync(
+                Task.Run(async () => await
+                HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     new ClaimsPrincipal(identity),
                     new AuthenticationProperties
                     {
                         IsPersistent = true,
                         ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
-                    });
+                    })).GetAwaiter().GetResult();
 
                 Response.Cookies.Append("jwt", token, new CookieOptions
                 {
@@ -77,14 +79,14 @@ namespace WebApp.Controllers
             }
 
             ModelState.AddModelError("", "Invalid login attempt.");
-            return View(model);
+            return View();
         }
 
         [HttpGet]
         public ActionResult Register() => View();
 
         [HttpPost]
-        public async Task<ActionResult> Register(AuthVM model)
+        public ActionResult Register(AuthVM model)
         {
             if (!ModelState.IsValid)
             {
@@ -101,7 +103,7 @@ namespace WebApp.Controllers
                 return View(model);
             }
             var content = new StringContent(JsonSerializer.Serialize(model), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("api/auth/register", content);
+            var response = Task.Run(async () => await _httpClient.PostAsync("api/auth/register", content)).GetAwaiter().GetResult();
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction("Login");
@@ -113,7 +115,7 @@ namespace WebApp.Controllers
         [Authorize]
         public ActionResult Logout()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            Task.Run(async () => HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)).GetAwaiter().GetResult();
             Response.Cookies.Delete("jwt");
             return RedirectToAction("Login");
         }

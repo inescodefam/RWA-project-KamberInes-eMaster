@@ -11,15 +11,14 @@ namespace WebApp.Auth
             _httpContextAccessor = httpContextAccessor;
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override HttpResponseMessage Send(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            //var token = _httpContextAccessor.HttpContext?.Session.GetString("JWToken");
             var token = _httpContextAccessor.HttpContext?.Request.Cookies["jwt"];
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
-            return base.SendAsync(request, cancellationToken);
+            return base.Send(request, cancellationToken);
         }
     }
 }

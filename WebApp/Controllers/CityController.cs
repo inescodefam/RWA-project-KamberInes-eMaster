@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.Services;
+using WebApp.Interfaces;
 using WebApp.Models;
 
 
@@ -19,9 +19,9 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchTerm, int page = 1, int pageSize = 10)
+        public IActionResult Index(string searchTerm, int page, int pageSize)
         {
-            var response = await _cityService.GetCitiesAsync(searchTerm, page, pageSize);
+            var response = _cityService.GetCities(searchTerm, page, pageSize);
             var model = new CityIndexVM
             {
                 Cities = _mapper.Map<List<CityVM>>(response),
@@ -41,14 +41,14 @@ namespace WebApp.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(CityCreateVM model)
+        public IActionResult Create(CityCreateVM model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
             try
             {
-                var response = await _cityService.CreateCityAsync(model.Name);
+                var response = _cityService.CreateCity(model.Name);
 
                 if (response == null)
                 {

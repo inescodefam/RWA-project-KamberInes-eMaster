@@ -42,7 +42,9 @@ namespace WebAPI.Controllers
                 _mapper.Map<IEnumerable<ProfessionalApiDataDto>>(professionals);
 
                 _loggingService.CreateLog($"Retrieved {professionals.Count} professionals from the database.", "info");
-                return Ok(professionals);
+
+                var professionalDataApiDtos = _mapper.Map<List<ProfessionalApiDataDto>>(professionals);
+                return Ok(professionalDataApiDtos);
             }
             catch (Exception ex)
             {
@@ -59,7 +61,14 @@ namespace WebAPI.Controllers
             {
                 var professionalDto = _professionalService.GetSingleProfessional(id);
                 _loggingService.CreateLog($"Retrieved professional with ID {id}.", "info");
-                return Ok(professionalDto);
+
+                if (professionalDto == null)
+                {
+                    _loggingService.CreateLog($"Professional with ID {id} not found.", "info");
+                    return NotFound();
+                }
+                var professionalApiDto = _mapper.Map<ProfessionalApiDataDto>(professionalDto);
+                return Ok(professionalApiDto);
             }
             catch (Exception ex)
             {
@@ -87,7 +96,8 @@ namespace WebAPI.Controllers
                     return NoContent();
                 }
                 _loggingService.CreateLog($"Found {professionalDtos.Count} professionals matching the search criteria.", "info");
-                return Ok(professionalDtos);
+                var professionalDtosMapped = _mapper.Map<List<ProfessionalApiDataDto>>(professionalDtos);
+                return Ok(professionalDtosMapped);
 
             }
             catch (Exception ex)
@@ -117,6 +127,7 @@ namespace WebAPI.Controllers
                     return BadRequest("Failed to create professional.");
                 }
                 _loggingService.CreateLog("Professional created successfully.", "info");
+
                 return Ok();
             }
             catch (Exception ex)

@@ -28,8 +28,8 @@ namespace WebAPI.Controllers
             try
             {
                 var userDtos = _userService.GetUsers(count, start);
-
-                return Ok(userDtos);
+                var userApiDtos = _mapper.Map<List<UserApiDto>>(userDtos);
+                return Ok(userApiDtos);
             }
             catch (Exception ex)
             {
@@ -46,7 +46,13 @@ namespace WebAPI.Controllers
             {
 
                 var userDto = _userService.GetUserById(id);
-                return Ok(userDto);
+                if (userDto == null)
+                {
+                    return NotFound($"User with id {id} not found");
+                }
+
+                var userApiDto = _mapper.Map<UserApiDto>(userDto);
+                return Ok(userApiDto);
 
             }
             catch
@@ -63,7 +69,7 @@ namespace WebAPI.Controllers
                 var user = _userService.GetUserByEmail(email);
 
                 return user != null
-                ? Ok(user)
+                ? Ok(_mapper.Map<UserApiDto>(user))
                 : NotFound($"User with email {email} not found");
             }
             catch
@@ -84,6 +90,7 @@ namespace WebAPI.Controllers
             {
                 var user = _mapper.Map<UserDto>(userDto);
                 var updated = _userService.UpdateUser(user);
+
                 return updated
                     ? Ok("User updated successfully")
                     : NotFound("User not found");

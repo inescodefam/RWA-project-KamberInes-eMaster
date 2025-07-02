@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using Shared.BL.Services;
 using System.Text;
+using WebAPI.DTOs;
 using WebApp.Auth;
+using WebApp.Interfaces;
 using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,19 +15,19 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSession();
-builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddAutoMapper(typeof(Program), typeof(EntityDtoMapperProfileBLL));
 
 // Add to your services configuration
 builder.Services.AddTransient<JwtAuthorizationHandler>();
-builder.Services.AddScoped<ApiFetchService>();
+builder.Services.AddScoped<ApiService>();
 builder.Services.AddScoped<ProfessionalViewModelService>();
-builder.Services.AddScoped<IProfessionalService, ProfessionalApiServices>();
-builder.Services.AddScoped<IUserService, UserApiService>();
-builder.Services.AddScoped<ICityService, CityApiService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalServices>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<ICityProfessionalService, CityProfessionalService>();
-builder.Services.AddScoped<IServiceApiService, ServiceApiService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
 builder.Services.AddScoped<IServiceType, ServiceTypeService>();
-builder.Services.AddScoped<IRoleService, RoleApiService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 
 builder.Services.AddHttpClient("ApiClient", client =>
     client.BaseAddress = new Uri("http://localhost:5020/")

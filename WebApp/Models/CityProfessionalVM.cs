@@ -1,0 +1,35 @@
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+
+namespace WebApp.Models
+{
+    public class CityProfessionalVM
+    {
+        public int IdProfessionalCity { get; set; }
+
+        public int ProfessionalId { get; set; }
+
+        public int CityId { get; set; }
+
+    }
+
+    public class CityProfessionalDataVM : CityProfessionalVM
+    {
+        public string Username { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Phone { get; set; }
+        public string City { get; set; }
+    }
+
+    public class ProfessionalIndexVM
+    {
+        public List<ProfessionalVM> Professionals { get; set; }
+        [Display(Name = "Users")]
+        public List<SelectListItem> Users { get; set; } = new List<SelectListItem>();
+        [Display(Name = "Cities")]
+        public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
+
+    }
+}

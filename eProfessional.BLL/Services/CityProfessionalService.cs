@@ -65,17 +65,17 @@ namespace eProfessional.BLL.Services
         }
 
 
-        public List<CityDto> GetCitiesByProfessional(string professionalName)
+        public List<CityDto> GetCitiesByProfessional(int profesionalId)
         {
-            var exists = _cityProfessionalRepository.ProfessionalExists(professionalName);
-            if (exists == null)
+            var exists = _cityProfessionalRepository.ProfessionalExists(profesionalId);
+            if (exists)
             {
                 throw new ArgumentException("Professional does not exist.");
             }
             try
             {
 
-                var cityProfessionals = _cityProfessionalRepository.GetCitiesByProfessionalId(exists.IdProfessional);
+                var cityProfessionals = _cityProfessionalRepository.GetCitiesByProfessionalId(profesionalId);
 
                 if (cityProfessionals == null || !cityProfessionals.Any())
                 {
@@ -93,17 +93,17 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public List<ProfessionalDataDto> GetProfessionalsByCity(string city)
+        public List<ProfessionalDataDto> GetProfessionalsByCity(int city)
         {
             var exists = _cityProfessionalRepository.CityExists(city);
-            if (exists == null)
+            if (exists)
             {
                 throw new ArgumentException("City does not exist.");
             }
 
             try
             {
-                var cityProfessionals = _cityProfessionalRepository.GetProfessionalsByCity(exists.Idcity);
+                var cityProfessionals = _cityProfessionalRepository.GetProfessionalsByCity(city);
 
                 var professionalIds = cityProfessionals.Select(cp => cp.ProfessionalId).Distinct().ToList();
 

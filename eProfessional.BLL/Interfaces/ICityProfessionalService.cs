@@ -5,9 +5,9 @@ namespace eProfessional.BLL.Interfaces
     public interface ICityProfessionalService
     {
         public List<CityProfessionalDataDto> GetCityProfessionals(int count, int start);
-        public List<CityDto> GetCitiesByProfessional(string professionalName);
+        public List<CityDto> GetCitiesByProfessional(int professionalId);
 
-        public List<ProfessionalDataDto> GetProfessionalsByCity(string city);
+        public List<ProfessionalDataDto> GetProfessionalsByCity(int cityId);
 
         public CityProfessionalDto AddCityProfessional(CityProfessionalDto model);
         public CityProfessionalDataDto UpdateCityProfessional(CityProfessionalDto model);

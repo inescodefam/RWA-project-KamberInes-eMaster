@@ -27,7 +27,12 @@ namespace WebAPI.Controllers
             try
             {
                 var services = _servicesService.GetServicesCount(count, start);
-                return Ok(services);
+                if (services == null || !services.Any())
+                {
+                    return NotFound("No services found.");
+                }
+                var servicesDto = _mapper.Map<List<ServiceApiDto>>(services);
+                return Ok(servicesDto);
             }
             catch (Exception)
             {
@@ -35,12 +40,19 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("type/{type}")]
-        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type, int count)
+        [HttpGet("search")]
+        public ActionResult<ServiceApiDto> GetServiceByServiceType(string type, int count, int start)
         {
             try
             {
-                return Ok(_servicesService.GetServiceByServiceType(type, count));
+                var response = _servicesService.GetServiceByServiceType(type, count, start);
+                if (response == null || !response.Any())
+                {
+                    return NotFound("No services found for the specified type.");
+                }
+                var servicesDto = _mapper.Map<List<ServiceApiDto>>(response);
+                return Ok(servicesDto);
+
             }
             catch (Exception)
             {
@@ -53,7 +65,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(_servicesService.GetServiceByServiceId(id));
+                var service = _servicesService.GetServiceByServiceId(id);
+                if (service == null)
+                {
+                    return NotFound($"Service with id {id} not found.");
+                }
+                var serviceDto = _mapper.Map<ServiceApiDto>(service);
+                return Ok(serviceDto);
             }
             catch (Exception)
             {
@@ -81,8 +99,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public ActionResult UpdateService(int id, ServiceApiDto serviceApiDto)
+        [HttpPut]
+        public ActionResult UpdateService([FromBody] ServiceApiDto serviceApiDto)
         {
             ServiceDto exists = _servicesService.GetServiceByServiceId(serviceApiDto.IdService);
             if (exists == null)
@@ -93,6 +111,7 @@ namespace WebAPI.Controllers
             {
                 var serviceDto = _mapper.Map<ServiceDto>(serviceApiDto);
                 _servicesService.UpdateService(serviceDto);
+
                 return NoContent();
             }
             catch (Exception ex)

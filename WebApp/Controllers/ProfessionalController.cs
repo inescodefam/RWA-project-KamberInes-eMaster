@@ -1,37 +1,29 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
+using WebApp.Interfaces;
 using WebApp.Models;
-using WebApp.Services;
 
 namespace WebApp.Controllers
 {
     [Authorize]
     public class ProfessionalController : Controller
     {
-        private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
-        private readonly ProfessionalViewModelService _viewModelService;
         private readonly IProfessionalService _professionalService;
+        private readonly ICityProfessionalService _cityProfessionalService;
 
-        public ProfessionalController(IHttpClientFactory httpClientFactory, IMapper mapper, ProfessionalViewModelService viewModelService, IProfessionalService professionalService)
+        public ProfessionalController(IProfessionalService professionalService, ICityProfessionalService cityProfessionalService)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
-            _mapper = mapper;
-            _viewModelService = viewModelService;
             _professionalService = professionalService;
+            _cityProfessionalService = cityProfessionalService;
         }
 
         // GET: ProfessionalController
         [HttpGet]
-        public async Task<IActionResult> Index(int count = 50, int start = 0)
+        public IActionResult Index(int count, int start)
         {
-            var model = await _professionalService.GetProfessionals(count, start);
-            List<ProfessionalVM> professionalVMs = _mapper.Map<List<ProfessionalVM>>(model);
+            var model = _professionalService.GetProfessionals(count, start);
 
-            if (professionalVMs == null || professionalVMs.Count == 0)
+            if (model == null || model.Count == 0)
             {
                 ModelState.AddModelError("", "No professionals found.");
                 return View(new ProfessionalIndexVM
@@ -39,69 +31,35 @@ namespace WebApp.Controllers
                     Professionals = new List<ProfessionalVM>()
                 });
             }
-            var professionalIndexModel = await _viewModelService.GetProfessionalIndexVM(professionalVMs, count);
-
-            return View(professionalIndexModel);
-        }
-
-        // GET: ProfessionalController/AddProfessional
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var professionals = await _professionalService.GetProfessionals(1000, 0);
-            int count = professionals.Count;
-            var professionalVms = _mapper.Map<List<ProfessionalVM>>(professionals);
-            var model = await _viewModelService.GetProfessionalIndexVM(professionalVms, count);
 
             return View(model);
         }
 
+        // GET: ProfessionalController/AddProfessional
+        [HttpGet]
+        public IActionResult Create() => View(new ProfessionalDataVM());
+
         // GET: ProfessionalController/Search
         [HttpGet]
-        public async Task<IActionResult> Search(string username, string? city, int? count, int? start)
+        public IActionResult Search(string username, string? city, int count, int start)
         {
-            var response = await _professionalService.Search(username, city, 1000, 0);
-            List<ProfessionalVM> professionalVms = _mapper.Map<List<ProfessionalVM>>(response);
-            ProfessionalIndexVM model;
+            var response = _professionalService.Search(username, city, count, start);
 
-            if (professionalVms == null || professionalVms.Count == 0)
-            {
-                ModelState.AddModelError("", "No professionals found.");
-                model = new ProfessionalIndexVM
-                {
-                    Professionals = new List<ProfessionalVM>()
-                };
-            }
-            else
-            {
-
-                model = await _viewModelService.GetProfessionalIndexVM(professionalVms, professionalVms.Count);
-            }
-
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { model.Professionals });
-            }
-            else
-            {
-                return View("Index", model);
-            }
+            return View(response);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] ProfessionalVM professionalVM)
+        public IActionResult Create([FromBody] CreateProfessionalVM professionalVM)
         {
-            var professionalDto = _mapper.Map<ProfessionalDto>(professionalVM);
 
-            if (professionalDto == null)
+            if (professionalVM == null)
             {
                 ModelState.AddModelError("", "Invalid data submitted.");
                 return BadRequest("Invalid data submitted.");
             }
 
-            var response = await _professionalService.CreateProfessional(professionalDto);
+            var response = _professionalService.CreateProfessional(professionalVM);
 
             if (response)
                 return Ok();
@@ -119,49 +77,33 @@ namespace WebApp.Controllers
 
 
         // GET: ProfessionalController/Edit/5
-        public async Task<ActionResult> Edit(int id)
+        public ActionResult Edit(int id)
         {
-            var professional = await _professionalService.GetSingleProfessional(id);
-            ProfessionalVM professionalVm = _mapper.Map<ProfessionalVM>(professional);
+            var professional = _professionalService.GetSingleProfessional(id);
 
-            var professionalVmList = new List<ProfessionalVM> { professionalVm };
-
-            ProfessionalIndexVM professionalIndexVM = await _viewModelService.GetProfessionalIndexVM(professionalVmList, 1);
-
-            return View(professionalIndexVM);
+            return View(professional);
         }
 
         // POST: ProfessionalController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, [FromForm] ProfessionalVM professionalVm)
+        public ActionResult Edit(int id, [FromForm] ProfessionalDataVM professionalVm)
         {
             try
             {
-                ProfessionalDto professionalDto = _mapper.Map<ProfessionalDto>(professionalVm);
-                var response = await _professionalService.UpdateProfessional(id, professionalDto);
+                var response = _professionalService.UpdateProfessional(professionalVm);
                 if (!response)
                 {
                     ModelState.AddModelError("", "Failed to update professional.");
 
-                    var model = await GetProfessionalViewModel(id);
-                    return View(model);
+                    return View(response);
                 }
                 return RedirectToAction(nameof(Create));
             }
             catch
             {
-                var model = await GetProfessionalViewModel(id);
-                return View(model);
+                return View();
             }
-        }
-
-        private async Task<ProfessionalIndexVM> GetProfessionalViewModel(int id)
-        {
-            var professional = await _professionalService.GetSingleProfessional(id);
-            var professionalVm = _mapper.Map<ProfessionalVM>(professional);
-            var professionalVmList = new List<ProfessionalVM> { professionalVm };
-            return await _viewModelService.GetProfessionalIndexVM(professionalVmList, 1);
         }
 
 

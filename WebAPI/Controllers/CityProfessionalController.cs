@@ -29,7 +29,12 @@ namespace WebAPI.Controllers
             try
             {
                 var result = _cityProfessionalService.GetCityProfessionals(count, start);
-                return Ok(result);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No city-professionals found.");
+                }
+                var cityProfessionalDataDtos = _mapper.Map<List<CityProfessionalDataApiDto>>(result);
+                return Ok(cityProfessionalDataDtos);
             }
             catch (Exception ex)
             {
@@ -38,12 +43,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("city")]
-        public IActionResult GetProfessionalsFromCity([FromQuery] string cityName)
+        public IActionResult GetProfessionalsFromCity([FromQuery] int cityId)
         {
             try
             {
-                var result = _cityProfessionalService.GetProfessionalsByCity(cityName);
-                return Ok(result);
+                var result = _cityProfessionalService.GetProfessionalsByCity(cityId);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No professionals found for the given city.");
+                }
+                var professionalDataDtos = _mapper.Map<List<ProfessionalApiDataDto>>(result);
+                return Ok(professionalDataDtos);
             }
             catch (Exception ex)
             {
@@ -52,12 +62,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("professional")]
-        public IActionResult GetCitiesByProfessional([FromQuery] string professionalName)
+        public IActionResult GetCitiesByProfessional([FromQuery] int professionalId)
         {
             try
             {
-                var result = _cityProfessionalService.GetCitiesByProfessional(professionalName);
-                return Ok(result);
+                var result = _cityProfessionalService.GetCitiesByProfessional(professionalId);
+                if (result == null || !result.Any())
+                {
+                    return NotFound("No cities found for the given professional.");
+                }
+                var cityDtos = _mapper.Map<List<CityApiDto>>(result);
+                return Ok(cityDtos);
             }
             catch (Exception ex)
             {
@@ -78,7 +93,8 @@ namespace WebAPI.Controllers
                 {
                     return BadRequest("CityProfessional could not be created.");
                 }
-                return Ok(result);
+                var cityProfessionalApiDto = _mapper.Map<CityProfessionalApiDto>(result);
+                return Ok(cityProfessionalApiDto);
             }
             catch (Exception ex)
             {
@@ -97,7 +113,9 @@ namespace WebAPI.Controllers
                 {
                     return NotFound("CityProfessional not found.");
                 }
-                return Ok(result);
+
+                var cityProfessionalDataApiDto = _mapper.Map<CityProfessionalDataApiDto>(result);
+                return Ok(cityProfessionalDataApiDto);
             }
             catch (Exception ex)
             {
@@ -105,7 +123,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("professional")]
+        [HttpPut("professional/{professionalId}")]
         public IActionResult UpdateCitiesByProfessionalId(int professionalId, [FromBody] List<int> citiesIds)
         {
             try
@@ -116,7 +134,8 @@ namespace WebAPI.Controllers
                 {
                     return NotFound("No cities found for the given professional.");
                 }
-                return Ok(result);
+                var cityProfessionalDataDtos = _mapper.Map<List<CityProfessionalDataApiDto>>(result);
+                return Ok(cityProfessionalDataDtos);
             }
             catch (Exception ex)
             {
@@ -124,7 +143,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("city")]
+        [HttpPut("city/{cityId}")]
         public IActionResult UpdateProfessionalsByCityId(int cityId, [FromBody] List<int> professionalsIds)
         {
             try
@@ -136,7 +155,8 @@ namespace WebAPI.Controllers
                 {
                     return NotFound("No professionals found for the given city.");
                 }
-                return Ok(result);
+                var cityProfessionalDataDtos = _mapper.Map<List<CityProfessionalDataApiDto>>(result);
+                return Ok(cityProfessionalDataDtos);
             }
             catch (Exception ex)
             {
@@ -145,8 +165,8 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("professional")]
-        public IActionResult DeleteCitiesForProfessional([FromQuery] int id)
+        [HttpDelete("professional/{id}")]
+        public IActionResult DeleteCitiesForProfessional(int id)
         {
             try
             {
@@ -155,6 +175,7 @@ namespace WebAPI.Controllers
                 {
                     return NotFound("Reference not found.");
                 }
+
                 return NoContent();
             }
             catch (Exception ex)
@@ -164,8 +185,8 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("city")]
-        public IActionResult DeletePRofessionalsForCities([FromQuery] int Id)
+        [HttpDelete("city/{Id}")]
+        public IActionResult DeletePRofessionalsForCities(int Id)
         {
             try
             {
@@ -183,8 +204,8 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete]
-        public IActionResult Delete([FromQuery] int id)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
             try
             {

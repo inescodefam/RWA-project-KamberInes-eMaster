@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using Shared.BL.DTOs;
-using Shared.BL.Models;
+using WebAPI.DTOs;
 using WebApp.Models;
 
 namespace WebApp.Mapper
@@ -9,20 +8,30 @@ namespace WebApp.Mapper
     {
         public EntityDtoMapperProfile()
         {
-            CreateMap<UserVM, UserDto>();
-            CreateMap<UserDto, UserVM>();
-            CreateMap<UserDto, User>();
-            CreateMap<User, UserDto>();
-            CreateMap<ProfessionalDto, ProfessionalVM>();
-            CreateMap<ProfessionalVM, ProfessionalDto>();
-            CreateMap<ProfessionalDto, Professional>();
-            CreateMap<Professional, ProfessionalDto>();
-            CreateMap<ServiceTypeDto, ServiceTypeVM>();
-            CreateMap<ServiceTypeVM, ServiceTypeDto>();
-            CreateMap<CityDto, CityVM>();
-            CreateMap<CityVM, CityDto>();
-            CreateMap<ServiceVM, ServiceDto>();
-            CreateMap<ServiceDto, ServiceVM>();
+            CreateMap<UserVM, UserApiDto>();
+            CreateMap<UserApiDto, UserVM>();
+
+            CreateMap<ProfessionalApiDto, ProfessionalVM>();
+            CreateMap<ProfessionalVM, ProfessionalApiDto>();
+            CreateMap<ProfessionalApiDataDto, ProfessionalDataVM>();
+            CreateMap<ProfessionalDataVM, ProfessionalApiDataDto>();
+            CreateMap<CreateProfessionalApiDataDto, CreateProfessionalVM>();
+            CreateMap<CreateProfessionalVM, CreateProfessionalApiDataDto>();
+
+            CreateMap<CityProfessionalApiDto, CityProfessionalVM>();
+            CreateMap<CityProfessionalVM, CityProfessionalApiDto>();
+
+            CreateMap<ServiceTypeApiDto, ServiceTypeVM>();
+            CreateMap<ServiceTypeVM, ServiceTypeApiDto>();
+
+            CreateMap<CityApiDto, CityVM>();
+            CreateMap<CityVM, CityApiDto>();
+
+            CreateMap<ServiceVM, ServiceApiDto>();
+            CreateMap<ServiceApiDto, ServiceVM>();
+
+            CreateMap<RoleVM, RoleApiDto>();
+            CreateMap<RoleApiDto, RoleVM>();
 
         }
     }

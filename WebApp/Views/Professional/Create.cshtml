@@ -126,6 +126,7 @@
                                         <a class="btn btn-primary btn-sm" href="@Url.Action("Edit", "Professional", new { id = p.IdProfessional })">
                                             Edit
                                         </a>
+                                        @Html.ActionLink("Edit", "Edit", "Professional", new { id = p.IdProfessional })
                                     </td>
                                 </tr>
                             }

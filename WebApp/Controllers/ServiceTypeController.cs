@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
+using eProfessional.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
 using WebApp.Models;
 using WebApp.Services;
 
@@ -15,7 +14,7 @@ namespace WebApp.Controllers
         private readonly IMapper _mapper;
         private readonly IServiceType _serviceTypeService;
 
-        public ServiceTypeController(IMapper mapper, ApiFetchService apiFetchService, IServiceType serviceType)
+        public ServiceTypeController(IMapper mapper, ApiService apiFetchService, IServiceType serviceType)
         {
             _mapper = mapper;
             _serviceTypeService = serviceType;
@@ -25,14 +24,13 @@ namespace WebApp.Controllers
         public IActionResult CreateServiceType() => View();
 
         [HttpPost]
-        public async Task<IActionResult> CreateServiceType(ServiceTypeVM model)
+        public IActionResult CreateServiceType(ServiceTypeVM model)
         {
             if (ModelState.IsValid)
             {
-                ServiceTypeDto modelDto = _mapper.Map<ServiceTypeDto>(model);
                 try
                 {
-                    var response = await _serviceTypeService.CreateServiceType(modelDto);
+                    var response = _serviceTypeService.CreateServiceType(model);
                     return RedirectToAction("Search", "Service");
 
                 }

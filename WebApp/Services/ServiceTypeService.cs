@@ -1,54 +1,72 @@
 ﻿using AutoMapper;
-using Shared.BL.DTOs;
-using Shared.BL.Services;
+using eProfessional.BLL.DTOs;
+using WebApp.Interfaces;
+using WebApp.Models;
 
 namespace WebApp.Services
 {
     public class ServiceTypeService : IServiceType
     {
-        private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly ApiService _apiFetchService;
 
-        public ServiceTypeService(IHttpClientFactory httpClientFactory, IMapper mapper, ApiFetchService apiFetchService)
+        public ServiceTypeService(IMapper mapper, ApiService apiFetchService)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _apiFetchService = apiFetchService;
             _mapper = mapper;
         }
 
-        public async Task<ServiceTypeDto> CreateServiceType(ServiceTypeDto model)
+        public ServiceTypeVM CreateServiceType(ServiceTypeVM model)
         {
-            var serviceTypesDto = await GetServiceTypes(100, 0);
 
-            if (serviceTypesDto.Any(st => st.ServiceTypeName.Equals(model.ServiceTypeName, StringComparison.OrdinalIgnoreCase)))
+            var response = _apiFetchService.PostData<ServiceTypeDto, ServiceTypeVM>("api/servicetype", model);
+
+            if (response == null)
             {
-                throw new InvalidOperationException("Service type with the same name already exists.");
+                throw new Exception("Failed to create service type.");
             }
-            var serviceTypeDto = _mapper.Map<ServiceTypeDto>(model);
-            var response = await _httpClient.PostAsJsonAsync("api/servicetype", serviceTypeDto);
-
-            return serviceTypeDto;
+            return response;
         }
 
-        public Task<bool> DeleteServiceType(int id)
+        public bool DeleteServiceType(int id)
         {
-            throw new NotImplementedException();
+            var response = _apiFetchService.DeleteData($"api/servicetype/{id}");
+            return response;
         }
 
-        public Task<ServiceTypeDto> GetServiceTypeById(int id)
+        public ServiceTypeVM GetServiceTypeById(int id)
         {
-
-            throw new NotImplementedException();
+            var response = _apiFetchService.Fetch<ServiceTypeDto, ServiceTypeVM>($"api/servicetype/{id}");
+            if (response != null)
+            {
+                return response;
+            }
+            else
+            {
+                throw new Exception("Service type not found.");
+            }
         }
 
-        public async Task<List<ServiceTypeDto>> GetServiceTypes(int count, int start)
+        public List<ServiceTypeVM> GetServiceTypes(int pageSize, int page)
         {
-            var serviceTypes = await _httpClient.GetFromJsonAsync<List<ServiceTypeDto>>($"api/servicetype?count={count}&start={start}");
-            return serviceTypes ?? new List<ServiceTypeDto>();
+            if (page < 1) page = 1;
+            if (pageSize < 1) pageSize = 10;
+            var start = (page - 1) * pageSize;
+            var serviceTypes = _apiFetchService.FetchDataList<ServiceTypeDto, ServiceTypeVM>($"api/servicetype?count={pageSize}&start={start}");
+            return serviceTypes ?? new List<ServiceTypeVM>();
         }
 
-        public Task<ServiceTypeDto> UpdateServiceType(ServiceTypeDto serviceTypeDto)
+        public ServiceTypeVM UpdateServiceType(ServiceTypeVM serviceTypeDto)
         {
-            throw new NotImplementedException();
+            var response = _apiFetchService.PostData<ServiceTypeDto, ServiceTypeVM>("api/servicetype", serviceTypeDto);
+            if (response != null)
+            {
+                return response;
+            }
+            else
+            {
+                throw new Exception("Failed to update service type.");
+            }
         }
     }
 }

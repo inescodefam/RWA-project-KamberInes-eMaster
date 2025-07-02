@@ -37,14 +37,14 @@
         @Html.ValidationMessageFor(m => m.SelectedCityId)
     </div>
     <div>
-        <label asp-for="SelectedServiceTypeName">Service Type:</label>
+        <label asp-for="SelectedServiceTypeId">Service Type:</label>
         @Html.DropDownListFor(
-                m => m.SelectedServiceTypeName,
-                new SelectList(Model.ServiceTypes, "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
+                m => m.SelectedServiceTypeId,
+                new SelectList(Model.ServiceTypes, "IdserviceType", "ServiceTypeName", Model.SelectedServiceTypeName),
                 "-- Select Service Type --",
                 new { @class = "form-control" }
                 )
-        @Html.ValidationMessageFor(m => m.SelectedServiceTypeName)
+        @Html.ValidationMessageFor(m => m.SelectedServiceTypeId)
     </div>
     <div>
         <label asp-for="Description">Description:</label>

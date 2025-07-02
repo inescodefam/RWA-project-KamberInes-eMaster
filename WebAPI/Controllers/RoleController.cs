@@ -58,19 +58,17 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("api/role/{roleId}")]
-        public IActionResult UpdateRole(int roleId, [FromBody] string newRoleName)
+        public IActionResult UpdateRole([FromBody] RoleApiDto newRole)
         {
-            if (string.IsNullOrEmpty(newRoleName))
+            if (string.IsNullOrEmpty(newRole.RoleName) ||
+                newRole.UserId <= 0 || newRole.Idrole <= 0)
+
             {
                 return BadRequest("New role name cannot be empty.");
             }
-            RoleDto newRole = new RoleDto
-            {
-                Idrole = roleId,
-                RoleName = newRoleName
-            };
+            RoleDto newRoleDto = _mapper.Map<RoleDto>(newRole);
 
-            var response = _roleService.UpdateRole(newRole);
+            var response = _roleService.UpdateRole(newRoleDto);
             if (!response)
             {
                 return NotFound("Role not found or could not be updated.");

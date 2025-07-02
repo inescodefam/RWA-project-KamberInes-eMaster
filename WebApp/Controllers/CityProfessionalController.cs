@@ -1,0 +1,131 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebApp.Interfaces;
+using WebApp.Models;
+
+namespace WebApp.Controllers
+{
+    [Authorize]
+    public class CityProfessionalController : Controller
+    {
+        private readonly ICityProfessionalService _cityProfessionalService;
+
+        public CityProfessionalController(ICityProfessionalService cityProfessionalService)
+        {
+            _cityProfessionalService = cityProfessionalService;
+        }
+
+        [HttpGet]
+        public IActionResult Index(int count, int start)
+        {
+            var result = _cityProfessionalService.GetCityProfessionals(count, start);
+            return View(result);
+        }
+
+        [HttpGet]
+        public IActionResult GetProfessionals(int cityId)
+        {
+            var result = _cityProfessionalService.GetProfessionalsByCity(cityId);
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult GetCities(int professionalId)
+        {
+            var result = _cityProfessionalService.GetCitysByProfessional(professionalId);
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult AddCityProfessional()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddCityProfessional(CityProfessionalVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _cityProfessionalService.AddCityProfessional(model);
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult UpdateCityProfessional(int id)
+        {
+            var model = _cityProfessionalService.GetCityProfessionals(0, 0).FirstOrDefault(x => x.IdProfessionalCity == id);
+            if (model == null)
+            {
+                return NotFound();
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCityProfessional(int id, CityProfessionalDataVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _cityProfessionalService.UpdateCityProfessional(id, model);
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCitiesByProfessional(int professionalId, List<int> citiesIds)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _cityProfessionalService.UpdateCitiesByProfessional(professionalId, citiesIds);
+                return RedirectToAction("Index");
+            }
+            return BadRequest("Invalid data");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateProfessionalsByCity(int cityId, List<int> professionalsIds)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _cityProfessionalService.UpdateProfessionalsByCity(cityId, professionalsIds);
+                return RedirectToAction("Index");
+            }
+            return BadRequest("Invalid data");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCityProfessional(int idProfessionalCity)
+        {
+            if (_cityProfessionalService.DeleteCityProfessional(idProfessionalCity))
+            {
+                return RedirectToAction("Index");
+            }
+            return BadRequest("Error deleting city professional");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteCitiesForProfessional(int professionalId)
+        {
+            if (_cityProfessionalService.DeleteCitiesForProfessional(professionalId))
+            {
+                return RedirectToAction("Index");
+            }
+            return BadRequest("Error deleting cities for professional");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteProfessionalsForCity(int cityId)
+        {
+            if (_cityProfessionalService.DeleteProfessionalsForCity(cityId))
+            {
+                return RedirectToAction("Index");
+            }
+            return BadRequest("Error deleting professionals for city");
+        }
+    }
+}
+
