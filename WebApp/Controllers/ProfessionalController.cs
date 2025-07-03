@@ -120,7 +120,7 @@ namespace WebApp.Controllers
                 if (!response)
                     return NoContent();
 
-                return View();
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -44,8 +44,7 @@ namespace WebApp.Services
         public bool CreateProfessional(ProfessionalBaseVm professionalVm) // ProfessionalVM
         {
             var response = _apiService.PostData<ProfessionalApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
-            var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional/co");
-            /// add great number
+            var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional/count={10000}&start={0}");
 
             // i dont like this but... no time for fixing it now
 
