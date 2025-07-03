@@ -41,16 +41,16 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult Search(string serviceTypeName, int count = 50, int start = 0)
+        public ActionResult Search(string SelectedServiceTypeName, int count = 50, int start = 0)
         {// add city id...
-            if (string.IsNullOrEmpty(serviceTypeName))
+            if (string.IsNullOrEmpty(SelectedServiceTypeName))
             {
-                serviceTypeName = string.Empty;
+                SelectedServiceTypeName = string.Empty;
             }
 
             var vm = new ServiceSearchVM
             {
-                Services = _serviceService.Search(serviceTypeName, count, start)
+                Services = _serviceService.Search(SelectedServiceTypeName, count, start)
             };
 
             return View(vm);
