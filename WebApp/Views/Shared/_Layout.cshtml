@@ -37,9 +37,10 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.IsAuthenticated)
                         {
+
+                         <ul class="navbar-nav flex-grow-1">
 
                             @if (User.IsInRole("Admin"))
                             {
@@ -59,9 +60,6 @@
                             }
                             else
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Service" asp-action="YourServices">Your Services</a>
-                                </li>
 
                                 <li class="nav-item">
                                     <a class="nav-link" asp-controller="Professional" asp-action="Index">Professionals</a>
@@ -71,16 +69,20 @@
                                 </li>
 
                             }
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Service" asp-action="YourServices">Your Services</a>
+                                </li>
 
 
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="User" asp-action="Edit">Profile</a>
                             </li>
+
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
                             </li>
+                             </ul>
                         }
-                    </ul>
 
                 </div>
             </div>
