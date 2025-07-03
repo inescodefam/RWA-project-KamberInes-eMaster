@@ -127,16 +127,39 @@ namespace WebApp.Services
             return serviceResults;
         }
 
-        public List<ServiceResultVM> Search(string serviceTypeName, int count, int start = 0)
+        public List<ServiceResultVM> Search(string serviceTypeName, int cityId, int count, int start = 0)
         {
-            var url = $"api/service/search?serviceTypeName={serviceTypeName}&count={count}&start={start}";
+            List<ServiceVM> response = new List<ServiceVM>();
 
-            var response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
-
-            if (response == null || !response.Any())
+            if (!string.IsNullOrEmpty(serviceTypeName))
             {
-                return new List<ServiceResultVM>();
+                var url = $"api/service/search?serviceTypeName={serviceTypeName}&count={count}&start={start}";
+                response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
+                if (response == null || !response.Any())
+                {
+                    return new List<ServiceResultVM>();
+                }
             }
+
+            if (cityId > 0)
+            {
+                var url = $"api/city-professional/city/{cityId}";
+                var professionals = _cpService.GetProfessionalsByCity(cityId)
+                    .Select(p => p.IdProfessional)
+                    .ToList();
+
+                List<ServiceVM> servicesWithProfessionalsCity = GetServices()
+                    .Where(s => professionals.Contains(s.ProfessionalId))
+                    .ToList();
+
+                var combined = response.Concat(servicesWithProfessionalsCity)
+                    .GroupBy(s => s.IdService)
+                    .Select(g => g.First())
+                    .ToList();
+
+                response = combined;
+            }
+
             var serviceResults = new List<ServiceResultVM>();
             foreach (var service in response)
             {
@@ -147,6 +170,13 @@ namespace WebApp.Services
         }
 
         // PRIVATE
+
+        private List<ServiceVM> GetServices()
+        {
+            var url = "api/service?count=1000&start=0";
+            var response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
+            return response ?? new List<ServiceVM>();
+        }
 
         private ServiceResultVM MapServiceToResult(ServiceVM service)
         {

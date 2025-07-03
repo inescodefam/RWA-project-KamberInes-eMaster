@@ -10,6 +10,6 @@ namespace WebApp.Interfaces
         public ServiceResultVM GetServiceByID(int id);
         public ServiceEditVM GetServiceByIdEditVm(int id);
         public List<ServiceResultVM> GetServiceIndex(int count, int start);
-        public List<ServiceResultVM> Search(string serviceTypeName, int count, int start = 0);
+        public List<ServiceResultVM> Search(string serviceTypeName, int cityId, int count, int start = 0);
     }
 }
