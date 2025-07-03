@@ -85,21 +85,24 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var vm = _serviceService.GetServiceByID(id);
+            var vm = _serviceService.GetServiceByIdEditVm(id);
             return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Edit(ServiceEditVM vm)
+        public IActionResult Edit(ServiceEditResultVM vm)
         {
+
+
             if (!ModelState.IsValid)
             {
-                return View(vm);
+                var model = _serviceService.GetServiceByIdEditVm(vm.IdService);
+                return View(model);
             }
 
             _serviceService.EditService(vm);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Search));
         }
 
         [HttpPost]

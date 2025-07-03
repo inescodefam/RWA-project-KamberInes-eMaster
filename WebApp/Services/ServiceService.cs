@@ -64,18 +64,20 @@ namespace WebApp.Services
             return response;
         }
 
-        public void EditService(ServiceEditVM vm)
+        public bool EditService(ServiceEditResultVM vm)
         {
             var serviceDto = new ServiceVM
             {
                 IdService = vm.IdService,
                 ProfessionalId = vm.SelectedProfessionalId,
-                ServiceTypeId = vm.IdService,
+                ServiceTypeId = vm.SelectedServiceTypeId,
                 Description = vm.Description,
                 Price = vm.Price
             };
 
-            var response = _apiFetchService.PutData<ServiceApiDto, ServiceVM>($"api/service/{vm.IdService}", serviceDto);
+            var response = _apiFetchService.PutData<ServiceApiDto, ServiceVM>($"api/service", serviceDto);
+
+            return response != null;
         }
 
         public ServiceResultVM GetServiceByID(int id)
@@ -89,6 +91,14 @@ namespace WebApp.Services
 
             var serviceResultVM = MapServiceToResult(response);
             return serviceResultVM;
+        }
+
+        public ServiceEditVM GetServiceByIdEditVm(int id)
+        {
+            var response = GetServiceByID(id);
+            var serviceEditVm = MapServiceResultToServiceEditViewModel(response);
+
+            return serviceEditVm;
         }
 
         public List<ServiceResultVM> GetServiceIndex(int pageSize, int page)
@@ -155,5 +165,35 @@ namespace WebApp.Services
                 CityNames = cityNames
             };
         }
+
+        private ServiceEditVM MapServiceResultToServiceEditViewModel(ServiceResultVM response)
+        {
+            var professionalIndexVm = _professionalService.GetProfessionals(1000, 0);
+
+            int professionalId = professionalIndexVm.Professionals.FirstOrDefault(p => p.UserName == response.ProfessionalName)?.IdProfessional ?? 0;
+
+            List<CityVM> cities = _cpService.GetCitysByProfessional(professionalId);
+
+            int serviceTypeId = _serviceType.GetServiceTypes(1000, 0).FirstOrDefault(st => st.ServiceTypeName == response.ServiceTypeName).IdserviceType;
+
+
+            List<int> cityIds = cities.Select(c => c.Idcity).ToList();
+
+            ServiceEditVM serviceEditVM = new ServiceEditVM
+            {
+                IdService = response.IdService,
+                SelectedProfessionalId = professionalId,
+                SelectedCityId = cityIds,
+                SelectedServiceTypeId = serviceTypeId,
+                Description = response.Description,
+                Price = response.Price,
+                Professionals = professionalIndexVm.Professionals,
+                Cities = cities,
+                ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
+            };
+
+            return serviceEditVM;
+        }
+
     }
 }

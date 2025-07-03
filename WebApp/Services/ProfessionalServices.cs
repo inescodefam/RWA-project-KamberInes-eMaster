@@ -72,7 +72,7 @@ namespace WebApp.Services
 
                 return response != null;
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

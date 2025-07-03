@@ -40,7 +40,7 @@
         <label asp-for="SelectedServiceTypeId">Service Type:</label>
         @Html.DropDownListFor(
                 m => m.SelectedServiceTypeId,
-                new SelectList(Model.ServiceTypes, "IdserviceType", "ServiceTypeName", Model.SelectedServiceTypeName),
+                new SelectList(Model.ServiceTypes, "IdserviceType", "ServiceTypeName", Model.SelectedServiceTypeId),
                 "-- Select Service Type --",
                 new { @class = "form-control" }
                 )

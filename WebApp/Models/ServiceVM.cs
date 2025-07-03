@@ -77,10 +77,8 @@ namespace WebApp.Models
         [MinLength(1, ErrorMessage = "At least one city must be selected.")]
         [Display(Name = "Cities")]
         public List<int> SelectedCityId { get; set; }
-        [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]
         [Display(Name = "Service type")]
         public int SelectedServiceTypeId { get; set; }
-        public string SelectedServiceTypeName { get; set; }
         [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
         [Display(Name = "Description")]
         public string Description { get; set; }
@@ -89,5 +87,15 @@ namespace WebApp.Models
         public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
         public List<CityVM> Cities { get; set; } = new List<CityVM>();
         public List<ServiceTypeVM> ServiceTypes { get; set; }
+    }
+
+    public class ServiceEditResultVM
+    {
+        public int IdService { get; set; }
+        public int SelectedProfessionalId { get; set; }
+        public List<int> CityIds { get; set; } = new List<int>();
+        public int SelectedServiceTypeId { get; set; }
+        public string Description { get; set; }
+        public decimal Price { get; set; }
     }
 }

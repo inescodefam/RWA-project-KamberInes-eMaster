@@ -113,7 +113,7 @@ namespace WebAPI.Controllers
                 var serviceDto = _mapper.Map<ServiceDto>(serviceApiDto);
                 _servicesService.UpdateService(serviceDto);
 
-                return NoContent();
+                return Ok(serviceDto);
             }
             catch (Exception ex)
             {

@@ -144,6 +144,8 @@ namespace WebApp.Services
             {
                 Content = new StringContent(JsonSerializer.Serialize(dto), System.Text.Encoding.UTF8, "application/json")
             };
+
+
             try
             {
                 var response = _httpClient.Send(request);
