@@ -23,7 +23,7 @@ namespace WebApp.Models
         public string Email { get; set; }
         [Phone(ErrorMessage = "Invalid phone number format.")]
         [Display(Name = "Phone number")]
-        public string? PhoneNumber { get; set; }
+        public string? Phone { get; set; }
 
         [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be 8-100 characters.")]
         [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$",

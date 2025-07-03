@@ -107,9 +107,8 @@ namespace WebAPI.Controllers
                 var user = _mapper.Map<UserDto>(userDto);
                 var updated = _userService.UpdateUser(user);
 
-                return updated
-                    ? Ok("User updated successfully")
-                    : NotFound("User not found");
+
+                return Ok(updated);
             }
             catch
             {

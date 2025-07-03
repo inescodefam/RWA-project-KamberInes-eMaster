@@ -198,7 +198,7 @@ namespace eProfessional.BLL.Services
                     var professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
                     professionalDto.UserName = user.Username;
                     professionalDto.Email = user.Email;
-                    professionalDto.PhoneNumber = user.Phone ?? "";
+                    professionalDto.Phone = user.Phone ?? "";
                     professionalDto.FirstName = user.FirstName ?? "";
                     professionalDto.LastName = user.LastName ?? "";
                     professionalDtos.Add(professionalDto);
@@ -228,7 +228,7 @@ namespace eProfessional.BLL.Services
             };
             professionalDto.UserName = user.Username;
             professionalDto.Email = user.Email;
-            professionalDto.PhoneNumber = user.Phone ?? "";
+            professionalDto.Phone = user.Phone ?? "";
             professionalDto.FirstName = user.FirstName ?? "";
             professionalDto.LastName = user.LastName ?? "";
 
@@ -244,7 +244,7 @@ namespace eProfessional.BLL.Services
             {
                 Username = professionalDto.UserName,
                 Email = professionalDto.Email,
-                Phone = professionalDto.PhoneNumber,
+                Phone = professionalDto.Phone,
                 FirstName = professionalDto.FirstName,
                 LastName = professionalDto.LastName
             };

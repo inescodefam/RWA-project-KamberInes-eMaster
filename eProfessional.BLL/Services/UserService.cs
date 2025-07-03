@@ -62,11 +62,11 @@ namespace eProfessional.BLL.Services
             }
         }
 
-        public bool UpdateUser(UserDto userDto)
+        public UserDto UpdateUser(UserDto userDto)
         {
             var userExists = _userRepository.GetById(userDto.Iduser);
 
-            if (userExists == null) return false;
+            if (userExists == null) return userDto;
 
             if (userDto.Password != null)
             {
@@ -84,7 +84,10 @@ namespace eProfessional.BLL.Services
 
             _mapper.Map(userDto, userExists);
             _userRepository.Save();
-            return true;
+
+            UserDto updatedUser = _mapper.Map<UserDto>(userExists);
+
+            return updatedUser;
         }
 
         public void DeleteUser(int userId)

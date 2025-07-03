@@ -327,7 +327,7 @@ namespace eProfessional.BLL.Services
                     var professionalDto = _mapper.Map<ProfessionalDataDto>(professional);
                     professionalDto.UserName = user.Username;
                     professionalDto.Email = user.Email;
-                    professionalDto.PhoneNumber = user.Phone ?? "";
+                    professionalDto.Phone = user.Phone ?? "";
                     professionalDto.FirstName = user.FirstName ?? "";
                     professionalDto.LastName = user.LastName ?? "";
                     professionalDtos.Add(professionalDto);

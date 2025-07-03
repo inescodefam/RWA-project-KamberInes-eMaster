@@ -32,7 +32,7 @@ namespace WebApp.Models
         [StringLength(15, ErrorMessage = "Phone number too long.")]
         [Display(Name = "Phone number")]
         [Phone(ErrorMessage = "Invalid phone number.")]
-        public string PhoneNumber { get; set; }
+        public string Phone { get; set; }
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(50, ErrorMessage = "First name too long.")]
         [Display(Name = "First name")]
@@ -63,7 +63,7 @@ namespace WebApp.Models
         [StringLength(15, ErrorMessage = "Phone number too long.")]
         [Display(Name = "Phone number")]
         [Phone(ErrorMessage = "Invalid phone number.")]
-        public string PhoneNumber { get; set; }
+        public string Phone { get; set; }
         [Required(ErrorMessage = "First name is required.")]
         [StringLength(50, ErrorMessage = "First name too long.")]
         [Display(Name = "First name")]

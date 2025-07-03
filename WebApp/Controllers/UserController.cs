@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Interfaces;
@@ -55,6 +57,7 @@ namespace WebApp.Controllers
             var userEmail = emailClaim?.Value;
 
             UserVM user = _userService.GetUserByEmail(userEmail);
+
             if (user == null)
                 return NotFound();
 
@@ -78,7 +81,25 @@ namespace WebApp.Controllers
 
             try
             {
+                var emailClaim = User.Claims.FirstOrDefault(c => c.Type == "email");
+                var userEmail = emailClaim?.Value;
+
+                UserVM user = _userService.GetUserByEmail(userEmail);
+                if (user == null)
+                    return Json(new { success = false, message = "Unauthorized" });
+
+
                 var result = _userService.UpdateUser(model);
+
+                if (user.Email != model.Email)
+                {
+                    Task.Run(async () => await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme)).GetAwaiter().GetResult();
+                    Response.Cookies.Delete("jwt");
+
+                    return result
+                    ? Json(new { success = true, redirectUrl = Url.Action("Login", "Auth") })
+                    : Json(new { success = false, message = "Update failed" });
+                }
 
                 return result
                     ? Json(new { success = true, redirectUrl = Url.Action("Search", "Service") })
