@@ -25,10 +25,14 @@ namespace WebAPI.DTOs
 
             CreateMap<ProfessionalApiDto, ProfessionalDto>();
             CreateMap<ProfessionalDto, ProfessionalApiDto>();
+            CreateMap<ProfessionalBaseDto, ProfessionalApiDto>();
+            CreateMap<ProfessionalApiDto, ProfessionalBaseDto>();
+
             CreateMap<ProfessionalApiDataDto, ProfessionalDataDto>();
             CreateMap<ProfessionalDataDto, ProfessionalApiDataDto>();
             CreateMap<CreateProfessionalApiDataDto, ProfessionalDataDto>();
             CreateMap<ProfessionalDataDto, CreateProfessionalApiDataDto>();
+            CreateMap<ProfessionalBaseApiDto, ProfessionalBaseDto>();
 
             CreateMap<RoleApiDto, RoleDto>();
             CreateMap<RoleDto, RoleApiDto>();

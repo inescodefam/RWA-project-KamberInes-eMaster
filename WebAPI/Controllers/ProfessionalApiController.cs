@@ -109,7 +109,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] CreateProfessionalApiDataDto professionalApiDataDto)
+        public IActionResult Post([FromBody] ProfessionalApiDto professionalApiDataDto)
         {
             if (!ModelState.IsValid)
             {
@@ -118,17 +118,17 @@ namespace WebAPI.Controllers
 
             try
             {
-                var professionalDataDto = _mapper.Map<ProfessionalDataDto>(professionalApiDataDto);
+                var professionalDataDto = _mapper.Map<ProfessionalBaseDto>(professionalApiDataDto);
 
                 var response = _professionalService.CreateProfessional(professionalDataDto);
-                if (!response)
+                if (response == null)
                 {
                     _loggingService.CreateLog("Failed to create professional.", "error");
                     return BadRequest("Failed to create professional.");
                 }
                 _loggingService.CreateLog("Professional created successfully.", "info");
 
-                return Ok();
+                return Ok(response);
             }
             catch (Exception ex)
             {

@@ -85,44 +85,39 @@ namespace eProfessional.BLL.Services
             return professionalDtos;
         }
 
-        public bool CreateProfessional(ProfessionalDataDto professionalDto)
+        public ProfessionalDto CreateProfessional(ProfessionalBaseDto professionalDto)
         {
             var user = _userRepository.GetById(professionalDto.UserId);
             if (user == null)
             {
-                // i will create user instead of forcing user creatin first
-                //UserDto newUserDto = MapUserFromProfessionalData(professionalDto);
 
-                //User newUser = _mapper.Map<User>(newUserDto);
-                //_userRepository.Add(newUser);
-                //_userRepository.Save();
+                _loggingRepository.CreateLog($"User with ID {user.Iduser} not found for professional creation. Create user for professional.", "warning");
+                throw new Exception($"User with username {user.Iduser} not found. Please register user first or create professional from existing user.");
+            }
 
-                //professionalDto.UserId = newUser.Iduser;
-                // todo add pasword hash
+            var exsists = _professionalRepository.GetAll()
+                .Any(p => p.UserId == professionalDto.UserId); // inače bi ovo trebalo omogučiti jer zašto ne bi jedan user imao dvije firme ili obrta
 
-                _loggingRepository.CreateLog($"User with username {professionalDto.UserName} not found for professional creation. Create user for professional.", "warning");
-                throw new Exception($"User with username {professionalDto.UserName} not found. Please register user first or create professional from existing user.");
+            if (!exsists)
+            {
+
+                var professional = new Professional
+                {
+                    UserId = professionalDto.UserId
+                };
+
+                _professionalRepository.Add(professional);
+                _professionalRepository.Save();
+
+                _loggingRepository.CreateLog($"Professional with ID {professional.IdProfessional} added successfully.", "info");
+                return _mapper.Map<ProfessionalDto>(professional);
             }
             else
             {
-                UserDto userUpdated = MapUserFromProfessionalData(professionalDto);
-                _mapper.Map(userUpdated, user);
-                _userRepository.Save();
-                professionalDto.UserId = userUpdated.Iduser;
-
+                _loggingRepository.CreateLog($"Professional with User ID {professionalDto.UserId} already exists.", "warning");
+                return null;
+                //throw new Exception($"Professional with User ID {professionalDto.UserId} already exists.");
             }
-
-            var professional = new Professional
-            {
-                UserId = professionalDto.UserId
-            };
-
-            _professionalRepository.Add(professional);
-            _professionalRepository.Save();
-
-            _loggingRepository.CreateLog($"Professional with ID {professional.IdProfessional} added successfully.", "info");
-
-            return true;
         }
 
         public bool UpdateProfessional(ProfessionalDataDto professionalDataDto)

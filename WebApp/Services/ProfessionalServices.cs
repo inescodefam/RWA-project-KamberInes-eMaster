@@ -41,9 +41,25 @@ namespace WebApp.Services
             return response;
         }
 
-        public bool CreateProfessional(CreateProfessionalVM professionalDto) // ProfessionalVM
+        public bool CreateProfessional(ProfessionalBaseVm professionalVm) // ProfessionalVM
         {
-            var response = _apiService.PostData<CreateProfessionalApiDataDto, CreateProfessionalVM>("api/professional", professionalDto);
+            var response = _apiService.PostData<ProfessionalApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
+            var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional/co");
+            /// add great number
+
+            // i dont like this but... no time for fixing it now
+
+            var professional = professionals.FirstOrDefault(p => p.UserId == professionalVm.UserId);
+
+            foreach (var cityId in professionalVm.CityIds)
+            {
+                _cityProfessionalService.AddCityProfessional(new CityProfessionalVM
+                {
+                    ProfessionalId = professional.IdProfessional,
+                    CityId = cityId
+                });
+            }
+
             return response != null;
         }
 
@@ -110,7 +126,7 @@ namespace WebApp.Services
         public bool DeleteProfessional(int id)
         {
             var response = _apiService.DeleteData($"api/professional/{id}");
-            if (response)
+            if (!response)
             {
                 throw new Exception($"Professional with ID {id} not found.");
             }

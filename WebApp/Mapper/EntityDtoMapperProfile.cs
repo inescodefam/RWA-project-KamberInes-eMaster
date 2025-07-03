@@ -13,10 +13,15 @@ namespace WebApp.Mapper
 
             CreateMap<ProfessionalApiDto, ProfessionalVM>();
             CreateMap<ProfessionalVM, ProfessionalApiDto>();
+            CreateMap<ProfessionalBaseVm, ProfessionalBaseApiDto>();
+            CreateMap<ProfessionalBaseApiDto, ProfessionalBaseVm>();
+            CreateMap<ProfessionalBaseVm, ProfessionalApiDto>();
+            CreateMap<ProfessionalApiDto, ProfessionalBaseVm>();
             CreateMap<ProfessionalApiDataDto, ProfessionalDataVM>();
             CreateMap<ProfessionalDataVM, ProfessionalApiDataDto>();
             CreateMap<CreateProfessionalApiDataDto, CreateProfessionalVM>();
             CreateMap<CreateProfessionalVM, CreateProfessionalApiDataDto>();
+
 
             CreateMap<CityProfessionalApiDto, CityProfessionalVM>();
             CreateMap<CityProfessionalVM, CityProfessionalApiDto>();

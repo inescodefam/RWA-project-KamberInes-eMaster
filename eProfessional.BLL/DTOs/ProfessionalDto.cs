@@ -1,9 +1,12 @@
 ﻿namespace eProfessional.BLL.DTOs
 {
-    public class ProfessionalDto
+    public class ProfessionalBaseDto
+    {
+        public int UserId { get; set; }
+    }
+    public class ProfessionalDto : ProfessionalBaseDto
     {
         public int IdProfessional { get; set; }
-        public int UserId { get; set; }
     }
 
     public class ProfessionalDataDto : ProfessionalDto

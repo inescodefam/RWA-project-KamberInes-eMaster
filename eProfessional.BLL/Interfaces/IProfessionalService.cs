@@ -7,7 +7,7 @@ namespace eProfessional.BLL.Interfaces
         List<ProfessionalDataDto> GetProfessionals(int count, int start = 0);
         ProfessionalDataDto GetSingleProfessional(int id);
         List<ProfessionalDataDto> Search(string? Name, string? serviceType, int count, int start = 0);
-        bool CreateProfessional(ProfessionalDataDto professionalDto);
+        ProfessionalDto CreateProfessional(ProfessionalBaseDto professionalDto);
         bool UpdateProfessional(ProfessionalDataDto professionalDto);
         bool DeleteProfessional(int id);
     }

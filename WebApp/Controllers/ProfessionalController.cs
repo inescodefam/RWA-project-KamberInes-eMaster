@@ -49,7 +49,7 @@ namespace WebApp.Controllers
         public IActionResult Create() => View(_professionalService.GetProfessionals(50, 0));
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateProfessionalVM professionalVM)
+        public IActionResult Create([FromBody] ProfessionalBaseVm professionalVM)
         {
 
             if (professionalVM == null)
@@ -60,10 +60,7 @@ namespace WebApp.Controllers
 
             var response = _professionalService.CreateProfessional(professionalVM);
 
-            if (response)
-                return Ok();
-
-            return BadRequest();
+            return response ? Ok() : BadRequest();
 
         }
 
@@ -120,7 +117,7 @@ namespace WebApp.Controllers
             try
             {
                 var response = _professionalService.DeleteProfessional(id);
-                if (response)
+                if (!response)
                     return NoContent();
 
                 return View();

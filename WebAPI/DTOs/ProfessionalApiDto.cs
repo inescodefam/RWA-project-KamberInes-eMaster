@@ -1,9 +1,12 @@
 ﻿namespace WebAPI.DTOs
 {
-    public class ProfessionalApiDto
+    public class ProfessionalBaseApiDto
+    {
+        public int UserId { get; set; }
+    }
+    public class ProfessionalApiDto : ProfessionalBaseApiDto
     {
         public int IdProfessional { get; set; }
-        public int UserId { get; set; }
     }
 
     public class ProfessionalApiDataDto : ProfessionalApiDto
