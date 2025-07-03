@@ -68,7 +68,7 @@ namespace eProfessional.BLL.Services
         public List<CityDto> GetCitiesByProfessional(int profesionalId)
         {
             var exists = _cityProfessionalRepository.ProfessionalExists(profesionalId);
-            if (exists)
+            if (!exists)
             {
                 throw new ArgumentException("Professional does not exist.");
             }

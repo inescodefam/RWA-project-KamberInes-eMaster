@@ -62,11 +62,11 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("professional/{id}")]
-        public IActionResult GetCitiesByProfessional(int professionalId)
+        public IActionResult GetCitiesByProfessional(int id)
         {
             try
             {
-                var result = _cityProfessionalService.GetCitiesByProfessional(professionalId);
+                var result = _cityProfessionalService.GetCitiesByProfessional(id);
                 if (result == null || !result.Any())
                 {
                     return NotFound("No cities found for the given professional.");
