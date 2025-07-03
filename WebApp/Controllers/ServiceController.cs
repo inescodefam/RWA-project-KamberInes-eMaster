@@ -12,22 +12,20 @@ namespace WebApp.Controllers
     {
 
         private readonly IServiceService _serviceService;
+        private readonly ICityService _cityService;
+        private readonly IServiceType _serviceType;
 
 
-        public ServiceController(IMapper mapper, IServiceService serviceApiService)
+        public ServiceController(
+            IMapper mapper,
+            IServiceService serviceApiService,
+            ICityService cityService,
+            IServiceType serviceType)
         {
 
             _serviceService = serviceApiService;
-        }
-
-        [HttpGet]
-        public IActionResult Index(int count, int start)
-        {
-            var vm = new ServiceSearchVM
-            {
-                Services = _serviceService.GetServiceIndex(50, 0)
-            };
-            return View(vm);
+            _cityService = cityService;
+            _serviceType = serviceType;
         }
 
         [HttpGet]
@@ -35,6 +33,8 @@ namespace WebApp.Controllers
         {
             var vm = new ServiceSearchVM
             {
+                Cities = _cityService.GetAllCities(),
+                ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
                 Services = _serviceService.GetServiceIndex(50, 0)
             };
             return View(vm);
@@ -42,7 +42,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
         public ActionResult Search(string serviceTypeName, int count = 50, int start = 0)
-        {
+        {// add city id...
             if (string.IsNullOrEmpty(serviceTypeName))
             {
                 serviceTypeName = string.Empty;

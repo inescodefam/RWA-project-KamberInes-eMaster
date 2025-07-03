@@ -102,7 +102,6 @@ namespace WebApp.Services
             if (response == null || !response.Any())
             {
                 return new List<ServiceResultVM>();
-                throw new Exception("No services found.");
             }
             var serviceResults = new List<ServiceResultVM>();
 
