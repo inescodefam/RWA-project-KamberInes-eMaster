@@ -35,26 +35,29 @@ namespace WebApp.Models
         public decimal Price { get; set; }
     }
 
-    public class ServiceCreateVM
+    public class ServiceCreateVM : CreateServiceResultVM
     {
         [Required(ErrorMessage = "Professional selection is required.")]
         [Display(Name = "Professional")]
-        public int SelectedProfessionalId { get; set; }
         public List<ProfessionalVM> Professionals { get; set; } = new List<ProfessionalVM>();
-
-        [Required(ErrorMessage = "At least one city must be selected.")]
-        [MinLength(1, ErrorMessage = "At least one city must be selected.")]
-        [Display(Name = "Cities")]
-        public List<int> SelectedCitiesIds { get; set; } = new List<int>();
-
-        [Required(ErrorMessage = "Service type selection is required.")]
-        [Display(Name = "Service type")]
-        public int SelectedServiceTypeId { get; set; }
 
         [Required(ErrorMessage = "Service type selection is required.")]
         [StringLength(100, ErrorMessage = "Service type name cannot be longer than 100 characters.")]
         [Display(Name = "Service type")]
         public string SelectedServiceTypeName { get; set; }
+        public List<CityVM> Cities { get; set; } = new List<CityVM>();
+
+        public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
+    }
+
+    public class CreateServiceResultVM
+    {
+        [Required(ErrorMessage = "Professional selection is required.")]
+        [Display(Name = "Professional")]
+        public int SelectedProfessionalId { get; set; }
+        [Required(ErrorMessage = "Service type selection is required.")]
+        [Display(Name = "Service type")]
+        public int SelectedServiceTypeId { get; set; }
 
         [StringLength(1000, ErrorMessage = "Description cannot be longer than 1000 characters.")]
         [Display(Name = "Description")]
@@ -63,10 +66,12 @@ namespace WebApp.Models
         [Required(ErrorMessage = "Price is required.")]
         [Range(0, double.MaxValue, ErrorMessage = "Price must be a non-negative value.")]
         [Display(Name = "Price")]
-        public decimal Price { get; set; }
-        public List<CityVM> Cities { get; set; } = new List<CityVM>();
 
-        public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
+        public decimal Price { get; set; }
+        [Required(ErrorMessage = "At least one city must be selected.")]
+        [MinLength(1, ErrorMessage = "At least one city must be selected.")]
+        [Display(Name = "Cities")]
+        public List<int> SelectedCitiesIds { get; set; } = new List<int>();
     }
 
     public class ServiceEditVM

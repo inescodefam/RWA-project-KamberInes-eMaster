@@ -14,18 +14,21 @@ namespace WebApp.Controllers
         private readonly IServiceService _serviceService;
         private readonly ICityService _cityService;
         private readonly IServiceType _serviceType;
+        private readonly IProfessionalService _professionalService;
 
 
         public ServiceController(
             IMapper mapper,
             IServiceService serviceApiService,
             ICityService cityService,
-            IServiceType serviceType)
+            IServiceType serviceType,
+            IProfessionalService professionalService)
         {
 
             _serviceService = serviceApiService;
             _cityService = cityService;
             _serviceType = serviceType;
+            _professionalService = professionalService;
         }
 
         [HttpGet]
@@ -42,7 +45,7 @@ namespace WebApp.Controllers
 
         [HttpPost]
         public ActionResult Search(string SelectedServiceTypeName, int SelectedCityId, int count = 50, int start = 0)
-        {// add city id...
+        {
             if (string.IsNullOrEmpty(SelectedServiceTypeName))
             {
                 SelectedServiceTypeName = string.Empty;
@@ -76,16 +79,48 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            var vm = new ServiceCreateVM { };
+            var vm = new ServiceCreateVM
+            {
+                ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
+                Cities = _cityService.GetAllCities(),
+                Professionals = _professionalService.GetProfessionals(1000).Professionals
+            };
             return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Create(ServiceCreateVM vm)
+        public IActionResult Create(CreateServiceResultVM vm)
         {
+            if (!ModelState.IsValid)
+            {
+                if (vm.SelectedCitiesIds.Count == 0)
+                {
+                    ModelState.AddModelError("SelectedCitiesIds", "At least one city must be selected.");
+                }
+                vm = new ServiceCreateVM
+                {
+                    ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
+                    Cities = _cityService.GetAllCities(),
+                    Professionals = _professionalService.GetProfessionals(1000).Professionals
+                };
+                ModelState.AddModelError("", "Please correct the errors in the form.");
+                return View(vm);
+            }
 
-            return View(vm);
+            var result = _serviceService.CreateService(vm);
+            if (!result)
+            {
+                vm = new ServiceCreateVM
+                {
+                    ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
+                    Cities = _cityService.GetAllCities(),
+                    Professionals = _professionalService.GetProfessionals(1000).Professionals
+                };
+                ModelState.AddModelError("", "Please correct the errors in the form.");
+                return View(vm);
+            }
 
+            return Redirect("Search");
         }
 
         [HttpGet]

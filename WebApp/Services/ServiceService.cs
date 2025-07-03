@@ -29,7 +29,7 @@ namespace WebApp.Services
             _serviceType = serviceType;
         }
 
-        public ServiceCreateVM CreateService(ServiceCreateVM vm)
+        public bool CreateService(CreateServiceResultVM vm)
         {
             ServiceVM serviceVM = new ServiceVM
             {
@@ -41,16 +41,7 @@ namespace WebApp.Services
             var response = _apiFetchService.PostData<ServiceApiDto, ServiceVM>("api/service", serviceVM);
             if (response != null)
             {
-                var createdVm = new ServiceCreateVM
-                {
-                    SelectedProfessionalId = vm.SelectedProfessionalId,
-                    SelectedServiceTypeId = vm.SelectedServiceTypeId,
-                    Description = vm.Description,
-                    Price = vm.Price,
-                    SelectedServiceTypeName = vm.SelectedServiceTypeName,
-                    SelectedCitiesIds = vm.SelectedCitiesIds
-                };
-                return createdVm;
+                return true;
             }
             else
             {

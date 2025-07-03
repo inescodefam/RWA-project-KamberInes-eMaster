@@ -4,7 +4,7 @@ namespace WebApp.Interfaces
 {
     public interface IServiceService
     {
-        public ServiceCreateVM CreateService(ServiceCreateVM vm);
+        public bool CreateService(CreateServiceResultVM vm);
         public bool DeleteService(int id);
         public bool EditService(ServiceEditResultVM vm);
         public ServiceResultVM GetServiceByID(int id);
