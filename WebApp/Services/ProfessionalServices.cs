@@ -41,6 +41,14 @@ namespace WebApp.Services
             return response;
         }
 
+        public ProfessionalIndexVM GetSingleProfessionalIndexVm(int id)
+        {
+            ProfessionalDataVM response = GetSingleProfessional(id);
+            ProfessionalIndexVM professionalAsList = MapProfessionalDataModelToIndexModel(new List<ProfessionalDataVM> { response });
+
+            return professionalAsList;
+        }
+
         public bool CreateProfessional(ProfessionalBaseVm professionalVm) // ProfessionalVM
         {
             try
@@ -124,9 +132,9 @@ namespace WebApp.Services
             return professionalIndexVM;
         }
 
-        public bool UpdateProfessional(ProfessionalDataVM professionalDto) //ProfessisionalVM
+        public bool UpdateProfessional(ProfessionalDataVM professionalEditVm) //ProfessisionalVM
         {
-            var resposne = _apiService.PutData<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional", professionalDto);
+            var resposne = _apiService.PutData<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional", professionalEditVm);
 
             return resposne != null;
         }

@@ -12,7 +12,7 @@
 <div class="container">
     <h2 class="mb-4">Edit Professional</h2>
 
-    @if (Model.Professionals?.FirstOrDefault() != null)
+    @if (Model.Professionals.FirstOrDefault() != null)
     {
         var professional = Model.Professionals.First();
 
@@ -47,7 +47,7 @@
         </div>
 
         <form asp-action="Edit" method="post">
-            <input type="hidden" name="id" value="@professional.IdProfessional" />
+            <input type="hidden" name="IdProfessional" value="@professional.IdProfessional" />
             @Html.AntiForgeryToken()
 
             <div class="card shadow-sm">
@@ -60,7 +60,6 @@
                                     <option value="">Select User</option>
                                     @foreach (var user in Model.Users)
                                     {
-                                        <option value="">Select User</option>
                                         <option value="@user.Value"
                                                 selected="@(user.Value == professional.UserId.ToString())">
                                             @user.Text
@@ -99,7 +98,7 @@
     else
     {
         <div class="alert alert-warning">
-            Professional not found hvala
+            Professional not found
         </div>
         <a asp-action="Create" class="btn btn-secondary">Back to List</a>
     }

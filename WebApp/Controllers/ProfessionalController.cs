@@ -84,7 +84,7 @@ namespace WebApp.Controllers
         // GET: ProfessionalApiController/Edit/5
         public ActionResult Edit(int id)
         {
-            var professional = _professionalService.GetSingleProfessional(id);
+            var professional = _professionalService.GetSingleProfessionalIndexVm(id);
 
             return View(professional);
         }
@@ -92,17 +92,20 @@ namespace WebApp.Controllers
         // POST: ProfessionalApiController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [FromForm] ProfessionalDataVM professionalVm)
+        public ActionResult Edit([FromForm] ProfessionalCityEditVM professionalEditVm)
         {
             try
             {
-                var response = _professionalService.UpdateProfessional(professionalVm);
-                if (!response)
-                {
-                    ModelState.AddModelError("", "Failed to update professional.");
+                //var response = _professionalService.UpdateProfessional(professionalEditVm);
 
-                    return View(response);
+                var response = _cityProfessionalService.UpdateCitiesByProfessional(professionalEditVm.IdProfessional, professionalEditVm.CityIds);
+                if (!ModelState.IsValid)
+                {
+                    ModelState.AddModelError("", "Invalid data submitted.");
+                    var model = _professionalService.GetSingleProfessionalIndexVm(professionalEditVm.IdProfessional);
+                    return View(model);
                 }
+
                 return RedirectToAction(nameof(Create));
             }
             catch
