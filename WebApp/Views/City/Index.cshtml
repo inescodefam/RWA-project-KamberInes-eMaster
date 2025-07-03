@@ -16,13 +16,13 @@
 <h2>Cities</h2>
 
 <form asp-action="Create" method="post" class="mb-3 d-flex">
-    @* <input asp-for="NewCityName" class="form-control me-2" placeholder="Enter city name" /> *@
+    <input asp-for="Name" class="form-control me-2" placeholder="Enter city name" />
     <button type="submit" class="btn btn-success">Add new city</button>
 </form>
 
 <form asp-action="Index" method="get" class="mb-3 row">
     <div class="col-md-4">
-        <label asp-for="NewCityName"></label>
+        <label asp-for="Name"></label>
         <input type="text" name="searchTerm" value="@Model.SearchTerm" class="form-control" placeholder="Search cities..." />
     </div>
     <div class="col-md-2">

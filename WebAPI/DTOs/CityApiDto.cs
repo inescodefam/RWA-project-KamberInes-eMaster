@@ -2,11 +2,10 @@
 
 namespace WebAPI.DTOs
 {
-    public class CityApiDto
+    public class CityApiDto : CreateCityApiDto
     {
         public int? Idcity { get; set; }
-        [Required(ErrorMessage = "City name is required.")]
-        public string Name { get; set; }
+
     }
 
     public class CreateCityApiDto

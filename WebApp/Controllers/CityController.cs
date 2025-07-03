@@ -19,9 +19,9 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string searchTerm, int page, int pageSize)
+        public IActionResult Index(string searchTerm, int pageSize, int page)
         {
-            var response = _cityService.GetCities(searchTerm, page, pageSize);
+            var response = _cityService.GetCities(searchTerm, pageSize, page);
             var model = new CityIndexVM
             {
                 Cities = _mapper.Map<List<CityVM>>(response),
@@ -32,13 +32,6 @@ namespace WebApp.Controllers
             };
             return View(model);
         }
-
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View(new CityCreateVM());
-        }
-
 
         [HttpPost]
         public IActionResult Create(CityCreateVM model)
@@ -53,7 +46,7 @@ namespace WebApp.Controllers
                 if (response == null)
                 {
                     ModelState.AddModelError("", "Failed to create city. Please try again.");
-                    return View(model);
+                    return RedirectToAction("Index");
                 }
                 return RedirectToAction("Index");
 
@@ -61,12 +54,12 @@ namespace WebApp.Controllers
             catch (InvalidOperationException ex)
             {
                 ModelState.AddModelError("Name", ex.Message);
-                return View(model);
+                return RedirectToAction("Index");
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "An unexpected error occurred.");
-                return View(model);
+                return RedirectToAction("Index");
             }
         }
 

@@ -76,9 +76,9 @@ namespace WebAPI.Controllers
 
                 return CreatedAtAction(nameof(GetCities), new { id = cityDto.Idcity }, cityDto.Name);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while creating the city.");
+                return BadRequest($"{ex.Message}");
             }
 
         }
