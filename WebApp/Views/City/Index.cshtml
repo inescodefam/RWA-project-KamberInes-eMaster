@@ -37,6 +37,7 @@
     <thead>
         <tr>
             <th>City Name</th>
+            <th style="width:100px">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -44,10 +45,50 @@
         {
             <tr>
                 <td>@city.Name</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@city.Idcity" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete {@city.Name} city?')">
+                            Delete
+                        </button>
+                    </form>
+
+                    <button class="btn btn-primary btn-sm update-city"
+                            data-cityid="@city.Idcity"
+                            data-name="@city.Name">
+                        Update
+                    </button>
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+
+<div class="modal fade" id="cityModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update City name for <span id="nameSpan"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form id="roleForm" method="post">
+                    <input type="hidden" id="cityIdInput" name="cityId">
+                    <div class="mb-3">
+                        <label for="cityNameInput" class="form-label">New City Name</label>
+                        <input type="text" class="form-control" id="cityNameInput" name="name"
+                               placeholder="Enter role (e.g., Admin, User)" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @if (Model.TotalCount > Model.PageSize)
@@ -64,3 +105,37 @@
         </ul>
     </nav>
 }
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.update-city').click(function() {
+                const cityId = $(this).data('cityid');
+                const name = $(this).data('name');
+
+                $('#nameSpan').text(name);
+                $('#cityIdInput').val(cityId);
+                $('#cityModal').modal('show');
+            });
+
+            $('#roleForm').submit(function(e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: '@Url.Action("Update", "City")',
+                    type: 'POST',
+                    data: formData,
+                    success: function() {
+                        $('#cityModal').modal('hide');
+                        alert('City updated successfully!');
+                         location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('Error updating city: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+    }

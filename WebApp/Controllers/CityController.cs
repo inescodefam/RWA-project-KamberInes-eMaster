@@ -63,5 +63,45 @@ namespace WebApp.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            if (!ModelState.IsValid || id <= 0)
+                return RedirectToAction("Index");
+
+            try
+            {
+                var response = _cityService.DeleteCity(id);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An unexpected error occurred.");
+                return RedirectToAction("Index");
+            }
+
+        }
+
+        [HttpPost]
+        public IActionResult Update(int cityId, string name)
+        {
+            try
+            {
+                var response = _cityService.UpdateCity(cityId, name);
+
+                if (!response)
+                {
+                    return Json(new { success = false, message = "Failed to update city" });
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
