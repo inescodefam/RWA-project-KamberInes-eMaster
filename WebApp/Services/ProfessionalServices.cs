@@ -43,23 +43,31 @@ namespace WebApp.Services
 
         public bool CreateProfessional(ProfessionalBaseVm professionalVm) // ProfessionalVM
         {
-            var response = _apiService.PostData<ProfessionalApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
-            var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional/count={10000}&start={0}");
-
-            // i dont like this but... no time for fixing it now
-
-            var professional = professionals.FirstOrDefault(p => p.UserId == professionalVm.UserId);
-
-            foreach (var cityId in professionalVm.CityIds)
+            try
             {
-                _cityProfessionalService.AddCityProfessional(new CityProfessionalVM
-                {
-                    ProfessionalId = professional.IdProfessional,
-                    CityId = cityId
-                });
-            }
+                var response = _apiService.PostData<ProfessionalApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
 
-            return response != null;
+                var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional?count=10000&start=0");
+
+                // i dont like this but... no time for fixing it now
+
+                var professional = professionals.FirstOrDefault(p => p.UserId == professionalVm.UserId);
+
+                foreach (var cityId in professionalVm.CityIds)
+                {
+                    _cityProfessionalService.AddCityProfessional(new CityProfessionalVM
+                    {
+                        ProfessionalId = professional.IdProfessional,
+                        CityId = cityId
+                    });
+                }
+
+                return response != null;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
 

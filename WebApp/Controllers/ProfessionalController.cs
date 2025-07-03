@@ -58,9 +58,18 @@ namespace WebApp.Controllers
                 return BadRequest("Invalid data submitted.");
             }
 
-            var response = _professionalService.CreateProfessional(professionalVM);
+            try
+            {
 
-            return response ? Ok() : BadRequest();
+                var response = _professionalService.CreateProfessional(professionalVM);
+                return response ? Ok() : BadRequest();
+            }
+            catch (Exception ex)
+            {
+
+                throw new InvalidOperationException(ex.Message);
+            }
+
 
         }
 
@@ -101,12 +110,6 @@ namespace WebApp.Controllers
                 return View();
             }
         }
-
-
-        // GET: ProfessionalApiController/Delete/5
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Delete() => View();
 
         // delete: ProfessionalApiController/Delete/5
         [Route("Professional/Delete/{id}")]

@@ -39,7 +39,6 @@ namespace WebAPI.Controllers
                     _loggingService.CreateLog("No professionals found in the database.", "info");
                     return NoContent();
                 }
-                _mapper.Map<IEnumerable<ProfessionalApiDataDto>>(professionals);
 
                 _loggingService.CreateLog($"Retrieved {professionals.Count} professionals from the database.", "info");
 
@@ -124,7 +123,7 @@ namespace WebAPI.Controllers
                 if (response == null)
                 {
                     _loggingService.CreateLog("Failed to create professional.", "error");
-                    return BadRequest("Failed to create professional.");
+                    throw new Exception("Professional already exist.");
                 }
                 _loggingService.CreateLog("Professional created successfully.", "info");
 

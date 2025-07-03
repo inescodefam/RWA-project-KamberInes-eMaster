@@ -32,7 +32,7 @@
                     $('#addProfessionalError').text('');
                 },
                 error: function(xhr) {
-                    $('#addProfessionalError').text('Could not add professional: ' + xhr.responseText);
+                    $('#addProfessionalError').text('Professional already exsist.' + xhr.responseText);
                 }
             });
         });
