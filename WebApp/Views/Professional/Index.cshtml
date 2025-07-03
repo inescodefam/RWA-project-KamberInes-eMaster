@@ -16,7 +16,7 @@
             <h3 class="mb-0"><i class="bi bi-search me-2"></i>Search Professionals</h3>
         </div>
         <div class="card-body">
-            <form id="searchProfessionalForm" class="row g-3">
+            <form id="searchProfessionalForm" class="row g-3" method="get">
                 <div class="col-md-6">
                     <div class="form-floating">
                         <input type="text" id="searchUsername" name="username" class="form-control" placeholder="Enter username" />
@@ -72,15 +72,15 @@
 </div>
 @section Scripts {
     <script>
-        console.log('Unready');
+
         $(document).ready(function() {
-            console.log('Ready');
-            alert(JSON.stringify(Model));
+
             $('#noResultsMessage').removeClass('d-none');
 
             $('#searchProfessionalForm').submit(function(e) {
-                console.log('Search form submitted');
+
                 e.preventDefault();
+
                 var username = $('#searchUsername').val();
                 var cityName = $('#searchCityName').val();
 
@@ -94,7 +94,8 @@
                         start: 0
                     },
                     success: function(results) {
-                        var professionals = results.Professionals;
+                        console.log(results);
+                        var professionals = results.professionals;
                         var $tbody = $('#searchProfessionalsTable tbody');
                         $tbody.empty();
 

@@ -41,7 +41,7 @@ namespace WebApp.Controllers
         {
             var response = _professionalService.Search(username, city, count, start);
 
-            return View(response);
+            return Json(response);
         }
 
         // GET: ProfessionalApiController/AddProfessional
