@@ -16,14 +16,21 @@
             + Add Service
         </a>
     </div>
-
+    <div class="col-md-4">
+        <a asp-action="CreateServiceType" asp-controller="ServiceType" class="btn btn-primary mb-3">
+            + Add Service Type
+        </a>
+        <a asp-action="Update" asp-controller="ServiceType" class="btn btn-primary mb-3">
+            Manage service types
+        </a>
+    </div>
 }
 
 @using (Html.BeginForm("Search", "Service", FormMethod.Post))
 {
-    <div class="col-md-4">
-    <div>
-        <label asp-for="SelectedServiceTypeName" class="form-label">Service Type:</label>
+    <div class="col-md-6 d-flex">
+    <div class="d-flex f-direction:row text-nowrap m-3 gap-3">
+            <label asp-for="SelectedServiceTypeName" class="form-label"></label>
             @Html.DropDownListFor(
                      m => m.SelectedServiceTypeName,
                      new SelectList(
@@ -32,8 +39,8 @@
                      "-- Select Service Type --"
                      )
     </div>
-    <div>
-            <label asp-for="SelectedCityId" class="form-label">City</label>
+        <div class="d-flex f-direction:row text-nowrap m-3 gap-3">
+            <label asp-for="SelectedCityId" class="form-label"></label>
             @Html.DropDownListFor(
                      m => m.SelectedCityId,
                      new SelectList(Model.Cities, "Idcity", "Name", Model.SelectedCityId),
@@ -43,12 +50,6 @@
     <div>
             <button type="submit" class="btn btn-primary w-100 mb-3 mt-3">Search</button>
         </div>
-    </div>
-    <div class="col-md-4">
-
-        <a asp-action="CreateServiceType" asp-controller="ServiceType" class="btn btn-success mb-3">
-            + Add Service Type
-        </a>
     </div>
 }
 

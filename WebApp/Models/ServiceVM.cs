@@ -18,7 +18,9 @@ namespace WebApp.Models
 
     public class ServiceSearchVM
     {
+        [Display(Name ="City")]
         public int SelectedCityId { get; set; }
+        [Display(Name = "Selected service type")]
         public string SelectedServiceTypeName { get; set; }
         public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
         public List<CityVM> Cities { get; set; } = new List<CityVM>();
