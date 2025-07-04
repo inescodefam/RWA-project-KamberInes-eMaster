@@ -37,6 +37,7 @@ namespace WebApp.Models
 
     public class ProfessionalIndexVM
     {
+        [Display(Name = "Professional")]
         public List<ProfessionalVM> Professionals { get; set; }
         [Display(Name = "Users")]
         public List<SelectListItem> Users { get; set; } = new List<SelectListItem>();

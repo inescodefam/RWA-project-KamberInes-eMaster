@@ -118,11 +118,11 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteProfessionalsForCity(int cityId)
+        public IActionResult DeleteProfessionalsForCity(int id)
         {
-            if (_cityProfessionalService.DeleteProfessionalsForCity(cityId))
+            if (_cityProfessionalService.DeleteProfessionalsForCity(id))
             {
-                return RedirectToAction("Index");
+                return RedirectToAction("Create", "Professional");
             }
             return BadRequest("Error deleting professionals for city");
         }

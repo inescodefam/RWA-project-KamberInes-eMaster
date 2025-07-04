@@ -59,6 +59,7 @@
                 });
             }
         });
+ 
     });
 </script>
 
@@ -72,7 +73,7 @@
             <div class="card-body">
                 <form id="addProfessionalForm" asp-action="Create" method="post" class="row g-3">
                     <div class="col-md-6">
-                        <label for="UserId" class="form-label">User</label>
+                        <label asp-for="Users" for="UserId" class="form-label"></label>
                         <select name="UserId" id="UserId" class="form-select">
                             <option value="">Select user</option>
                             @foreach (var user in Model.Users)
@@ -82,7 +83,7 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label for="CityIds" class="form-label">City</label>
+                        <label asp-for="Cities" for="CityIds" class="form-label"></label>
                         <select name="CityIds" id="CityIds" class="form-select" multiple>
                             @foreach (var city in Model.Cities)
                             {
@@ -97,6 +98,29 @@
                 </form>
             </div>
         </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">Delete Professional</h4>
+                </div>
+                <div class="card-body">
+                <form id="deleteProfessionalForm" asp-action="DeleteProfessionalsForCity" asp-controller="CityProfessional" method="post" lass="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="Cities" for="id" class="form-label"></label>
+                            <select name="id" id="id" class="form-select">
+                                @foreach (var city in Model.Cities)
+                                {
+                                    <option value="@city.Value">@city.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <button type="submit" class="btn btn-danger">Delete Professionals</button>
+                            <span id="deleteProfessionalError" class="text-danger ms-3"></span>
+                        </div>
+                </form>
+                </div>
+                </div>
 
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-secondary text-white">
