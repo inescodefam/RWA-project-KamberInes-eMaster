@@ -37,7 +37,7 @@
     <thead>
         <tr>
             <th>City Name</th>
-            <th style="width:100px">Action</th>
+            <th style="width:300px">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -53,12 +53,17 @@
                             Delete
                         </button>
                     </form>
-
                     <button class="btn btn-primary btn-sm update-city"
                             data-cityid="@city.Idcity"
                             data-name="@city.Name">
                         Update
                     </button>
+                    <a asp-action="GetProfessionals"
+                       asp-controller="CityProfessional"
+                       asp-route-cityId="@city.Idcity"
+                       class="btn btn-info btn-sm">
+                        See professionals
+                    </a>
                 </td>
             </tr>
         }

@@ -109,11 +109,11 @@ namespace WebApp.Services
             }
         }
 
-        internal TVm PutDataList<T1, TVm>(string url, T1 citiesIds)
+        internal TVm PutDataList<T1, TVm>(string url, T1 ids)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, url)
             {
-                Content = new StringContent(JsonSerializer.Serialize(citiesIds), System.Text.Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(ids), System.Text.Encoding.UTF8, "application/json")
             };
 
             try

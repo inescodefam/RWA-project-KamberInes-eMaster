@@ -25,8 +25,23 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult GetProfessionals(int cityId)
         {
-            var result = _cityProfessionalService.GetProfessionalsByCity(cityId);
-            return View();
+            var response = _cityProfessionalService.GetProfessionalsByCity(cityId);
+            var result = new CityProfessionalsVm
+            {
+                Professionals = response.Select(p => new ProfessionalDataVM
+                {
+                    IdProfessional = p.IdProfessional,
+                    UserId = p.UserId,
+                    UserName = p.UserName,
+                    Email = p.Email,
+                    Phone = p.Phone,
+                    FirstName = p.FirstName,
+                    LastName = p.LastName
+                }).ToList(),
+                CityId = cityId
+            };
+
+            return View(result);
         }
 
         [HttpGet]

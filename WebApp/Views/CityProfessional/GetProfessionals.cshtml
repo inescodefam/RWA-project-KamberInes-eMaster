@@ -1,0 +1,49 @@
+﻿@model WebApp.Models.CityProfessionalsVm
+@{
+    ViewData["Title"] = "City Professionals";
+}
+<h3>City Professionals</h3>
+
+<form asp-action="UpdateProfessionalsByCity" method="post" id="professionalsForm">
+    <input type="hidden" name="cityId" value="@Model.CityId" />
+    <table class="table table-bordered table-striped" id="professionalsTable">
+        <thead class="table-light">
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        @for (int i = 0; i < Model.Professionals.Count; i++)
+        {
+                <tr>
+                    <td>@Model.Professionals[i].UserName</td>
+                    <td>@Model.Professionals[i].Email</td>
+                    <td>@Model.Professionals[i].Phone</td>
+                    <td>@Model.Professionals[i].FirstName</td>
+                    <td>@Model.Professionals[i].LastName</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm delete-professional">Delete</button>
+                        <input type="hidden" name="professionalsIds" value="@Model.Professionals[i].IdProfessional" />
+                    </td>
+                </tr>
+
+        }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#professionalsTable').on('click', '.delete-professional', function () {
+                $(this).closest('tr').remove();
+            });
+        });
+    </script>
+}

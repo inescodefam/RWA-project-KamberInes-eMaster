@@ -13,6 +13,13 @@ namespace WebApp.Models
 
     }
 
+    public class CityProfessionalsVm
+    {
+        public List<ProfessionalDataVM> Professionals { get; set; } = new List<ProfessionalDataVM>();
+        public int? CityId { get; set; }
+
+    }
+
     public class ProfessionalCityEditVM
     {
         public int IdProfessional { get; set; }
