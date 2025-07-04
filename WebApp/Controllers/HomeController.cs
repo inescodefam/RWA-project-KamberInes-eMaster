@@ -13,11 +13,11 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToAction("Login", "Auth");
 
-            return RedirectToAction("Search", "Service");
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Search", "Service");
 
+            return RedirectToAction("Login", "Auth");
         }
     }
 }

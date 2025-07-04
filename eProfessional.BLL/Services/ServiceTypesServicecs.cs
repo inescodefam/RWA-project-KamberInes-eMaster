@@ -48,6 +48,13 @@ namespace eProfessional.BLL.Services
                 ServiceTypeName = serviceTypeDto.ServiceTypeName
             };
 
+            var existsingServiceType = _serviceTypeRepository.GetServiceTypes(10000, 0).Any(st => st.ServiceTypeName == serviceTypeDto.ServiceTypeName);
+
+            if (existsingServiceType)
+            {
+                throw new InvalidOperationException("Service type with this name already exists.");
+            }
+
             _serviceTypeRepository.Add(entity);
             _serviceTypeRepository.Save();
 

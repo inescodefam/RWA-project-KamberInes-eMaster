@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewData["Title"] = "Service types manager";
+}
+@model WebApp.Models.ServiceTypeIndexVm
+
+<h3>Service type manager</h3>
+
+<div class="col-md-4">
+    <a asp-action="CreateServiceType" asp-controller="ServiceType" class="btn btn-primary mb-3">
+        + Add Service Type
+    </a>
+</div>
+
+@if (Model.ServiceTypes != null && Model.ServiceTypes.Any())
+{
+    <h3 class="mt-4">Results</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Service Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var serviceType in Model.ServiceTypes)
+                {
+                    <tr>
+                        <td>@serviceType.ServiceTypeName</td>
+                        <td>
+                            <button class="btn btn-primary update-serviceType"
+                                    data-servicetypeid="@serviceType.IdserviceType"
+                                    data-name="@serviceType.ServiceTypeName">
+                                Update
+                            </button>
+                            <form asp-action="Delete" asp-controller="ServiceType"
+                                  asp-route-id="@serviceType.IdserviceType" method="post"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Are you sure?');">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="modal fade" id="serviceTypeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update service type:  <span id="nameSpan"></span> </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="serviceTypeForm" method="post">
+                        <input type="hidden" id="serviceTypeIdInput" name="serviceTypeId">
+                        <div class="mb-3">
+                            <label for="serviceTypeNameInput" class="form-label">New service type Name</label>
+                            <input type="text" class="form-control" id="serviceTypeNameInput" name="name"
+                                   placeholder="Enter service type name:" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+else
+{
+    <div class="alert alert-warning mt-4" role="alert">
+        No services found for the selected criteria.
+    </div>
+}
+@section Scripts {
+    <script src="~/js/site.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.update-serviceType').click(function() {
+                const serviceTypeId = $(this).data('servicetypeid');
+                const name = $(this).data('name');
+
+                $('#nameSpan').text(name);
+                $('#serviceTypeIdInput').val(serviceTypeId);
+                $('#serviceTypeModal').modal('show');
+            });
+
+            $('#serviceTypeForm').submit(function(e) {
+                e.preventDefault();
+                const formData = $(this).serialize();
+
+                $.ajax({
+                    url: '@Url.Action("Update", "ServiceType")',
+                    type: 'POST',
+                    data: formData,
+                    success: function() {
+                        $('#serviceTypeModal').modal('hide');
+                        alert('Service type updated successfully!');
+                         location.reload();
+                    },
+                    error: function(xhr) {
+                        alert('Error updating service type: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

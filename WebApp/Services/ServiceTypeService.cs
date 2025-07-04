@@ -18,14 +18,16 @@ namespace WebApp.Services
 
         public ServiceTypeVM CreateServiceType(ServiceTypeVM model)
         {
-
-            var response = _apiFetchService.PostData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", model);
-
-            if (response == null)
+            try
             {
-                throw new Exception("Failed to create service type.");
+                var response = _apiFetchService.PostData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", model);
+                return response;
             }
-            return response;
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+
         }
 
         public bool DeleteServiceType(int id)
@@ -58,7 +60,7 @@ namespace WebApp.Services
 
         public ServiceTypeVM UpdateServiceType(ServiceTypeVM serviceTypeDto)
         {
-            var response = _apiFetchService.PostData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", serviceTypeDto);
+            var response = _apiFetchService.PutData<ServiceTypeApiDto, ServiceTypeVM>("api/servicetype", serviceTypeDto);
             if (response != null)
             {
                 return response;

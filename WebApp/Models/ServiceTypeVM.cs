@@ -10,4 +10,9 @@ namespace WebApp.Models
         [Display(Name = "Service type name")]
         public string ServiceTypeName { get; set; }
     }
+
+    public class ServiceTypeIndexVm
+    {
+        public List<ServiceTypeVM> ServiceTypes { get; set; }
+    }
 }

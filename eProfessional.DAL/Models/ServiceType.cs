@@ -11,7 +11,7 @@ public partial class ServiceType
 
     [Column("ServiceType")]
     [StringLength(100)]
-    public string? ServiceTypeName { get; set; }
+    public string ServiceTypeName { get; set; }
 
     [InverseProperty("ServiceType")]
     public virtual ICollection<Service> Services { get; set; } = new List<Service>();
