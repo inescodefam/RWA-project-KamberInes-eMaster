@@ -61,10 +61,10 @@ namespace eProfessional.BLL.Services
             return professionalDataDto;
         }
 
-        public List<ProfessionalDataDto> Search(string? name, string? serviceType, int count, int start = 0)
+        public List<ProfessionalDataDto> Search(string? name, string? cityName, int count, int start = 0)
         {
 
-            var professionals = _professionalRepository.SearchProfessionals(name, serviceType, count, start);
+            var professionals = _professionalRepository.SearchProfessionals(name, cityName, count, start);
 
             if (professionals == null || professionals.Count == 0)
             {

@@ -80,14 +80,14 @@ namespace WebAPI.Controllers
         [HttpGet("search")]
         public ActionResult<IEnumerable<ProfessionalApiDataDto>> Search(
             [FromQuery] string? name,
-            [FromQuery] string? serviceType,
+            [FromQuery] string? cityName,
             [FromQuery] int count,
             [FromQuery] int start = 0
             )
         {
             try
             {
-                var professionalDtos = _professionalService.Search(name, serviceType, count, start);
+                var professionalDtos = _professionalService.Search(name, cityName, count, start);
 
                 if (professionalDtos == null || !professionalDtos.Any())
                 {
