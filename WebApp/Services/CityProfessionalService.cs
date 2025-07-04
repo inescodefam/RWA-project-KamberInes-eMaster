@@ -19,7 +19,7 @@ namespace WebApp.Services
             if (pageSize < 1) pageSize = 10;
             int start = (page - 1) * pageSize;
             var url = $"api/city-professional?count={pageSize}&start={start}";
-            var response = _apiFetchService.FetchDataList<CityProfessionalApiDto, CityProfessionalDataVM>(url);
+            var response = _apiFetchService.FetchDataList<CityProfessionalDataApiDto, CityProfessionalDataVM>(url);
             return response;
         }
 

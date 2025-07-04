@@ -107,7 +107,7 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 var result = _cityProfessionalService.UpdateProfessionalsByCity(cityId, professionalsIds);
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "City");
             }
             return BadRequest("Invalid data");
         }
