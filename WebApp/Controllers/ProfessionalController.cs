@@ -120,7 +120,7 @@ namespace WebApp.Controllers
 
         // delete: ProfessionalApiController/Delete/5
         [Route("Professional/Delete/{id}")]
-        [HttpDelete]
+        [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {

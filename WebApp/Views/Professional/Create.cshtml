@@ -6,60 +6,6 @@
    
 }
 @model WebApp.Models.ProfessionalIndexVM
-<script>
-    $(document).ready(function() {
-        $('#addProfessionalForm').submit(function(e) {
-            e.preventDefault();
-
-            var userId = $('#UserId').val();
-                if (!userId || userId === "0") {
-                $('#addProfessionalError').text('Please select a valid user.');
-                return;
-            }
-            var cityIds = $('#CityIds').val();
-
-            $.ajax({
-                url: '@Url.Action("Create", "Professional")',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                        UserId: userId,
-                        CityIds: cityIds
-                }),
-                success: function(response) {
-                    $('#professionalsTable tbody').load(window.location.href + ' #professionalsTable tbody>*', '');
-                    $('#addProfessionalError').text('');
-                },
-                error: function(xhr) {
-                    $('#addProfessionalError').text('Professional already exsist.' + xhr.responseText);
-                }
-            });
-        });
-        $(document).on('click', '.delete-professional', function() {
-            var professionalId = $(this).data('id');
-            var row = $(this).closest('tr');
-            var deleteUrlTemplate = '@Url.Action("Delete", "Professional", new { id = "_id"})';
-
-            if (confirm('Are you sure you want to delete this professional?')) {
-                var deleteUrl = deleteUrlTemplate.replace('_id', professionalId);
-
-                $.ajax({
-                    url: deleteUrl,
-                    type: 'DELETE',
-                    success: function() {
-                        row.fadeOut(300, function() {
-                            $(this).remove();
-                        });
-                    },
-                    error: function(xhr) {
-                        alert('Error deleting professional: ' + xhr.responseText);
-                    }
-                });
-            }
-        });
- 
-    });
-</script>
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
@@ -146,7 +92,7 @@
                                     <td>@p.UserName</td>
                                     <td>@string.Join(", ", p.CityNames ?? new List<string>())</td>
                                     <td>
-                                        <button class="btn btn-danger btn-sm delete-professional"
+                                        <button type="button" class="btn btn-danger btn-sm delete-professional"
                                                 data-id="@p.IdProfessional">
                                             Delete
                                         </button>
@@ -163,4 +109,59 @@
         </div>
     </div>
 }
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#addProfessionalForm').submit(function(e) {
+                e.preventDefault();
 
+                var userId = $('#UserId').val();
+                    if (!userId || userId === "0") {
+                    $('#addProfessionalError').text('Please select a valid user.');
+                    return;
+                }
+                var cityIds = $('#CityIds').val();
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Professional")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                            UserId: userId,
+                            CityIds: cityIds
+                    }),
+                    success: function(response) {
+                        $('#professionalsTable tbody').load(window.location.href + ' #professionalsTable tbody>*', '');
+                        $('#addProfessionalError').text('');
+                    },
+                    error: function(xhr) {
+                        $('#addProfessionalError').text('Professional already exsist.' + xhr.responseText);
+                    }
+                });
+            });
+            $(document).on('click', '.delete-professional', function() {
+                var professionalId = $(this).data('id');
+                var row = $(this).closest('tr');
+                var deleteUrlTemplate = '@Url.Action("Delete", "Professional", new { id = "_id" })';
+
+                if (confirm('Are you sure you want to delete this professional?')) {
+                    var deleteUrl = deleteUrlTemplate.replace('_id', professionalId);
+
+                    $.ajax({
+                        url: deleteUrl,
+                        type: 'POST',
+                        success: function() {
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+                            });
+                        },
+                        error: function(xhr) {
+                            alert('Error deleting professional: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+}
