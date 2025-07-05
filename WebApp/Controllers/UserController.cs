@@ -25,15 +25,17 @@ namespace WebApp.Controllers
 
         //GET: UserController
         [Authorize(Roles = "Admin")]
-        public IActionResult Index(string role, string username, int pageSize, int page)
+        public IActionResult Index(string role, string username, int pageSize, int page, bool partial = false)
         {
+            if (pageSize == 0) pageSize = 10;
+            // remeove this from here to service
             List<UserVM> users = _userService.GetUsers(pageSize, page);
             List<RoleVM> roles = _roleService.GetUserRole();
+            var totalUsersCount = _userService.GetAllUsers().Count();
 
             if (!string.IsNullOrEmpty(username))
                 users = users.Where(u => u.Username.Contains(username) || u.FirstName.Contains(username)).ToList();
 
-            // remeove this from here to BL TODO
             if (!string.IsNullOrEmpty(role))
             {
 
@@ -63,8 +65,11 @@ namespace WebApp.Controllers
                 Role = role,
                 Page = page,
                 PageSize = pageSize,
-                TotalCount = users.Count
+                TotalCount = totalUsersCount
             };
+
+            if (partial)
+                return PartialView("_UserTablePartial", model);
 
             return View(model);
         }

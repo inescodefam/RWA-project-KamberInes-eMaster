@@ -1,0 +1,90 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model WebApp.Models.UserIndexVM
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Email</td>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>             
+                    <div class="btn-group gap-2" role="group">
+                        <form asp-action="DeleteUser" asp-route-id="@user.Iduser" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Are you sure you want to delete this user?')">
+                                Delete
+                            </button>
+                        </form>
+
+                        <button class="btn btn-primary btn-sm update-role"
+                        data-userid="@user.Iduser"
+                        data-username="@user.Username">
+                            Update Role
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@{
+    var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    var notEnoughCount = Model.TotalCount <= Model.PageSize;
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(Model.Page-1)"
+                   data-role="@Model.Role"
+                   data-username="@Model.Username"
+                   data-pagesize="@Model.PageSize">
+                    Previous
+                </a>
+
+            </li>
+            @for (int i = 0; i < totalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page || notEnoughCount ? "active" : "")">
+                    <a class="page-link page-ajax"
+                       href="javascript:void(0);"
+                       data-page="@i"
+                       data-role="@Model.Role"
+                       data-username="@Model.Username"
+                       data-pagesize="@Model.PageSize">
+                        @(i+1)
+                    </a>
+
+                </li>
+            } 
+            <li class="page-item @(Model.Page == totalPages-1 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(Model.Page+1)"
+                   data-role="@Model.Role"
+                   data-username="@Model.Username"
+                   data-pagesize="@Model.PageSize">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+

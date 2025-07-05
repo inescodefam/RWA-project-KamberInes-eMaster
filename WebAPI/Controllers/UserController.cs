@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public ActionResult<List<UserDto>> Get(int count, int start = 0)
+        public ActionResult<List<UserDto>> Get(int count, int start)
         {
             try
             {

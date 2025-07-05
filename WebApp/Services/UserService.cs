@@ -18,9 +18,8 @@ namespace WebApp.Services
         }
         public List<UserVM> GetUsers(int pageSize, int page)
         {
-            if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            int start = (page - 1) * pageSize;
+            int start = page;
             var response = _apiFetchService.FetchDataList<UserApiDto, UserVM>($"api/user?count={pageSize}&start={start}");
             return response ?? new List<UserVM>();
         }
