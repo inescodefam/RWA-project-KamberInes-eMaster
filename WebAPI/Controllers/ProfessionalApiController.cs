@@ -92,7 +92,7 @@ namespace WebAPI.Controllers
                 if (professionalDtos == null || !professionalDtos.Any())
                 {
                     _loggingService.CreateLog("No professionals found matching the search criteria.", "info");
-                    return NoContent();
+                    return new List<ProfessionalApiDataDto>();
                 }
                 _loggingService.CreateLog($"Found {professionalDtos.Count} professionals matching the search criteria.", "info");
                 var professionalDtosMapped = _mapper.Map<List<ProfessionalApiDataDto>>(professionalDtos);
