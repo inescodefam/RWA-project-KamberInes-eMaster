@@ -61,7 +61,7 @@
 
 @{
     var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-    var notEnoughCount = Model.TotalCount <= Model.PageSize || Model.TotalCount <= Model.Professionals.Count;
+    var notEnoughCount = Model.TotalCount <= Model.PageSize;
     <nav id="pagination-nav">
         <ul class="pagination">
             <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
