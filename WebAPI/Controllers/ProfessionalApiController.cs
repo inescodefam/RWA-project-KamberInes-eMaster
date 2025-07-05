@@ -25,6 +25,28 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("all")]
+        public IActionResult Get()
+        {
+            try
+            {
+                var professionals = _professionalService.Get();
+                if (professionals == null || !professionals.Any())
+                {
+                    _loggingService.CreateLog("No professionals found in the database.", "info");
+                    return NoContent();
+                }
+                _loggingService.CreateLog($"Retrieved {professionals.Count} professionals from the database.", "info");
+                var professionalDataApiDtos = _mapper.Map<List<ProfessionalApiDataDto>>(professionals);
+                return Ok(professionalDataApiDtos);
+            }
+            catch (Exception ex)
+            {
+                _loggingService.CreateLog($"Error retrieving professionals: {ex.Message}", "error");
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<ProfessionalApiDataDto>> GetAllProfessionals(int count, int start = 0)
         {

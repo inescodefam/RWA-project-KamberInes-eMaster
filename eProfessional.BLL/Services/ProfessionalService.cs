@@ -44,6 +44,20 @@ namespace eProfessional.BLL.Services
             return professionalDtos;
         }
 
+        public List<ProfessionalDataDto> Get()
+        {
+            var professionals = _professionalRepository.Get();
+            var users = _userRepository.GetAll().ToList();
+            if (!professionals.Any())
+            {
+                _loggingRepository.CreateLog("No professionals found in the database.", "info");
+                return new List<ProfessionalDataDto>();
+            }
+            List<ProfessionalDataDto> professionalDtos = MapUserProfessionalList(professionals, users);
+            _loggingRepository.CreateLog($"Retrieved {professionalDtos.Count} professionals from the database.", "info");
+            return professionalDtos;
+        }
+
         public ProfessionalDataDto GetSingleProfessional(int id)
         {
             var professional = _professionalRepository.GetById(id);

@@ -16,6 +16,13 @@ namespace eProfessional.DAL.Repositories
             return professionals;
         }
 
+        public List<Professional> Get()
+        {
+            var professionals = GetAll().ToList();
+
+            return professionals;
+        }
+
         public List<Professional> GetProfessionalsByIds(List<int> ids)
         {
             return _context.Professionals

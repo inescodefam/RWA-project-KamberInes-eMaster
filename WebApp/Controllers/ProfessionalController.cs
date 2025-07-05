@@ -28,7 +28,10 @@ namespace WebApp.Controllers
                 ModelState.AddModelError("", "No professionals found.");
                 return View(new ProfessionalIndexVM
                 {
-                    Professionals = new List<ProfessionalVM>()
+                    Professionals = model.Professionals ?? new List<ProfessionalVM>(),
+                    PageSize = pageSize,
+                    Page = page,
+                    TotalCount = model.TotalCount
                 });
             }
 
@@ -37,11 +40,22 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController/Search
         [HttpGet]
-        public IActionResult Search(string username, string city, int pageSize, int page, bool partial = false)
+        public IActionResult Search(string username, string city, int pageSize, int page, bool partial)
         {
             var response = _professionalService.Search(username, city, pageSize, page);
 
-            if (partial) return PartialView("_ProfessionalTablePartial", response);
+            if (partial)
+            {
+
+                return PartialView("_ProfessionalTablePartial", new ProfessionalIndexVM
+                {
+                    Professionals = response.Professionals ?? new List<ProfessionalVM>(),
+                    PageSize = pageSize,
+                    Page = page,
+                    TotalCount = response.TotalCount
+                });
+
+            }
 
             return Json(response);
         }

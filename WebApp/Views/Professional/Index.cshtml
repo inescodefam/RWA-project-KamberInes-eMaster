@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Professional List";
+    var pageSizeList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "5", Text = "5" },
+        new SelectListItem { Value = "10", Text = "10" },
+        new SelectListItem { Value = "30", Text = "30" }
+    };
 
 }
 @if (Model?.Professionals?.Count == 0)
@@ -44,7 +50,15 @@
                         <label asp-for="Cities" for="searchCityName"><i class="bi bi-geo-alt-fill me-2"></i>City</label>
                     </div>
                 </div>
-                <div class="col-12">
+                <div class="col-md-2">
+                    <select asp-for="PageSize"
+                            asp-items="pageSizeList"
+                            name="PageSize"
+                            class="form-select"
+                            onchange="this.form.submit()"
+                            data-pagesize="@pageSizeList"></select>
+                </div>
+                <div class="col-10">
                     <button type="submit" class="btn btn-primary w-100 py-2">
                         <i class="bi bi-search me-2"></i>Search Professionals
                     </button>
@@ -64,14 +78,14 @@
 
         $(document).ready(function() {
 
-            $('#noResultsMessage').removeClass('d-none');
-
             $('#searchProfessionalForm').submit(function(e) {
-
                 e.preventDefault();
 
                 var username = $('#searchUsername').val();
                 var cityName = $('#searchCityName').val();
+                var page = 0;
+                var pageSize = $('#searchProfessionalForm select[name="PageSize"]').val();
+
 
                 $.ajax({
                     url: '@Url.Action("Search", "Professional")',
@@ -79,17 +93,17 @@
                     data: {
                         username: username,
                         city: cityName,
-                        pageSize: 100,
-                        page: 0
+                        pageSize,
+                        page
                     },
                     success: function(results) {
-                        console.log(results);
                         var professionals = results.professionals;
                         var $tbody = $('#professionalTableContainer #searchProfessionalsTable tbody');
                         $tbody.empty();
 
                         if (professionals && professionals.length > 0) {
                             $('#noResultsMessage').addClass('d-none');
+
                             $.each(professionals, function(i, p) {
                                 $tbody.append(
                                     `<tr>
@@ -109,11 +123,11 @@
                 }); 
             });
 
-             $('#professionalTableContainer').on('click', '.page-ajax', function (e) {
-            e.preventDefault();
+         $('#professionalTableContainer').on('click', '.page-ajax', function (e) {
+        e.preventDefault();
 
             var page = $(this).data('page');
-            var pageSize = $(this).data('pagesize');
+            var pageSize =$('#searchProfessionalForm select[name="PageSize"]').val()
 
             var username = $('#searchUsername').val();
             var cityName = $('#searchCityName').val();
@@ -135,7 +149,6 @@
                     console.error("Pagination AJAX error:", xhr.responseText);
                 }
             });
-
         }); 
         })
     </script>

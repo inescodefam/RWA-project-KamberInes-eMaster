@@ -5,6 +5,7 @@ namespace eProfessional.BLL.Interfaces
     public interface IProfessionalService
     {
         List<ProfessionalDataDto> GetProfessionals(int count, int start = 0);
+        List<ProfessionalDataDto> Get();
         ProfessionalDataDto GetSingleProfessional(int id);
         List<ProfessionalDataDto> Search(string? Name, string? serviceType, int count, int start = 0);
         ProfessionalDto CreateProfessional(ProfessionalBaseDto professionalDto);

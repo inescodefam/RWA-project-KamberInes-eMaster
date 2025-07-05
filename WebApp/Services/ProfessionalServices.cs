@@ -93,7 +93,14 @@ namespace WebApp.Services
                     Cities = new List<SelectListItem>()
                 };
             }
+
+            var totalCount = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/all").Count();
+
             ProfessionalIndexVM professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
+
+            professionalIndexVM.Page = page;
+            professionalIndexVM.PageSize = pageSize;
+            professionalIndexVM.TotalCount = totalCount;
 
             return professionalIndexVM;
         }
@@ -113,6 +120,8 @@ namespace WebApp.Services
             }
 
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
+            var totalCount = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/all").Count();
+
             if (response == null || !response.Any())
             {
                 return new ProfessionalIndexVM
@@ -124,6 +133,9 @@ namespace WebApp.Services
             }
             ProfessionalIndexVM professionalIndexVM = MapProfessionalDataModelToIndexModel(response);
 
+            professionalIndexVM.Page = page;
+            professionalIndexVM.PageSize = pageSize;
+            professionalIndexVM.TotalCount = totalCount;
 
             return professionalIndexVM;
         }

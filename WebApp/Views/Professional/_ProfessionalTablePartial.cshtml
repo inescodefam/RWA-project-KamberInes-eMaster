@@ -26,7 +26,7 @@
                 <tbody>
 @*                     za inicijalni prikaz 
 
-*@                  @*   @if (Model.Professionals != null && Model.Professionals.Count > 0)
+*@                    @if (Model.Professionals != null && Model.Professionals.Count > 0)
                     {
                         foreach (var professional in Model.Professionals)
                         {
@@ -47,7 +47,7 @@
                         <tr>
                             <td colspan="2" class="text-center">No professionals found</td>
                         </tr>
-                    } *@
+                    }
                 </tbody>
             </table>
         </div>
@@ -61,8 +61,8 @@
 
 @{
     var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-    var notEnoughCount = Model.TotalCount <= Model.PageSize;
-    <nav>
+    var notEnoughCount = Model.TotalCount <= Model.PageSize || Model.TotalCount <= Model.Professionals.Count;
+    <nav id="pagination-nav">
         <ul class="pagination">
             <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
                 <a class="page-link page-ajax"
