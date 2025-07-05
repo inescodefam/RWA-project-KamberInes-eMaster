@@ -20,6 +20,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
+
         public IActionResult Index(int count, int start)
         {
             try
@@ -41,9 +42,11 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateServiceType() => View();
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult CreateServiceType(ServiceTypeVM model)
         {
 
@@ -66,6 +69,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(int serviceTypeId, string name)
         {
             if (!ModelState.IsValid || serviceTypeId <= 0)
@@ -93,6 +97,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             if (!ModelState.IsValid || id <= 0)

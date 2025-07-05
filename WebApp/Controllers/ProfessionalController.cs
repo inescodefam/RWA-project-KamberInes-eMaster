@@ -46,9 +46,11 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController/AddProfessional
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create() => View(_professionalService.GetProfessionals(50, 0));
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create([FromBody] ProfessionalBaseVm professionalVM)
         {
 
@@ -82,6 +84,7 @@ namespace WebApp.Controllers
 
 
         // GET: ProfessionalApiController/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)
         {
             var professional = _professionalService.GetSingleProfessionalIndexVm(id);
@@ -92,6 +95,7 @@ namespace WebApp.Controllers
         // POST: ProfessionalApiController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit([FromForm] ProfessionalCityEditVM professionalEditVm)
         {
             try

@@ -9,6 +9,7 @@ using WebApp.Models;
 namespace WebApp.Controllers
 {
     [Authorize]
+
     public class UserController : Controller
     {
         private readonly IUserService _userService;
@@ -23,6 +24,7 @@ namespace WebApp.Controllers
         }
 
         //GET: UserController
+        [Authorize(Roles = "Admin")]
         public IActionResult Index(int count = 50, int start = 0)
         {
             List<UserVM> users = _userService.GetUsers(count, start);
@@ -113,6 +115,7 @@ namespace WebApp.Controllers
 
 
         // GET: UserController/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int id)
         {
             var userDto = _userService.GetUserById(id);

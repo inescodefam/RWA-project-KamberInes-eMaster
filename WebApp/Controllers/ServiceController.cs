@@ -77,6 +77,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             var vm = new ServiceCreateVM
@@ -89,6 +90,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(CreateServiceResultVM vm)
         {
             if (!ModelState.IsValid)
@@ -124,6 +126,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
             var vm = _serviceService.GetServiceByIdEditVm(id);
@@ -131,6 +134,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(ServiceEditResultVM vm)
         {
 

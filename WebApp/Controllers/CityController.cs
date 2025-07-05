@@ -7,7 +7,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CityController : Controller
     {
         private readonly ICityService _cityService;

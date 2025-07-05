@@ -9,7 +9,14 @@
     <div>No professionals found.</div>
 }
 <h2>Professionals List</h2>
-
+@if (User.IsInRole("Admin"))
+{   
+<a asp-action="Create"
+   asp-controller="Professional"
+   class="btn btn-primary btn-sm text-white mx-3">
+    Manage professionals
+</a>
+}
 <div class="container py-4">
     <div class="card shadow-lg mb-5">
         <div class="card-header bg-primary text-white py-3">
