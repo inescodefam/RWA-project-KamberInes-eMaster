@@ -75,6 +75,8 @@
                     <td>@service.Price</td>
 
                         <td>
+                            <div class="d-flex gap-2 align-items-center">
+
                         <button class="btn btn-success add-to-your-services"
                                 data-id="@service.IdService"
                                 data-name="@service.ServiceTypeName"
@@ -91,6 +93,7 @@
                                   onsubmit="return confirm('Are you sure?');">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
+                            </div>
                         </td>
                 </tr>
             }

@@ -50,6 +50,7 @@
             <tr>
                 <td>@city.Name</td>
                 <td >
+                    <div class="d-flex gap-2 align-items-center">
                     <form asp-action="Delete" asp-route-id="@city.Idcity" method="post">
                         @Html.AntiForgeryToken()
                         <button type="submit" class="btn btn-danger btn-sm"
@@ -68,6 +69,7 @@
                        class="btn btn-info btn-sm">
                         See professionals
                     </a>
+                    </div>
                 </td>
             </tr>
         }
