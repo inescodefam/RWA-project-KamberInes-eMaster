@@ -81,10 +81,8 @@ namespace WebApp.Services
 
         public ProfessionalIndexVM GetProfessionals(int pageSize, int page)
         {
-            if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            int start = (page - 1) * pageSize;
-            var url = $"api/professional?count={pageSize}&start={start}";
+            var url = $"api/professional?count={pageSize}&start={page}";
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
             if (response == null || !response.Any())
             {
@@ -102,10 +100,8 @@ namespace WebApp.Services
 
         public ProfessionalIndexVM Search(string? Name, string? cityName, int pageSize, int page)
         {
-            if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            int start = (page - 1) * pageSize;
-            var url = $"api/professional/search?count={pageSize}&start={start}";
+            var url = $"api/professional/search?count={pageSize}&start={page}";
 
             if (!string.IsNullOrEmpty(Name))
             {

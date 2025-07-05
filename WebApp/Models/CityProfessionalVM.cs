@@ -50,6 +50,8 @@ namespace WebApp.Models
         public List<SelectListItem> Users { get; set; } = new List<SelectListItem>();
         [Display(Name = "Cities")]
         public List<SelectListItem> Cities { get; set; } = new List<SelectListItem>();
-
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalCount { get; set; }
     }
 }

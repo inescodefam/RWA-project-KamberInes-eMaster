@@ -19,9 +19,9 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController
         [HttpGet]
-        public IActionResult Index(int count = 50, int start = 0)
+        public IActionResult Index(int pageSize, int page)
         {
-            var model = _professionalService.GetProfessionals(count, start);
+            var model = _professionalService.GetProfessionals(pageSize, page);
 
             if (model == null)
             {
@@ -37,9 +37,11 @@ namespace WebApp.Controllers
 
         // GET: ProfessionalApiController/Search
         [HttpGet]
-        public IActionResult Search(string username, string city, int count, int start)
+        public IActionResult Search(string username, string city, int pageSize, int page, bool partial = false)
         {
-            var response = _professionalService.Search(username, city, count, start);
+            var response = _professionalService.Search(username, city, pageSize, page);
+
+            if (partial) return PartialView("_ProfessionalTablePartial", response);
 
             return Json(response);
         }

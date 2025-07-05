@@ -82,7 +82,8 @@ namespace WebAPI.Controllers
             [FromQuery] string? name,
             [FromQuery] string? cityName,
             [FromQuery] int count,
-            [FromQuery] int start = 0
+            [FromQuery] int start,
+            bool partial = false
             )
         {
             try
