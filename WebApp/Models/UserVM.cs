@@ -31,4 +31,14 @@ namespace WebApp.Models
         [Display(Name = "Password")]
         public string? Password { get; set; }
     }
+
+    public class UserIndexVM
+    {
+        public List<UserVM> Users { get; set; } = new List<UserVM>();
+        public string? Role { get; set; }
+        public string? Username { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalCount { get; set; }
+    }
 }

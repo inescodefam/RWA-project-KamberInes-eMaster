@@ -108,7 +108,7 @@ namespace WebApp.Controllers
                 var response = _serviceTypeService.DeleteServiceType(id);
                 return RedirectToAction("Index");
             }
-            catch (Exception ex)
+            catch
             {
                 ModelState.AddModelError("", "An unexpected error occurred.");
                 return RedirectToAction("Index");

@@ -25,15 +25,15 @@ namespace WebApp.Controllers
 
         //GET: UserController
         [Authorize(Roles = "Admin")]
-        public IActionResult Index(string role, string username, int count = 50, int start = 0)
+        public IActionResult Index(string role, string username, int pageSize, int page)
         {
-            List<UserVM> users = _userService.GetUsers(count, start);
+            List<UserVM> users = _userService.GetUsers(pageSize, page);
             List<RoleVM> roles = _roleService.GetUserRole();
 
             if (!string.IsNullOrEmpty(username))
                 users = users.Where(u => u.Username.Contains(username) || u.FirstName.Contains(username)).ToList();
 
-
+            // remeove this from here to BL TODO
             if (!string.IsNullOrEmpty(role))
             {
 
@@ -56,7 +56,17 @@ namespace WebApp.Controllers
 
             }
 
-            return View(users);
+            var model = new UserIndexVM
+            {
+                Users = users,
+                Username = username,
+                Role = role,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = users.Count
+            };
+
+            return View(model);
         }
 
 
