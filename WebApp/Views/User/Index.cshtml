@@ -10,6 +10,23 @@
 }
 
 <h2>User List</h2>
+<form asp-action="Index" method="get" class="row g-3 mb-4">
+    <div class="col-auto">
+        <select name="role" class="form-select">
+            <option value="">All Roles</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <input type="text" name="username" class="form-control" placeholder="Search by username" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+
 <table class="table">
     <thead>
         <tr>

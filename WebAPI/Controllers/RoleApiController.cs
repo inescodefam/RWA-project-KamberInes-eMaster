@@ -31,8 +31,10 @@ namespace WebAPI.Controllers
             {
                 return Unauthorized("User role not found.");
             }
+            var userRoleDtos = _mapper.Map<List<RoleApiDto>>(userRole);
 
-            return Ok(new { Role = userRole });
+
+            return Ok(userRoleDtos);
         }
 
         [HttpPost]

@@ -25,9 +25,37 @@ namespace WebApp.Controllers
 
         //GET: UserController
         [Authorize(Roles = "Admin")]
-        public IActionResult Index(int count = 50, int start = 0)
+        public IActionResult Index(string role, string username, int count = 50, int start = 0)
         {
             List<UserVM> users = _userService.GetUsers(count, start);
+            List<RoleVM> roles = _roleService.GetUserRole();
+
+            if (!string.IsNullOrEmpty(username))
+                users = users.Where(u => u.Username.Contains(username) || u.FirstName.Contains(username)).ToList();
+
+
+            if (!string.IsNullOrEmpty(role))
+            {
+
+                if (role != "User")
+                {
+                    List<int> userIds = roles
+                        .Where(r => r.RoleName == role)
+                        .Select(r => r.UserId)
+                        .ToList();
+                    users = users.Where(u => userIds.Contains(u.Iduser)).ToList();
+                }
+                else
+                {
+                    List<int> userIds = roles
+                       .Where(r => r.RoleName != null)
+                       .Select(r => r.UserId)
+                       .ToList();
+                    users = users.Where(u => !userIds.Contains(u.Iduser)).ToList();
+                }
+
+            }
+
             return View(users);
         }
 
