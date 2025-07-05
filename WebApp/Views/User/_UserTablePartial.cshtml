@@ -52,6 +52,17 @@
             <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
                 <a class="page-link page-ajax"
                    href="javascript:void(0);"
+                   data-page="@(0)"
+                   data-role="@Model.Role"
+                   data-username="@Model.Username"
+                   data-pagesize="@Model.PageSize">
+                    Start
+                </a>
+
+            </li>
+            <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
                    data-page="@(Model.Page-1)"
                    data-role="@Model.Role"
                    data-username="@Model.Username"
@@ -82,6 +93,16 @@
                    data-username="@Model.Username"
                    data-pagesize="@Model.PageSize">
                     Next
+                </a>
+            </li>
+            <li class="page-item @(Model.Page == totalPages-1 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(totalPages - 1)"
+                   data-role="@Model.Role"
+                   data-username="@Model.Username"
+                   data-pagesize="@Model.PageSize">
+                    End
                 </a>
             </li>
         </ul>
