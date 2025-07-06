@@ -18,49 +18,107 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+    color: #222;
+    margin-bottom: 60px;
+}
+
+#nav {
+    display: flex;
+    flex-direction: row;
+    text-decoration: none;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    background: #2c3e50;
+}
+
+#nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+#nav li {
+    margin: 0 16px;
+}
+
+#nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5em 1em;
+    transition: background 0.2s;
+}
+
+#nav a:hover {
+    background: #34495e;
+    border-radius: 4px;
+}
+
+.logout{
+    justify-self: flex-end;
 }
 
 
-    .card {
-        border-radius: 10px;
-        overflow: hidden;
+h2 {
+    text-align: center;
+    margin: 1.5em 0;
+    color: #34495e;
+    letter-spacing: 1px;
+}
+h4 {
+    text-align: left;
+    color: #34495e;
+    letter-spacing: 1px;
+}
+h3 {
+    text-align: left;
+    color: #34495e;
+    letter-spacing: 1px;
+}
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.table th {
+    background: #34495e;
+    color: #fff;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.form-control, .form-select {
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3a8ffe, #6c42f5);
+    border: none;
+    transition: all 0.3s;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2a7dee, #5b32e5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .card-header {
-        border-bottom: 1px solid rgba(0,0,0,0.1);
-    }
-
-    .table th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-    }
-
-    .form-control, .form-select {
-        border: 1px solid #dee2e6;
-        transition: all 0.3s;
-    }
-
-        .form-control:focus, .form-select:focus {
-            border-color: #86b7fe;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-        }
-
-    .btn-primary {
-        background: linear-gradient(135deg, #3a8ffe, #6c42f5);
-        border: none;
-        transition: all 0.3s;
-    }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2a7dee, #5b32e5);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-    .table-hover tbody tr:hover {
-        background-color: rgba(13, 110, 253, 0.05);
-    }
-
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.05);
+}

@@ -1,7 +1,7 @@
 ﻿@using WebApp.Models
 @model WebApp.Models.ServiceSearchVM
 @{
-    ViewBag.Title = "Service Search";
+    ViewBag.Title = "Service search";
     var pageSizeList = new List<SelectListItem>
     {
         new SelectListItem { Value = "10", Text = "10" },
@@ -10,7 +10,7 @@
     };
 }
 
-<h2 class="mb-4">Search for Professional Services</h2>
+<h2 class="mb-4">Search for professionals services</h2>
 <p>Number of Service types: @(Model.ServiceTypes == null ? "null" : Model.ServiceTypes.Count.ToString())</p>
 <p>Number of cities: @(Model.Cities == null ? "null" : Model.Cities.Count.ToString())</p>
 

@@ -76,7 +76,7 @@ input[type=email], input[type=password] {
 
 #login-btn {
     width: 100%;
-    background-color: #04AA6D;
+    background-color: #34495e;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -166,4 +166,9 @@ button#currentPage {
     cursor: default;
     font-weight: bold;
     border: 1px solid #d0d7de;
+}
+
+.wrapper {
+    margin: 2em auto;
+    max-width: 900px;
 }

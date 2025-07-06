@@ -15,7 +15,9 @@
             <li><a href="javascript:void(0);" onclick="logout()">Logout</a></li>
         </ul>
     </nav>
-    <h2>Logs</h2>
+    <h2>Professional logs</h2>
+    <div class="wrapper">
+
     <div id="totalLogs"></div>
     <label>Number o logs dipslayed:</label>
     <select id="pageSizeSelect">
@@ -23,6 +25,7 @@
         <option value="20">20</option>
         <option value="30">30</option>
     </select>
+    </div>
 
     <div id="logs">
         <table id="logTable">
@@ -38,9 +41,11 @@
             </tbody>
         </table>
     </div>
+    <div class="wrapper">
     <button id="prevPage">Previous</button>
     <button id="currentPage"></button>
     <button id="nextPage">Next</button>
+    </div>
 
 </body>
 </html>
