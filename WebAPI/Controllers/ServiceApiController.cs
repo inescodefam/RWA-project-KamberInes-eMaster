@@ -21,15 +21,29 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
+
+        [HttpGet("count")]
+        public ActionResult<int> GetServicesCount()
+        {
+            try
+            {
+                return Ok(_servicesService.GetServicesCount());
+            }
+            catch (Exception)
+            {
+                return BadRequest("An error occurred while retrieving the services count.");
+            }
+        }
+
         [HttpGet]
-        public ActionResult<List<ServiceApiDto>> GetServices(int count, int start = 0)
+        public ActionResult<List<ServiceApiDto>> GetServices(int count, int start)
         {
             try
             {
                 var services = _servicesService.GetServicesCount(count, start);
                 if (services == null || !services.Any())
                 {
-                    return NotFound("No services found.");
+                    return new List<ServiceApiDto>();
                 }
                 var servicesDto = _mapper.Map<List<ServiceApiDto>>(services);
                 return Ok(servicesDto);
@@ -59,6 +73,12 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, "An error occurred while retrieving the service.");
             }
+        }
+
+        [HttpGet("search-count")]
+        public ActionResult<int> GetServiceByServiceTypeCount(string serviceTypeName)
+        {
+            return Ok(_servicesService.GetServiceByServiceTypeCount(serviceTypeName));
         }
 
         [HttpGet("id/{id}")]

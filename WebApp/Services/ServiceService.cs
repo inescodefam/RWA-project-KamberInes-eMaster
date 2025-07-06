@@ -118,23 +118,34 @@ namespace WebApp.Services
             return serviceResults;
         }
 
-        public List<ServiceResultVM> Search(string serviceTypeName, int cityId, int count, int start = 0)
+        public int GetServiceCount()
+        {
+            var url = "api/service/count";
+            var response = _apiFetchService.FetchPrimitive<int>(url);
+            return response;
+        }
+
+        public int GetServiceCountForServiceTypeName(string type)
+        {
+            var url = "api/service/search-count";
+            var response = _apiFetchService.FetchPrimitive<int>(url);
+            return response;
+        }
+
+        public List<ServiceResultVM> Search(string serviceTypeName, int cityId, int count, int start)
         {
             List<ServiceVM> response = new List<ServiceVM>();
+            var url = $"api/service?count={count}&start={start}";
 
             if (!string.IsNullOrEmpty(serviceTypeName))
             {
-                var url = $"api/service/search?serviceTypeName={serviceTypeName}&count={count}&start={start}";
+                url = $"api/service/search?serviceTypeName={serviceTypeName}&count={count}&start={start}";
                 response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
-                if (response == null || !response.Any())
-                {
-                    return new List<ServiceResultVM>();
-                }
             }
 
             if (cityId > 0)
             {
-                var url = $"api/city-professional/city/{cityId}";
+                // create BLL for this...
                 var professionals = _cpService.GetProfessionalsByCity(cityId)
                     .Select(p => p.IdProfessional)
                     .ToList();
@@ -150,6 +161,14 @@ namespace WebApp.Services
 
                 response = combined;
             }
+            if (string.IsNullOrEmpty(serviceTypeName) && cityId <= 0)
+            {
+                response = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
+                if (response == null || !response.Any())
+                {
+                    return new List<ServiceResultVM>();
+                }
+            }
 
             var serviceResults = new List<ServiceResultVM>();
             foreach (var service in response)
@@ -157,6 +176,7 @@ namespace WebApp.Services
                 var serviceResultVM = MapServiceToResult(service);
                 serviceResults.Add(serviceResultVM);
             }
+
             return serviceResults;
         }
 

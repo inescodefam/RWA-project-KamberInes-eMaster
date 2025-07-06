@@ -43,6 +43,12 @@ namespace eProfessional.BLL.Services
             }
         }
 
+        public int GetServicesCount()
+        {
+            return _serviceRepository.GetAll().Count();
+        }
+
+
         public List<ServiceDto> GetServicesCount(int count, int start = 0)
         {
             try
@@ -70,6 +76,11 @@ namespace eProfessional.BLL.Services
             {
                 throw new Exception("An error occurred while retrieving the service by service type.");
             }
+        }
+
+        public int GetServiceByServiceTypeCount(string type)
+        {
+            return _serviceRepository.GetServiceByServiceTypeCount(type);
         }
 
         public ServiceDto CreateService(ServiceDto serviceDto)

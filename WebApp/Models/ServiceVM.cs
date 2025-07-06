@@ -18,13 +18,17 @@ namespace WebApp.Models
 
     public class ServiceSearchVM
     {
-        [Display(Name ="City")]
+        [Display(Name = "City")]
         public int SelectedCityId { get; set; }
         [Display(Name = "Selected service type")]
         public string SelectedServiceTypeName { get; set; }
         public List<ServiceTypeVM> ServiceTypes { get; set; } = new List<ServiceTypeVM>();
         public List<CityVM> Cities { get; set; } = new List<CityVM>();
         public List<ServiceResultVM>? Services { get; set; }
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
+        public int TotalCount { get; set; }
+
     }
 
     public class ServiceResultVM

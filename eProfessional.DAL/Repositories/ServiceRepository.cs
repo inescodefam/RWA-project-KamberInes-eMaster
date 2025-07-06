@@ -23,6 +23,13 @@ namespace eProfessional.DAL.Repositories
             return services.Skip(start).Take(count).ToList() ?? new List<Service>();
         }
 
+        public int GetServiceByServiceTypeCount(string type)
+        {
+            return _context.Services
+                .Where(s => s.ServiceType.ServiceTypeName.Contains(type))
+                .ToList().Count;
+        }
+
         public List<Service> GetServices(int count, int start = 0)
         {
             return _dbSet

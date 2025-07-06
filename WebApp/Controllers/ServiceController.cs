@@ -34,33 +34,53 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Search()
         {
+            int pageSize = 10;
+            int page = 0;
+
             var vm = new ServiceSearchVM
             {
                 Cities = _cityService.GetAllCities(),
                 ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
-                Services = _serviceService.GetServiceIndex(50, 0)
+                Services = _serviceService.GetServiceIndex(pageSize, page),
+                PageSize = pageSize,
+                Page = page,
+                TotalCount = _serviceService.GetServiceCount()
             };
             return View(vm);
         }
 
         [HttpPost]
-        public ActionResult Search(string SelectedServiceTypeName, int SelectedCityId, int count = 50, int start = 0)
+        public ActionResult Search(string SelectedServiceTypeName, int SelectedCityId, int pageSize, int page, bool partial)
         {
+            int totalCount;
             if (string.IsNullOrEmpty(SelectedServiceTypeName))
             {
                 SelectedServiceTypeName = string.Empty;
+                totalCount = _serviceService.GetServiceCount();
             }
-            if (SelectedCityId < 0)
+            else
             {
-                SelectedCityId = 0;
+                totalCount = _serviceService.GetServiceCountForServiceTypeName(SelectedServiceTypeName);
             }
+
+            var services = _serviceService.Search(SelectedServiceTypeName, SelectedCityId, pageSize, page);
+            var totalServices = services.Count;
+            if (pageSize > totalServices && page == 0) totalCount = totalServices;
 
             var vm = new ServiceSearchVM
             {
                 Cities = _cityService.GetAllCities(),
                 ServiceTypes = _serviceType.GetServiceTypes(1000, 0),
-                Services = _serviceService.Search(SelectedServiceTypeName, SelectedCityId, count, start)
+                Services = services,
+                PageSize = pageSize,
+                Page = page,
+                TotalCount = totalCount
             };
+
+            if (partial)
+            {
+                return PartialView("_ServiceTablePartial", vm);
+            }
 
             return View(vm);
         }

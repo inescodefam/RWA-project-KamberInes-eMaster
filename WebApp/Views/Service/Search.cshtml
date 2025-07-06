@@ -2,10 +2,15 @@
 @model WebApp.Models.ServiceSearchVM
 @{
     ViewBag.Title = "Service Search";
+    var pageSizeList = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "10", Text = "10" },
+        new SelectListItem { Value = "20", Text = "20" },
+        new SelectListItem { Value = "50", Text = "50" }
+    };
 }
 
 <h2 class="mb-4">Search for Professional Services</h2>
-<!-- At top of view -->
 <p>Number of Service types: @(Model.ServiceTypes == null ? "null" : Model.ServiceTypes.Count.ToString())</p>
 <p>Number of cities: @(Model.Cities == null ? "null" : Model.Cities.Count.ToString())</p>
 
@@ -25,7 +30,7 @@
 
 @using (Html.BeginForm("Search", "Service", FormMethod.Post))
 {
-    <div class="col-md-6 d-flex">
+    <div class="col-md-12 d-flex gap-5">
         <div class="d-flex f-direction:row text-nowrap m-3 gap-3">
             <label asp-for="SelectedServiceTypeName" class="form-label"></label>
             @Html.DropDownListFor(
@@ -33,7 +38,9 @@
                               new SelectList(
                               Model.ServiceTypes,
                               "ServiceTypeName", "ServiceTypeName", Model.SelectedServiceTypeName),
-                              "-- Select Service Type --"
+                              "-- Select Service Type --",
+                                new { @class = "form-select" }
+
                               )
         </div>
         <div class="d-flex f-direction:row text-nowrap m-3 gap-3">
@@ -41,76 +48,55 @@
             @Html.DropDownListFor(
                               m => m.SelectedCityId,
                               new SelectList(Model.Cities, "Idcity", "Name", Model.SelectedCityId),
-                              "-- Select City --"
+                              "-- Select City --",
+                              new {@class="form-select col-md-6"}
                               )
+        </div>
+        <div class="col-md-2 d-flex f-direction:row text-nowrap m-3">
+            <select asp-for="PageSize"
+                    asp-items="pageSizeList"
+                    name="PageSize"
+                    class="form-select"
+                    onchange="this.form.submit()"
+                    data-pagesize="@pageSizeList"></select>
         </div>
         <div>
             <button type="submit" class="btn btn-primary w-100 mb-3 mt-3">Search</button>
         </div>
     </div>
+<div id="serviceTableContainer">
+    <partial name="_ServiceTablePartial" model="Model" />
+</div>
 }
 
-@if (Model.Services != null && Model.Services.Any())
-{
-    <h3 class="mt-4">Results</h3>
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>Professional</th>
-                    <th>City</th>
-                    <th>Service Type</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                        <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var service in Model.Services)
-                {
-                    <tr>
-                        <td>@service.ProfessionalName</td>
-                        <td>@string.Join(", ", service.CityNames ?? new List<string>())</td>
-                        <td>@service.ServiceTypeName</td>
-                        <td>@service.Description</td>
-                        <td>@service.Price</td>
-
-                        <td>
-                            <div class="d-flex gap-2 align-items-center">
-
-                                <button class="btn btn-success add-to-your-services"
-                                data-id="@service.IdService"
-                                data-name="@service.ServiceTypeName"
-                                data-desc="@service.Description"
-                                data-price="@service.Price">
-                                    Order
-                                </button>
-                                @if (User.IsInRole("Admin"))
-                                {
-                                <a asp-action="Edit" asp-controller="Service"
-                               asp-route-id="@service.IdService" class="btn btn-warning">Edit</a>
-                            <form asp-action="Delete" asp-controller="Service"
-                                  asp-route-id="@service.IdService" method="post"
-                                  style="display:inline;"
-                                  onsubmit="return confirm('Are you sure?');">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                                }
-                            </div>
-                        </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    </div>
-}
-else
-{
-    <div class="alert alert-warning mt-4" role="alert">
-        No services found for the selected criteria.
-    </div>
-}
 @section Scripts {
-    <script src="~/js/site.js"></script>
-}
+    <script>
+         $('#serviceTableContainer').on('click', '.page-ajax', function (e) {
+            e.preventDefault();
 
+            var page = $(this).data('page');
+            var pageSize = $(this).data('pagesize');
+            var selectedServiceTypeName = $('select[name="SelectedServiceTypeName"]').val();
+            var selectedCityId = $('select[name="SelectedCityId"]').val();
+            console.log("serviceTableContainer")
+
+            $.ajax({
+                url: '@Url.Action("Search", "Service")',
+                type: 'POST',
+                data: {
+                    SelectedServiceTypeName: selectedServiceTypeName,
+                    SelectedCityId: selectedCityId,
+                    page,
+                    pageSize,
+                    partial: true
+                },
+                success: function (result) {
+                    $('#serviceTableContainer').html(result);
+                },
+                error: function (xhr) {
+                    console.error("Pagination AJAX error:", xhr.responseText);
+                }
+            });
+        });
+    </script>
+}

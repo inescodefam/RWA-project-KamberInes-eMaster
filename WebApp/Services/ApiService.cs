@@ -14,6 +14,26 @@ namespace WebApp.Services
             _mapper = mapper;
         }
 
+        public T FetchPrimitive<T>(string url)
+        {
+            try
+            {
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+                var response = _httpClient.Send(request);
+                if (!response.IsSuccessStatusCode || response == null)
+                {
+                    return default;
+                }
+                var stream = response.Content.ReadAsStream();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return JsonSerializer.Deserialize<T>(stream, options);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Failed to fetch data from API. Please check the URL or your network connection.");
+            }
+        }
+
         public List<TVm> FetchDataList<TDto, TVm>(string url)
         {
             try

@@ -1,0 +1,127 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@using WebApp.Models
+@model WebApp.Models.ServiceSearchVM
+
+@if (Model.Services != null && Model.Services.Any())
+{
+    <h3 class="mt-4">Results</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Professional</th>
+                    <th>City</th>
+                    <th>Service Type</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var service in Model.Services)
+                {
+                    <tr>
+                        <td>@service.ProfessionalName</td>
+                        <td>@string.Join(", ", service.CityNames ?? new List<string>())</td>
+                        <td>@service.ServiceTypeName</td>
+                        <td>@service.Description</td>
+                        <td>@service.Price</td>
+
+                        <td>
+                            <div class="d-flex gap-2 align-items-center">
+
+                                <button class="btn btn-success add-to-your-services"
+                                        data-id="@service.IdService"
+                                        data-name="@service.ServiceTypeName"
+                                        data-desc="@service.Description"
+                                        data-price="@service.Price">
+                                    Order
+                                </button>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-controller="Service"
+                                       asp-route-id="@service.IdService" class="btn btn-warning">Edit</a>
+                                    <form asp-action="Delete" asp-controller="Service"
+                                          asp-route-id="@service.IdService" method="post"
+                                          style="display:inline;"
+                                          onsubmit="return confirm('Are you sure?');">
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-warning mt-4" role="alert">
+        No services found for the selected criteria.
+    </div>
+}
+
+@{
+    var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
+    var notEnoughCount = Model.TotalCount <= Model.PageSize;
+    <nav id="pagination-nav">
+        <ul class="pagination">
+            <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(0)"
+                   data-pagesize="@Model.PageSize">
+                    Start
+                </a>
+
+            </li>
+            <li class="page-item @(Model.Page == 0 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(Model.Page - 1)"
+                   data-pagesize="@Model.PageSize">
+                    Previous
+                </a>
+
+            </li>
+            @for (int i = 0; i < totalPages; i++)
+            {
+                <li class="page-item @(i == Model.Page || notEnoughCount ? "active" : "")">
+                    <a class="page-link page-ajax"
+                       href="javascript:void(0);"
+                       data-page="@i"
+                       data-pagesize="@Model.PageSize">
+                        @(i + 1)
+                    </a>
+
+                </li>
+            }
+            <li class="page-item @(Model.Page == totalPages-1 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(Model.Page + 1)"
+                   data-pagesize="@Model.PageSize">
+                    Next
+                </a>
+            </li>
+            <li class="page-item @(Model.Page == totalPages-1 || notEnoughCount ? "disabled" : "")">
+                <a class="page-link page-ajax"
+                   href="javascript:void(0);"
+                   data-page="@(totalPages - 1)"
+                   data-pagesize="@Model.PageSize">
+                    End
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}
