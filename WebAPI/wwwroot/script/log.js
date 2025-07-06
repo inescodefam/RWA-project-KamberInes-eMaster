@@ -1,5 +1,6 @@
 ﻿let page = 0;
 let pageSize = 10;
+let totalPages;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('jwt')) {
@@ -9,26 +10,26 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLogs();
 
     document.getElementById('prevPage').onclick = () => {
-        if (page > 1) {
+        if (page > 0) {
             page--;
             loadLogs();
         }
     };
     document.getElementById('nextPage').onclick = () => {
         let total = totalNumberOfLogs();
-        if (page * pageSize >= total) retrun;
+        if (page != 0 && page * pageSize >= total) retrun;
         page++;
         loadLogs();
     };
 });
 
-setPageSize = (size) => {
+const setPageSize = (size) => {
     pageSize = size;
     page = 0;
-    loadLogs(pageSize);
+    loadLogs();
 }
 
-totalNumberOfLogs = () => {
+const totalNumberOfLogs = () => {
     $.ajax({
         method: "GET",
         url: `/api/log/count`,
@@ -36,13 +37,15 @@ totalNumberOfLogs = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
     }).done(function (data) {
-        document.getElementById('totalLogs').textContent = `Total Logs: ${data.total}`;
+        console.log("Ukupan broj logova je:", data); //delete
+        totalPages = data;
+        document.getElementById('totalLogs').textContent = `Total Logs: ${data}`;
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load total logs.');
     });
 }
 
-loadLogs = (pageSize) => {
+const loadLogs = () => {
     $.ajax({
         method: "GET",
         url: `/api/log/get/${pageSize}?page=${page}`,
@@ -50,30 +53,38 @@ loadLogs = (pageSize) => {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
     }).done(function (data) {
-        displayLogs(data.logs);
-        updatePagination(data.totalPages);
+        console.log("Logs data:", data); //delete
+        displayLogs(data);
+        totalNumberOfLogs();
+        updatePagination(totalPages);
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load logs.');
     });
 }
 
-displayLogs = (logs) => {
+const displayLogs = (logs) => {
     const logTable = document.getElementById('logTableBody');
     logTable.innerHTML = '';
+    if (!logs || !Array.isArray(logs)) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="4">No logs found.</td>`;
+        logTable.appendChild(row);
+        return;
+    }
     logs.forEach(log => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${log.id}</td>
-            <td>${log.timestamp}</td>
-            <td>${log.level}</td>
-            <td>${log.message}</td>
+            <td>${log.idLog}</td>
+            <td>${log.logTimeStamp}</td>
+            <td>${log.logLevel}</td>
+            <td>${log.logMessage}</td>
         `;
         logTable.appendChild(row);
     });
 }
 
-updatePagination = (totalPages) => {
+const updatePagination = (totalPages) => {
     document.getElementById('prevPage').disabled = (page <= 0);
     document.getElementById('nextPage').disabled = (page >= totalPages - 1);
-    document.getElementById('currentPage').textContent = `Page ${page + 1} of ${totalPages}`;
+    document.getElementById('currentPage').textContent = `Page ${page + 1}`;
 }

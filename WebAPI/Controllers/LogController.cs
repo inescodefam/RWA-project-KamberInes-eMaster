@@ -6,7 +6,7 @@ using WebAPI.DTOs;
 
 namespace WebAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/log")]
     [ApiController]
     [Authorize]
     public class LogController : ControllerBase
