@@ -28,7 +28,7 @@ namespace WebApp.Controllers
         public IActionResult Index(string role, string username, int pageSize, int page, bool partial = false)
         {
             if (pageSize == 0) pageSize = 10;
-            // remeove this from here to service
+
             List<UserVM> users = _userService.GetUsers(pageSize, page);
             List<RoleVM> roles = _roleService.GetUserRole();
             var totalUsersCount = _userService.GetAllUsers().Count();
@@ -138,6 +138,26 @@ namespace WebApp.Controllers
                 if (user == null)
                     return Json(new { success = false, message = "Unauthorized" });
 
+                UserVM verifiedUser = _userService.GetUserByEmail(model.Email);
+
+                if (model.Email != user.Email && verifiedUser.Iduser != model.Iduser)
+                {
+                    ModelState.AddModelError("Email", "Email already exists.");
+                    var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+                    return Json(new { success = false, errors });
+                }
+                if (model.Username != user.Username && verifiedUser.Iduser != model.Iduser)
+                {
+                    ModelState.AddModelError("Usename", "Username already in use.");
+                    var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                    );
+                    return Json(new { success = false, errors });
+                }
 
                 var result = _userService.UpdateUser(model);
 
