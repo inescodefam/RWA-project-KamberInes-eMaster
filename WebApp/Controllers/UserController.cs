@@ -34,7 +34,10 @@ namespace WebApp.Controllers
             var totalUsersCount = _userService.GetAllUsers().Count();
 
             if (!string.IsNullOrEmpty(username))
+            {
                 users = users.Where(u => u.Username.Contains(username) || u.FirstName.Contains(username)).ToList();
+                totalUsersCount = users.Count();
+            }
 
             if (!string.IsNullOrEmpty(role))
             {
@@ -46,6 +49,7 @@ namespace WebApp.Controllers
                         .Select(r => r.UserId)
                         .ToList();
                     users = users.Where(u => userIds.Contains(u.Iduser)).ToList();
+                    totalUsersCount = users.Count();
                 }
                 else
                 {
@@ -54,6 +58,7 @@ namespace WebApp.Controllers
                        .Select(r => r.UserId)
                        .ToList();
                     users = users.Where(u => !userIds.Contains(u.Iduser)).ToList();
+                    totalUsersCount = users.Count();
                 }
 
             }
