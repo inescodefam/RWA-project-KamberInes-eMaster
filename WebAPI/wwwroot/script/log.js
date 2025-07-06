@@ -1,6 +1,5 @@
 ﻿let page = 0;
 let pageSize = 10;
-let totalPages;
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('jwt')) {
@@ -34,7 +33,7 @@ const setPageSize = (size) => {
     loadLogs();
 }
 
-const totalNumberOfLogs = () => {
+const totalNumberOfLogs = () => 
     $.ajax({
         method: "GET",
         url: `/api/log/count`,
@@ -42,14 +41,14 @@ const totalNumberOfLogs = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
     }).done(function (data) {
-        totalPages = Math.round(parseInt(data) / pageSize);
+        const totalPages = Math.ceil(data / pageSize);
         document.getElementById('totalLogs').textContent = `Total Logs: ${data}`;
+        updatePagination(totalPages)
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load total logs.');
-    });
-}
+    })
 
-const loadLogs = () => {
+const loadLogs = () =>
     $.ajax({
         method: "GET",
         url: `/api/log/get/${pageSize}?page=${page}`,
@@ -61,10 +60,9 @@ const loadLogs = () => {
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load logs.');
     });
-}
 
 const displayLogs = (logs) => {
-        totalNumberOfLogs();
+    totalNumberOfLogs();
     const logTable = document.getElementById('logTableBody');
     logTable.innerHTML = '';
     if (!logs || !Array.isArray(logs)) {
@@ -83,14 +81,9 @@ const displayLogs = (logs) => {
         `;
         logTable.appendChild(row);
     });
-        updatePagination(totalPages);
 }
 
-function formatDateTime(dateTimeString) {
-    if (!dateTimeString) return '';
-    const date = new Date(dateTimeString);
-    return date.toLocaleString();
-}
+const formatDateTime = (dateTimeString) => dateTimeString ? new Date(dateTimeString).toLocaleString() : '';
 
 const updatePagination = (totalPages) => {
     document.getElementById('prevPage').disabled = (page <= 0);
