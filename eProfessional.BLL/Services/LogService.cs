@@ -21,7 +21,7 @@ namespace eProfessional.BLL.Services
             _logRepository.CreateLog(level, message);
         }
 
-        public IEnumerable<LogDto> GetLogs(int count, int start = 0)
+        public IEnumerable<LogDto> GetLogs(int count, int start)
         {
             var logs = _logRepository.GetLogs(count, start);
             return _mapper.Map<IEnumerable<LogDto>>(logs);

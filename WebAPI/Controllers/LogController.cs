@@ -1,5 +1,6 @@
 ﻿
 using eProfessional.BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.DTOs;
 
@@ -7,6 +8,7 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LogController : ControllerBase
     {
 
@@ -16,12 +18,12 @@ namespace WebAPI.Controllers
             _logService = logService;
         }
 
-        [HttpGet("get/{n}")]
-        public ActionResult<IEnumerable<LogApiDto>> GetLogs(int n)
+        [HttpGet("get/{pageSize}")]
+        public ActionResult<IEnumerable<LogApiDto>> GetLogs(int pageSize, int page)
         {
             try
             {
-                var logs = _logService.GetLogs(n);
+                var logs = _logService.GetLogs(pageSize, page);
                 if (logs == null || !logs.Any())
                 {
                     return NotFound("No logs found.");
