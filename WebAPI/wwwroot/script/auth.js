@@ -1,6 +1,6 @@
 ﻿
 function logout() {
-    localStorage.removeItem("JWT");
+    localStorage.removeItem("jwt");
     window.location.href = "auth.html";
 }
 

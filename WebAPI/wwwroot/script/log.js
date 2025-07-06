@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadLogs();
 
+    document.getElementById('pageSizeSelect').addEventListener('change', function () {
+        pageSize = parseInt(this.value, 10);
+        loadLogs();
+    });
+
     document.getElementById('prevPage').onclick = () => {
         if (page > 0) {
             page--;
@@ -37,8 +42,7 @@ const totalNumberOfLogs = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
     }).done(function (data) {
-        console.log("Ukupan broj logova je:", data); //delete
-        totalPages = data;
+        totalPages = Math.round(parseInt(data) / pageSize);
         document.getElementById('totalLogs').textContent = `Total Logs: ${data}`;
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load total logs.');
@@ -53,16 +57,14 @@ const loadLogs = () => {
             'Authorization': `Bearer ${localStorage.getItem('jwt')}`
         }
     }).done(function (data) {
-        console.log("Logs data:", data); //delete
         displayLogs(data);
-        totalNumberOfLogs();
-        updatePagination(totalPages);
     }).fail(function (err) {
         alert(err.responseText || 'Failed to load logs.');
     });
 }
 
 const displayLogs = (logs) => {
+        totalNumberOfLogs();
     const logTable = document.getElementById('logTableBody');
     logTable.innerHTML = '';
     if (!logs || !Array.isArray(logs)) {
@@ -75,16 +77,23 @@ const displayLogs = (logs) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${log.idLog}</td>
-            <td>${log.logTimeStamp}</td>
+            <td>${formatDateTime(log.logTimeStamp )}</td>
             <td>${log.logLevel}</td>
             <td>${log.logMessage}</td>
         `;
         logTable.appendChild(row);
     });
+        updatePagination(totalPages);
+}
+
+function formatDateTime(dateTimeString) {
+    if (!dateTimeString) return '';
+    const date = new Date(dateTimeString);
+    return date.toLocaleString();
 }
 
 const updatePagination = (totalPages) => {
     document.getElementById('prevPage').disabled = (page <= 0);
     document.getElementById('nextPage').disabled = (page >= totalPages - 1);
-    document.getElementById('currentPage').textContent = `Page ${page + 1}`;
+    document.getElementById('currentPage').textContent = `Page ${page + 1} of ${totalPages}`;
 }
