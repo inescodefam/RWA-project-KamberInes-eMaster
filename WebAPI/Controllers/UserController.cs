@@ -94,6 +94,24 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpGet("username/{username}")]
+        public ActionResult<UserDto> GetUserByUsername(string username)
+        {
+            try
+            {
+                var user = _userService.GetUserByUsername(username);
+
+                return user != null
+                ? Ok(_mapper.Map<UserApiDto>(user))
+                : NotFound($"User with email {username} not found");
+            }
+            catch
+            {
+                return NotFound($"User with email: {username} can not be found!");
+            }
+        }
+
         [HttpPut]
         public IActionResult Put([FromBody] UserApiDto userDto)
         {

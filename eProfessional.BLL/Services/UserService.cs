@@ -62,6 +62,21 @@ namespace eProfessional.BLL.Services
             }
         }
 
+        public UserDto GetUserByUsername(string username)
+        {
+            username = username.ToLowerInvariant().Trim();
+            try
+            {
+                var user = _userRepository.GetUserByUsername(username);
+
+                return _mapper.Map<UserDto>(user);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving user by email: Error: ", ex);
+            }
+        }
+
         public UserDto UpdateUser(UserDto userDto)
         {
             var userExists = _userRepository.GetById(userDto.Iduser);

@@ -7,5 +7,6 @@ namespace eProfessional.DAL.Interfaces
         public List<User> GetUsers(int count, int start = 0);
         public List<User> GetUsers();
         public User GetUserByEmail(string email);
+        public User GetUserByUsername(string username);
     }
 }

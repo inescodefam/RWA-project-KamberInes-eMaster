@@ -20,6 +20,17 @@ namespace eProfessional.DAL.Repositories
             return user;
         }
 
+        public User GetUserByUsername(string username)
+        {
+            User? user = _context.Users.FirstOrDefault(x => x.Username.ToLower() == username.ToLower().Trim());
+
+            if (user == null)
+            {
+                throw new Exception($"User with email {username} not found.");
+            }
+            return user;
+        }
+
         public List<User> GetUsers(int count, int start = 0)
         {
             return _context.Users.Skip(start * count).Take(count).ToList();

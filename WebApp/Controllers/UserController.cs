@@ -149,9 +149,12 @@ namespace WebApp.Controllers
                     );
                     return Json(new { success = false, errors });
                 }
+
+                verifiedUser = _userService.GetUserByUsername(model.Username);
+
                 if (model.Username != user.Username && verifiedUser.Iduser != model.Iduser)
                 {
-                    ModelState.AddModelError("Usename", "Username already in use.");
+                    ModelState.AddModelError("Username", "Username already in use.");
                     var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
                     kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()

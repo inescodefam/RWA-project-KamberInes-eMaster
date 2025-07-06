@@ -8,6 +8,7 @@ namespace eProfessional.BLL.Interfaces
         List<UserDto> GetUsers();
         UserDto GetUserById(int id);
         UserDto GetUserByEmail(string email);
+        UserDto GetUserByUsername(string username);
         UserDto UpdateUser(UserDto userDto);
         void DeleteUser(int userId);
     }

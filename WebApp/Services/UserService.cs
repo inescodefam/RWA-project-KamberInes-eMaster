@@ -65,5 +65,15 @@ namespace WebApp.Services
             return response;
         }
 
+        public UserVM GetUserByUsername(string username)
+        {
+            var response = _apiFetchService.Fetch<UserApiDto, UserVM>($"api/user/username/{username}");
+            if (response == null)
+            {
+                throw new Exception($"User with username {username} not found.");
+            }
+            return response;
+        }
+
     }
 }
