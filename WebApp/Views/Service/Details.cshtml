@@ -1,0 +1,48 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = "Service details";
+}
+@model WebApp.Models.ServiceResultVM
+<h2>Service details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Professional Name</th>
+        <td>@Html.DisplayFor(model => model.ProfessionalName)</td>
+    </tr>
+    <tr>
+        <th>Service Type</th>
+        <td>@Html.DisplayFor(model => model.ServiceTypeName)</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>@Html.DisplayFor(model => model.Description)</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>@Html.DisplayFor(model => model.Price)</td>
+    </tr>
+    <tr>
+        <th>Cities</th>
+        <td>
+            @if (Model.CityNames != null && Model.CityNames.Any())
+            {
+                <ul>
+                    @foreach (var city in Model.CityNames)
+                    {
+                        <li>@city</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <span>No cities listed.</span>
+            }
+        </td>
+    </tr>
+</table>
+
+<a href="@Url.Action("Edit", new { id = Model.IdService })" class="btn btn-primary">Edit</a>
+<a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>

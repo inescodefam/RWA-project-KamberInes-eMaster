@@ -40,7 +40,7 @@ namespace WebApp.Services
             var response = _apiService.FetchDataList<RoleApiDto, RoleVM>("api/role");
             if (response == null || !response.Any())
             {
-                throw new Exception("No roles found.");
+                return new List<RoleVM>();
             }
             return response;
         }
