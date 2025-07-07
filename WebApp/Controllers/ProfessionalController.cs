@@ -137,8 +137,6 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-
-
         // GET: ProfessionalApiController/Edit/5
         [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id)

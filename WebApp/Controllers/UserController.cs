@@ -138,9 +138,19 @@ namespace WebApp.Controllers
                 if (user == null)
                     return Json(new { success = false, message = "Unauthorized" });
 
-                UserVM verifiedUser = _userService.GetUserByEmail(model.Email);
+                UserVM verifiedUser;
+                try
+                {
+                    verifiedUser = _userService.GetUserByEmail(model.Email);
+                }
+                catch
+                {
+                    verifiedUser = null;
+                }
 
-                if (model.Email != user.Email && verifiedUser.Iduser != model.Iduser)
+                UserVM exsistingUser = _userService.GetUserById(model.Iduser);
+
+                if (verifiedUser != null && model.Email != user.Email && verifiedUser.Iduser != model.Iduser)
                 {
                     ModelState.AddModelError("Email", "Email already exists.");
                     var errors = ModelState.ToDictionary(
@@ -150,9 +160,16 @@ namespace WebApp.Controllers
                     return Json(new { success = false, errors });
                 }
 
-                verifiedUser = _userService.GetUserByUsername(model.Username);
+                try
+                {
+                    verifiedUser = _userService.GetUserByUsername(model.Username);
+                }
+                catch
+                {
+                    verifiedUser = null;
+                }
 
-                if (model.Username != user.Username && verifiedUser.Iduser != model.Iduser)
+                if (verifiedUser != null && model.Username != user.Username && verifiedUser.Iduser != model.Iduser)
                 {
                     ModelState.AddModelError("Username", "Username already in use.");
                     var errors = ModelState.ToDictionary(
