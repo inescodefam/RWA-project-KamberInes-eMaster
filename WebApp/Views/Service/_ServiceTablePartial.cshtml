@@ -15,7 +15,7 @@
                 <tr>
                     <th>Professional</th>
                     <th>City</th>
-                    <th>Service Type</th>
+                    <th>Service type</th>
                     <th>Description</th>
                     <th>Price</th>
                     <th></th>
@@ -28,7 +28,7 @@
                         <td>@service.ProfessionalName</td>
                         <td>@string.Join(", ", service.CityNames ?? new List<string>())</td>
                         <td>@service.ServiceTypeName</td>
-                        <td>@service.Description</td>
+                        <td>@Truncate(service.Description, 150)</td>
                         <td>@service.Price</td>
 
                         <td>
@@ -124,4 +124,11 @@ else
 
 @section Scripts {
     <script src="~/js/site.js"></script>
+}
+@functions {
+    public string Truncate(string value, int maxLength)
+    {
+        if (string.IsNullOrEmpty(value)) return value;
+        return value.Length <= maxLength ? value : value.Substring(0, maxLength).TrimEnd() + "...";
+    }
 }
