@@ -15,7 +15,7 @@ namespace WebApp.Controllers
         {
 
             if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Search", "Service");
+                return RedirectToAction("Index", "Professional");
 
             return RedirectToAction("Login", "Auth");
         }

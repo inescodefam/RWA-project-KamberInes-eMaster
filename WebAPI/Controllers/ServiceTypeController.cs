@@ -39,6 +39,20 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("count")]
+        public ActionResult<int> GetTotalCount()
+        {
+            try
+            {
+                var totalCount = _serviceTypeService.GetTotalServiceTypesCount();
+                return Ok(totalCount);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the total count of service types.");
+            }
+        }
+
         [HttpGet("{id}")]
         public ActionResult<ServiceTypeApiDto> GetById(int id)
         {

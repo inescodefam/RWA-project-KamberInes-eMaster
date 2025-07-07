@@ -5,6 +5,8 @@ namespace eProfessional.BLL.Interfaces
     public interface IServiceType
     {
         public List<ServiceTypeDto> GetServiceTypes(int count, int start);
+
+        public int GetTotalServiceTypesCount();
         public ServiceTypeDto GetServiceTypeById(int id);
 
         public ServiceTypeDto CreateServiceType(ServiceTypeDto serviceTypeDto);

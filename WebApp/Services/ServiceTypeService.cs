@@ -51,11 +51,22 @@ namespace WebApp.Services
 
         public List<ServiceTypeVM> GetServiceTypes(int pageSize, int page)
         {
-            if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            var start = (page - 1) * pageSize;
-            var serviceTypes = _apiFetchService.FetchDataList<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype?count={pageSize}&start={start}");
+            var serviceTypes = _apiFetchService.FetchDataList<ServiceTypeApiDto, ServiceTypeVM>($"api/servicetype?count={pageSize}&start={page}");
             return serviceTypes ?? new List<ServiceTypeVM>();
+        }
+
+        public int GetTotalServiceTypesCount()
+        {
+            var response = _apiFetchService.FetchPrimitive<int>("api/servicetype/count");
+            if (response >= 0)
+            {
+                return response;
+            }
+            else
+            {
+                throw new Exception("Failed to retrieve total count of service types.");
+            }
         }
 
         public ServiceTypeVM UpdateServiceType(ServiceTypeVM serviceTypeDto)

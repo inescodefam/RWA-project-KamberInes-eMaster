@@ -17,5 +17,10 @@ namespace eProfessional.DAL.Repositories
                 .Take(count)
                 .ToList();
         }
+
+        public int ServiceTypeCount()
+        {
+            return _context.ServiceTypes.Count();
+        }
     }
 }

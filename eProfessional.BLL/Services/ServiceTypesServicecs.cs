@@ -29,6 +29,11 @@ namespace eProfessional.BLL.Services
             return serviceTypesDto;
         }
 
+        public int GetTotalServiceTypesCount()
+        {
+            return _serviceTypeRepository.ServiceTypeCount();
+        }
+
         public ServiceTypeDto GetServiceTypeById(int id)
         {
             var serviceType = _serviceTypeRepository.GetById(id);

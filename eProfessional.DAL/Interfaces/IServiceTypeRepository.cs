@@ -6,5 +6,6 @@ namespace eProfessional.DAL.Interfaces
     {
         public List<ServiceType> GetServiceTypes(int count, int start);
 
+        public int ServiceTypeCount();
     }
 }

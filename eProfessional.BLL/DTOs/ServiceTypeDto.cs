@@ -4,6 +4,7 @@
     {
         public int IdserviceType { get; set; }
         public string ServiceTypeName { get; set; }
+
     }
 
 }

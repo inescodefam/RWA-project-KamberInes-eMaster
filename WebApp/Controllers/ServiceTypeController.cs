@@ -21,16 +21,23 @@ namespace WebApp.Controllers
 
         [HttpGet]
 
-        public IActionResult Index(int count, int start)
+        public IActionResult Index(int pageSize, int page, bool partial = false)
         {
+            //add search term when finish rest
             try
             {
-                var serviceType = _serviceTypeService.GetServiceTypes(count, start);
+                var serviceType = _serviceTypeService.GetServiceTypes(pageSize, page);
 
                 ServiceTypeIndexVm serviceTypeIndexVm = new ServiceTypeIndexVm
                 {
-                    ServiceTypes = serviceType
+                    ServiceTypes = serviceType,
+                    Page = page,
+                    PageSize = pageSize,
+                    TotalCount = _serviceTypeService.GetTotalServiceTypesCount()
                 };
+
+                if (partial)
+                    return PartialView("_ServiceTypeTablePartial", serviceTypeIndexVm);
 
                 return View(serviceTypeIndexVm);
             }
