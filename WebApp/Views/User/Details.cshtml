@@ -1,0 +1,33 @@
+﻿@model WebApp.Models.UserVM
+
+@{
+    ViewData["Title"] = "Edit profile data";
+}
+<h2>User Details</h2>
+
+<table class="table table-bordered">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Username)</th>
+        <td>@Html.DisplayFor(model => model.Username)</td>
+    </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+        <td>@Html.DisplayFor(model => model.FirstName)</td>
+    </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.LastName)</th>
+        <td>@Html.DisplayFor(model => model.LastName)</td>
+    </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Email)</th>
+        <td>@Html.DisplayFor(model => model.Email)</td>
+    </tr>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Phone)</th>
+        <td>@Html.DisplayFor(model => model.Phone)</td>
+    </tr>
+    <!-- Never display the password in a details view for security reasons -->
+</table>
+
+<a href="@Url.Action("Edit", new { id = Model.Iduser })" class="btn btn-primary">Edit</a>
+<a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>

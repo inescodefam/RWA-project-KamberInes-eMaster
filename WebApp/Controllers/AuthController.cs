@@ -22,7 +22,8 @@ namespace WebApp.Controllers
 
         public ActionResult Index()
         {
-            return HttpContext.Request.Cookies["jwt"].Length != 0 ? RedirectToAction("Login", "Auth") : RedirectToAction("Search", "Services");
+            var jwt = HttpContext.Request.Cookies["jwt"];
+            return string.IsNullOrEmpty(jwt) ? RedirectToAction("Login", "Auth") : RedirectToAction("Index", "Professional");
         }
 
         [HttpGet]
