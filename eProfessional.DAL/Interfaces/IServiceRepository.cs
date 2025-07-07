@@ -11,5 +11,6 @@ namespace eProfessional.DAL.Interfaces
         public List<Service> GetServiceByServiceType(string type, int count, int start = 0);
 
         public int GetServiceByServiceTypeCount(string type);
+        public List<Service> GetServicesByProfessionalId(int id);
     }
 }

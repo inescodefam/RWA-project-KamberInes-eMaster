@@ -50,5 +50,12 @@ namespace eProfessional.DAL.Repositories
                 .Take(count)
                 .ToList();
         }
+
+        public List<Service> GetServicesByProfessionalId(int id)
+        {
+            return _dbSet
+                .Where(s => s.ProfessionalId == id)
+                .ToList();
+        }
     }
 }

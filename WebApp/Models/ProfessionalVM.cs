@@ -44,6 +44,11 @@ namespace WebApp.Models
         public string LastName { get; set; }
     }
 
+    public class ProfessionalDetailsVm : ProfessionalDataVM
+    {
+        public List<ServiceResultVM> Services { get; set; } = new List<ServiceResultVM>();
+    }
+
     public class CreateProfessionalVM
     {
         [Required(ErrorMessage = "User does not exist in database.")]

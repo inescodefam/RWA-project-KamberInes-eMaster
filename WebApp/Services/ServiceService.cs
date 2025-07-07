@@ -180,6 +180,25 @@ namespace WebApp.Services
             return serviceResults;
         }
 
+        public List<ServiceResultVM> GetServicesByProfessionalId(int id)
+        {
+            var url = $"api/service/professional/{id}";
+            var services = _apiFetchService.FetchDataList<ServiceApiDto, ServiceVM>(url);
+            List<ServiceResultVM> serviceVm = new List<ServiceResultVM>();
+
+            foreach (var service in services)
+            {
+                if (service.ProfessionalId <= 0 || service.ServiceTypeId <= 0)
+                {
+                    return new List<ServiceResultVM>();
+                }
+                var serviceResultVM = MapServiceToResult(service);
+                serviceVm.Add(serviceResultVM);
+            }
+
+            return serviceVm;
+        }
+
         // PRIVATE
 
         private List<ServiceVM> GetServices()

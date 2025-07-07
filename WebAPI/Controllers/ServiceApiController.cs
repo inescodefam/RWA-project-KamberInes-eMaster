@@ -54,6 +54,26 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("professional/{id}")]
+        public ActionResult<List<ServiceApiDto>> GetServicesByProfessionalId(int id)//(int id, int count, int start)
+        {
+            try
+            {
+                var services = _servicesService.GetServicesByProfessionalId(id);
+                if (services == null || !services.Any())
+                {
+                    return NotFound($"No services found for professional with id {id}.");
+                }
+                //var servicesDto = _mapper.Map<List<ServiceApiDto>>(services.Skip(start).Take(count).ToList());
+                var servicesDto = _mapper.Map<List<ServiceApiDto>>(services);
+                return Ok(servicesDto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the services.");
+            }
+        }
+
         [HttpGet("search")]
         public ActionResult<ServiceApiDto> GetServiceByServiceType(string serviceTypeName, int count, int start)
         {

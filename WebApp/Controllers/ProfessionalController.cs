@@ -10,11 +10,17 @@ namespace WebApp.Controllers
     {
         private readonly IProfessionalService _professionalService;
         private readonly ICityProfessionalService _cityProfessionalService;
+        private readonly IServiceService _serviceService;
 
-        public ProfessionalController(IProfessionalService professionalService, ICityProfessionalService cityProfessionalService)
+        public ProfessionalController(
+            IProfessionalService professionalService,
+            ICityProfessionalService cityProfessionalService,
+            IServiceService serviceService
+            )
         {
             _professionalService = professionalService;
             _cityProfessionalService = cityProfessionalService;
+            _serviceService = serviceService;
         }
 
         // GET: ProfessionalApiController
@@ -113,7 +119,24 @@ namespace WebApp.Controllers
         public ActionResult Details(int id)
         {
             var professional = _professionalService.GetSingleProfessional(id);
-            return View(professional);
+            var services = _serviceService.GetServicesByProfessionalId(id);
+            if (professional == null)
+            {
+                ModelState.AddModelError("", "Professional not found.");
+                return RedirectToAction("Details");
+            }
+            ProfessionalDetailsVm model = new ProfessionalDetailsVm
+            {
+                IdProfessional = professional.IdProfessional,
+                UserName = professional.UserName,
+                Email = professional.Email,
+                Phone = professional.Phone,
+                FirstName = professional.FirstName,
+                LastName = professional.LastName,
+                Services = services
+            };
+
+            return View(model);
         }
 
 

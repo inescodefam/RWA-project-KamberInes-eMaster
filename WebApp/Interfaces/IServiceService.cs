@@ -13,5 +13,6 @@ namespace WebApp.Interfaces
         public int GetServiceCountForServiceTypeName(string type);
         public List<ServiceResultVM> GetServiceIndex(int count, int start);
         public List<ServiceResultVM> Search(string serviceTypeName, int cityId, int count, int start = 0);
+        public List<ServiceResultVM> GetServicesByProfessionalId(int id);
     }
 }

@@ -13,7 +13,8 @@ namespace WebApp.Controllers
 
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Auth");
+            return View();
+            //return RedirectToAction("Index", "Auth");
         }
     }
 }

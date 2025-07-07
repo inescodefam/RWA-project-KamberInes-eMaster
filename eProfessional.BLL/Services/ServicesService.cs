@@ -169,5 +169,26 @@ namespace eProfessional.BLL.Services
                 throw new Exception("An error occurred while updating the service.", ex);
             }
         }
+
+        public List<ServiceDto> GetServicesByProfessionalId(int id)
+        {
+            if (id == 0)
+            {
+                return new List<ServiceDto>();
+            }
+            try
+            {
+                var services = _serviceRepository.GetServicesByProfessionalId(id);
+                if (services == null || !services.Any())
+                {
+                    return new List<ServiceDto>();
+                }
+                return _mapper.Map<List<ServiceDto>>(services);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving the services by professional ID.", ex);
+            }
+        }
     }
 }

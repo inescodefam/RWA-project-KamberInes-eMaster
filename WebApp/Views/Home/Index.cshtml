@@ -1,8 +1,29 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Landing";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">Sign In</h3>
+            <div class="text-center mt-3">
+            <a asp-action="Login" asp-controller="Auth" class="btn btn-link">WebAPP Login page</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5" style="max-width: 400px;">
+    <div class="card shadow">
+        <div class="card-body">
+            <h3 class="card-title text-center mb-4">HTML static page</h3>
+            <div class="text-center mt-3">
+                        <a href="http://localhost:5020/" class="btn btn-link">WebAPI page</a>
+              </div>
+        </div>
+    </div>
 </div>
