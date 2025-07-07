@@ -19,11 +19,12 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string searchTerm, int pageSize, int page)
+        public IActionResult Index(string searchTerm, int pageSize, int page, bool partial)
         {
             var response = _cityService.GetCities(searchTerm, pageSize, page);
             var total = _cityService.GetCityCount(searchTerm);
             if (pageSize == 0) pageSize = 10;
+
             var model = new CityIndexVM
             {
                 Cities = _mapper.Map<List<CityVM>>(response),
@@ -32,6 +33,10 @@ namespace WebApp.Controllers
                 PageSize = pageSize,
                 TotalCount = total
             };
+
+            if (partial)
+                PartialView("_CityTablePartial", model);
+
             return View(model);
         }
 

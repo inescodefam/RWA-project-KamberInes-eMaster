@@ -33,7 +33,7 @@ namespace eProfessional.DAL.Repositories
             {
                 query = query.Where(c => c.Name.Contains(searchTerm));
             }
-            return query.Skip(start).Take(count).ToList() ?? new List<City>();
+            return query.Skip(start * count).Take(count).ToList() ?? new List<City>();
         }
 
         public int GetCount(string searchTerm)
