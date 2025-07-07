@@ -26,7 +26,10 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult Login() => View();
+        public ActionResult Login()
+        {
+            return View("Login");
+        }
 
         [HttpPost]
         public ActionResult Login(AuthVM model)
