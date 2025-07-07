@@ -8,5 +8,7 @@ namespace eProfessional.DAL.Interfaces
         public List<City> Search(string? searchTerm, int count, int start = 0);
 
         public List<City> GetCitiesByIds(List<int> ids);
+
+        public int GetCount(string searchTerm);
     }
 }

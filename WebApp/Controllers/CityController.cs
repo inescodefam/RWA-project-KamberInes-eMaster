@@ -22,13 +22,15 @@ namespace WebApp.Controllers
         public IActionResult Index(string searchTerm, int pageSize, int page)
         {
             var response = _cityService.GetCities(searchTerm, pageSize, page);
+            var total = _cityService.GetCityCount(searchTerm);
+            if (pageSize == 0) pageSize = 10;
             var model = new CityIndexVM
             {
                 Cities = _mapper.Map<List<CityVM>>(response),
                 SearchTerm = searchTerm,
                 Page = page,
                 PageSize = pageSize,
-                TotalCount = response.Count
+                TotalCount = total
             };
             return View(model);
         }

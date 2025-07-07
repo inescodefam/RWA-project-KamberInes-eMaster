@@ -42,6 +42,20 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("count")]
+        public ActionResult<int> GetCityCount(string? searchTerm = null)
+        {
+            try
+            {
+                var count = _cityService.GetCityCount(searchTerm);
+                return Ok(count);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while retrieving the city count.");
+            }
+        }
+
         [HttpGet]
         public ActionResult<List<CityApiDto>> GetCities(int count, int start = 0, string searchTerm = "")
         {

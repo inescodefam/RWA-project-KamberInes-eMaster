@@ -36,6 +36,20 @@ namespace eProfessional.DAL.Repositories
             return query.Skip(start).Take(count).ToList() ?? new List<City>();
         }
 
+        public int GetCount(string searchTerm)
+        {
+            if (string.IsNullOrEmpty(searchTerm))
+            {
+                return _context.Cities.Count();
+            }
+            var query = _context.Cities.AsQueryable();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(c => c.Name.Contains(searchTerm));
+            }
+            return query.Count();
+        }
+
         public List<City> GetCitiesByIds(List<int> ids)
         {
             if (ids == null || !ids.Any())

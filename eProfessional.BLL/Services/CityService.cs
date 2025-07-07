@@ -87,6 +87,11 @@ namespace eProfessional.BLL.Services
             }
         }
 
+        public int GetCityCount(string? searchTerm = null)
+        {
+            return _cityRepository.GetCount(searchTerm);
+        }
+
         public bool DeleteCity(int id)
         {
             var city = _cityRepository.GetById(id);

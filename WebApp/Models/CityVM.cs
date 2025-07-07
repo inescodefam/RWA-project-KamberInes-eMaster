@@ -8,7 +8,7 @@ namespace WebApp.Models
         [StringLength(100, ErrorMessage = "City name too long.")]
         [Display(Name = "City name")]
         public string Name { get; set; }
-        public int Page { get; set; } = 1;
+        public int Page { get; set; } = 0;
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
         public List<CityVM> Cities { get; set; } = new List<CityVM>();

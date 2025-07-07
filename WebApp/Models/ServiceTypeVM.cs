@@ -14,7 +14,7 @@ namespace WebApp.Models
     public class ServiceTypeIndexVm
     {
         public List<ServiceTypeVM> ServiceTypes { get; set; }
-        public int Page { get; set; } = 1;
+        public int Page { get; set; } = 0;
         public int PageSize { get; set; } = 10;
         public int TotalCount { get; set; }
     }

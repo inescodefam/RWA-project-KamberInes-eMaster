@@ -14,10 +14,8 @@ namespace WebApp.Services
         }
         public List<CityVM> GetCities(string searchTerm, int pageSize, int page)
         {
-            if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
-            int start = (page - 1) * pageSize;
-            string url = $"api/city?count={pageSize}&start={start}";
+            string url = $"api/city?count={pageSize}&start={page}";
             if (!string.IsNullOrEmpty(searchTerm))
             {
                 url += $"&searchTerm={searchTerm}";
@@ -48,6 +46,17 @@ namespace WebApp.Services
             {
                 return new List<CityVM>();
             }
+            return response;
+        }
+
+        public int GetCityCount(string searchTerm)
+        {
+            string url = "api/city/count";
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                url += $"?searchTerm={searchTerm}";
+            }
+            var response = _apiService.FetchPrimitive<int>(url);
             return response;
         }
 

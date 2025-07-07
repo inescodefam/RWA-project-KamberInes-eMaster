@@ -14,7 +14,6 @@
     };
 }
 <h2>Cities</h2>
-
 <form asp-action="Create" method="post" class="mb-3 d-flex col-md-10">
     <input asp-for="Name" class="form-control col-md-8" placeholder="Enter city name" />
     <button type="submit" class="btn btn-success col-md-2 mx-3">Add new city</button>
@@ -37,45 +36,9 @@
     </div>
 </form>
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>City Name</th>
-            <th style="width:300px">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var city in Model.Cities)
-        {
-            <tr>
-                <td>@city.Name</td>
-                <td >
-                    <div class="d-flex gap-2 align-items-center">
-                    <form asp-action="Delete" asp-route-id="@city.Idcity" method="post">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-danger btn-sm"
-                                onclick="return confirm('Are you sure you want to delete {@city.Name} city?')">
-                            Delete
-                        </button>
-                    </form>
-                    <button class="btn btn-primary btn-sm update-city"
-                            data-cityid="@city.Idcity"
-                            data-name="@city.Name">
-                        Update
-                    </button>
-                    <a asp-action="GetProfessionals"
-                       asp-controller="CityProfessional"
-                       asp-route-cityId="@city.Idcity"
-                       class="btn btn-info btn-sm text-white">
-                        Professionals
-                    </a>
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
+<div id="cityTableContainer">
+    <partial name="_CityTablePartial" model="Model" />
+</div>
 
 <div class="modal fade" id="cityModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -101,24 +64,7 @@
     </div>
 </div>
 
-
-@if (Model.TotalCount > Model.PageSize)
-{
-    var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
-    <nav>
-        <ul class="pagination">
-            @for (int i = 1; i <= totalPages; i++)
-            {
-                <li class="page-item @(i == Model.Page ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { searchTerm = Model.SearchTerm, page = i, pageSize = Model.PageSize })">@i</a>
-                </li>
-            }
-        </ul>
-    </nav>
-}
-
 @section Scripts {
-    <script src="~/js/site.js"></script>
     <script>
         $(document).ready(function() {
             $('.update-city').click(function() {
@@ -147,6 +93,30 @@
                         alert('Error updating city: ' + xhr.responseText);
                     }
                 });
+            });
+            $('#cityTableContainer').on('click', '.page-ajax', function (e) {
+                    e.preventDefault();
+
+                    var page = $(this).data('page');
+                    var pageSize = $(this).data('pagesize');
+                    var searchTerm = $('input[name="searchTerm"]').val();
+
+                    $.ajax({
+                        url: '@Url.Action("Index", "City")',
+                        type: 'GET',
+                        data: {
+                            searchTerm,
+                            page,
+                            pageSize,
+                            partial: true
+                        },
+                        success: function (result) {
+                            $('#cityTableContainer').html(result);
+                        },
+                        error: function (xhr) {
+                            console.error("Pagination AJAX error:", xhr.responseText);
+                        }
+                    });
             });
         });
     </script>

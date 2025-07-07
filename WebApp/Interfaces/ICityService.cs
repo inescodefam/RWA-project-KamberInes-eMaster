@@ -8,6 +8,8 @@ namespace WebApp.Interfaces
         public CityVM CreateCity(string cityName);
 
         public List<CityVM> GetAllCities();
+
+        public int GetCityCount(string searchTerm);
         public bool UpdateCity(int id, string name);
         bool DeleteCity(int id);
     }
