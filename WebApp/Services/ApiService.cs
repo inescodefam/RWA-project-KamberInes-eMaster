@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Net;
 using System.Text.Json;
 
 namespace WebApp.Services
@@ -63,6 +64,12 @@ namespace WebApp.Services
             {
                 var request = new HttpRequestMessage(HttpMethod.Get, url);
                 var response = _httpClient.Send(request);
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to access this resource.");
+                }
+
                 response.EnsureSuccessStatusCode();
 
                 var stream = response.Content.ReadAsStream();
@@ -71,6 +78,10 @@ namespace WebApp.Services
 
                 var vm = _mapper.Map<TVm>(dtos);
                 return vm;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                throw;
             }
             catch (Exception)
             {

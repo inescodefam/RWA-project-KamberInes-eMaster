@@ -28,6 +28,8 @@ namespace WebApp.Controllers
             {
                 var serviceType = _serviceTypeService.GetServiceTypes(pageSize, page);
 
+                if (pageSize == 0) pageSize = 10;
+
                 ServiceTypeIndexVm serviceTypeIndexVm = new ServiceTypeIndexVm
                 {
                     ServiceTypes = serviceType,

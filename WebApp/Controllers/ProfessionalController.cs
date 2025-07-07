@@ -21,21 +21,40 @@ namespace WebApp.Controllers
         [HttpGet]
         public IActionResult Index(int pageSize, int page)
         {
-            var model = _professionalService.GetProfessionals(pageSize, page);
-
-            if (model == null)
+            try
             {
-                ModelState.AddModelError("", "No professionals found.");
+                var model = _professionalService.GetProfessionals(pageSize, page);
+
+                if (model == null)
+                {
+                    ModelState.AddModelError("", "No professionals found.");
+                    return View(new ProfessionalIndexVM
+                    {
+                        Professionals = model.Professionals ?? new List<ProfessionalVM>(),
+                        PageSize = pageSize,
+                        Page = page,
+                        TotalCount = model.TotalCount
+                    });
+                }
+
+                return View(model);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
                 return View(new ProfessionalIndexVM
                 {
-                    Professionals = model.Professionals ?? new List<ProfessionalVM>(),
+                    Professionals = new List<ProfessionalVM>(),
                     PageSize = pageSize,
                     Page = page,
-                    TotalCount = model.TotalCount
+                    TotalCount = 0
                 });
             }
 
-            return View(model);
         }
 
         // GET: ProfessionalApiController/Search
