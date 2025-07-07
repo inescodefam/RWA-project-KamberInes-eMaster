@@ -19,8 +19,12 @@
             <table id="searchProfessionalsTable" class="table table-hover align-middle mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th><i class="bi bi-person-badge me-2"></i>Professional</th>
-                        <th><i class="bi bi-geo-alt me-2"></i>City</th>
+                        <th>Professional</th>
+                        <th>City</th>
+                        @if (User.IsInRole("Admin"))
+                        {
+                        <th>Action</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -39,6 +43,18 @@
                                 <td>
                                    @string.Join(", ", professional.CityNames ?? new List<string>())
                                 </td>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-sm delete-professional"
+                                                data-id="@professional.IdProfessional">
+                                        Delete
+                                    </button>
+                                        <a class="btn btn-primary btn-sm" href="@Url.Action("Edit", "Professional", new { id = professional.IdProfessional })">
+                                        Edit
+                                    </a>
+                                </td>
+                                }
                             </tr>
                         }
                     }

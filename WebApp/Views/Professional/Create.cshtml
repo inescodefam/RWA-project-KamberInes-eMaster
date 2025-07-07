@@ -11,7 +11,7 @@
 {
     <div class="container my-4">
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-success text-white">
+            <div class="card-header bg-light">
                 <h4 class="mb-0">Add Professional</h4>
             </div>
             <div class="card-body">
@@ -44,7 +44,7 @@
         </div>
 
             <div class="card shadow-sm mb-4">
-                <div class="card-header bg-danger text-white">
+                <div class="card-header bg-light text-white">
                     <h4 class="mb-0">Delete Professional</h4>
                 </div>
                 <div class="card-body">
@@ -69,44 +69,6 @@
                 </form>
                 </div>
                 </div>
-
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">Professionals List</h5>
-            </div>
-            <div class="card-body p-0 table-responsive">
-                <table id="professionalsTable" class="table table-striped mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Username</th>
-                            <th>City</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model.Professionals != null)
-                        {
-                            foreach (var p in Model.Professionals)
-                            {
-                                <tr>
-                                    <td>@p.UserName</td>
-                                    <td>@string.Join(", ", p.CityNames ?? new List<string>())</td>
-                                    <td>
-                                        <button type="button" class="btn btn-danger btn-sm delete-professional"
-                                                data-id="@p.IdProfessional">
-                                            Delete
-                                        </button>
-                                        <a class="btn btn-primary btn-sm" href="@Url.Action("Edit", "Professional", new { id = p.IdProfessional })">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
         <a asp-action="Index"
            asp-controller="Professional"
            class="btn btn-secondary text-white">
@@ -145,29 +107,6 @@
                     }
                 });
             });
-            $(document).on('click', '.delete-professional', function() {
-                var professionalId = $(this).data('id');
-                var row = $(this).closest('tr');
-                var deleteUrlTemplate = '@Url.Action("Delete", "Professional", new { id = "_id" })';
-
-                if (confirm('Are you sure you want to delete this professional?')) {
-                    var deleteUrl = deleteUrlTemplate.replace('_id', professionalId);
-
-                    $.ajax({
-                        url: deleteUrl,
-                        type: 'POST',
-                        success: function() {
-                            row.fadeOut(300, function() {
-                                $(this).remove();
-                            });
-                        },
-                        error: function(xhr) {
-                            alert('Error deleting professional: ' + xhr.responseText);
-                        }
-                    });
-                }
-            });
-
         });
     </script>
 }
