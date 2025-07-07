@@ -35,7 +35,7 @@ namespace WebApp.Controllers
             };
 
             if (partial)
-                PartialView("_CityTablePartial", model);
+                return PartialView("_CityTablePartial", model);
 
             return View(model);
         }
@@ -43,31 +43,22 @@ namespace WebApp.Controllers
         [HttpPost]
         public IActionResult Create(CityCreateVM model)
         {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            try
+            if (ModelState.IsValid)
             {
-                var response = _cityService.CreateCity(model.Name);
-
-                if (response == null)
+                try
                 {
-                    ModelState.AddModelError("", "Failed to create city. Please try again.");
+                    var response = _cityService.CreateCity(model.Name);
+                    return RedirectToAction("Index");
+
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError("", "An unexpected error occurred.");
                     return RedirectToAction("Index");
                 }
-                return RedirectToAction("Index");
+            }
 
-            }
-            catch (InvalidOperationException ex)
-            {
-                ModelState.AddModelError("Name", ex.Message);
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("", "An unexpected error occurred.");
-                return RedirectToAction("Index");
-            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
