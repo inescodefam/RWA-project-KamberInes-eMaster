@@ -129,9 +129,9 @@ namespace WebAPI.Controllers
                 var result = _serviceTypeService.DeleteServiceType(id);
                 if (!result)
                 {
-                    return NotFound();
+                    return NotFound($"Service type with ID {id} not found.");
                 }
-                return NotFound($"Service type with ID {id} not found.");
+                return Ok(result);
             }
             catch (Exception)
             {

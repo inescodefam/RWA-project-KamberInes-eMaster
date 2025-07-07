@@ -89,6 +89,7 @@ namespace eProfessional.BLL.Services
             {
                 var serviceType = _serviceTypeRepository.GetById(id);
                 _serviceTypeRepository.Delete(serviceType);
+                _serviceTypeRepository.Save();
                 return true;
 
             }
