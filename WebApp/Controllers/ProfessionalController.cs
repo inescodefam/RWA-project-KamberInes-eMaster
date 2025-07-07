@@ -112,8 +112,6 @@ namespace WebApp.Controllers
 
                 throw new InvalidOperationException(ex.Message);
             }
-
-
         }
 
         public ActionResult Details(int id)
@@ -158,8 +156,6 @@ namespace WebApp.Controllers
         {
             try
             {
-                //var response = _professionalService.UpdateProfessional(professionalEditVm);
-
                 var response = _cityProfessionalService.UpdateCitiesByProfessional(professionalEditVm.IdProfessional, professionalEditVm.CityIds);
                 if (!ModelState.IsValid)
                 {
@@ -168,7 +164,7 @@ namespace WebApp.Controllers
                     return View(model);
                 }
 
-                return RedirectToAction(nameof(Create));
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
