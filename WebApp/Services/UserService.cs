@@ -23,6 +23,20 @@ namespace WebApp.Services
             return response ?? new List<UserVM>();
         }
 
+        public List<UserVM> Search(string role, string username, int pageSize, int page)
+        {
+            if (pageSize < 1) pageSize = 10;
+            var response = _apiFetchService.FetchDataList<UserApiDto, UserVM>($"api/user/search?role={role}&username={username}&count={pageSize}&start={page}");
+            return response ?? new List<UserVM>();
+        }
+
+        public int SearchTotal(string role, string username)
+        {
+            var response = _apiFetchService.FetchPrimitive<int>($"api/user/search-total?role={role}&username={username}");
+            return response;
+        }
+
+
         public List<UserVM> GetAllUsers()
         {
             var response = _apiFetchService.FetchDataList<UserApiDto, UserVM>($"api/user/all");

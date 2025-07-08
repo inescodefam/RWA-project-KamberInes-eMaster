@@ -40,6 +40,70 @@ namespace eProfessional.DAL.Repositories
         {
             return _context.Users.ToList();
         }
-    }
 
+        public List<User> Search(string role, string username, int pageSize, int page)
+        {
+            if (pageSize < 1) pageSize = 10;
+            var roles = new List<int>();
+            if (!string.IsNullOrEmpty(role))
+            {
+                roles = _context.Roles
+                    .Where(r => r.RoleName.ToLower() == role.ToLower())
+                    .Select(r => r.UserId)
+                    .ToList();
+            }
+
+            var users = new List<User>();
+            if (!string.IsNullOrEmpty(username))
+            {
+                users = _context.Users
+                    .Where(u => u.Username.ToLower().Contains(username.ToLower()))
+                    .ToList();
+
+                if (roles.Count > 0)
+                {
+                    users = users.Where(u => roles.Contains(u.Iduser)).ToList();
+                }
+            }
+            else
+            {
+                users = _context.Users.ToList();
+                if (roles.Count > 0)
+                {
+                    users = users.Where(u => roles.Contains(u.Iduser)).ToList();
+                }
+            }
+
+            return users.Skip(page * pageSize).Take(pageSize).ToList();
+        }
+
+        public int SearchTotal(string role, string username)
+        {
+            var result = 0;
+            var roles = new List<int>();
+            var users = new List<User>();
+            if (!string.IsNullOrEmpty(role))
+            {
+                roles = _context.Roles.Where(r => r.RoleName.ToLower() == role.ToLower()).Select(r => r.UserId).ToList();
+                result = roles.Count;
+            }
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                users = _context.Users.Where(u => u.Username.ToLower().Contains(username.ToLower())).ToList();
+
+                if (roles.Count > 0)
+                {
+                    result = users.Count(u => roles.Contains(u.Iduser));
+                }
+                else
+                {
+                    result = users.Count;
+                }
+            }
+
+            return result;
+        }
+
+    }
 }

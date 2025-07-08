@@ -37,6 +37,22 @@ namespace eProfessional.BLL.Services
             return _mapper.Map<List<UserDto>>(users);
         }
 
+        public List<UserDto> Search(string role, string username, int pageSize, int page)
+        {
+            if (pageSize < 1) pageSize = 10;
+            var users = _userRepository.Search(role, username, pageSize, page);
+            if (users == null || !users.Any())
+            {
+                return new List<UserDto>();
+            }
+            return _mapper.Map<List<UserDto>>(users);
+        }
+
+        public int SearchTotal(string role, string username)
+        {
+            return _userRepository.SearchTotal(role, username);
+        }
+
         public UserDto GetUserById(int id)
         {
             var user = _userRepository.GetById(id);

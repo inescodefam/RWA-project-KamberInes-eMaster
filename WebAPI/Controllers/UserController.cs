@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
 
         // GET: api/<UserController>
         [HttpGet]
-        public ActionResult<List<UserDto>> Get(int count, int start)
+        public ActionResult<List<UserApiDto>> Get(int count, int start)
         {
             try
             {
@@ -33,9 +33,39 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return new List<UserApiDto>();
             }
 
+        }
+
+        [HttpGet("search")]
+        public ActionResult<List<UserApiDto>> Search(string? role, string? username, int count, int start)
+        {
+            try
+            {
+                var userDtos = _userService.Search(role, username, count, start);
+                var userApiDtos = _mapper.Map<List<UserApiDto>>(userDtos);
+                return Ok(userApiDtos);
+            }
+            catch (Exception ex)
+            {
+                return new List<UserApiDto>();
+            }
+        }
+
+        [HttpGet("search-total")]
+        public ActionResult<int> Search(string? role, string? username)
+        {
+            try
+            {
+                var total = _userService.SearchTotal(role, username);
+
+                return Ok(total);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpGet("all")]

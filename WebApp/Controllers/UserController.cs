@@ -24,43 +24,21 @@ namespace WebApp.Controllers
         }
 
         //GET: UserController
-        [Authorize(Roles = "Admin")]
         public IActionResult Index(string role, string username, int pageSize, int page, bool partial = false)
         {
             if (pageSize == 0) pageSize = 10;
 
-            List<UserVM> users = _userService.GetUsers(pageSize, page);
-            List<RoleVM> roles = _roleService.GetUserRole();
-            var totalUsersCount = _userService.GetAllUsers().Count();
-
-            if (!string.IsNullOrEmpty(username))
+            List<UserVM> users = new List<UserVM>();
+            int totalUsersCount = 0;
+            if (!string.IsNullOrEmpty(role) || !string.IsNullOrEmpty(username))
             {
-                users = users.Where(u => u.Username.Contains(username) || u.FirstName.Contains(username)).ToList();
-                totalUsersCount = users.Count();
+                users = _userService.Search(role, username, pageSize, page);
+                totalUsersCount = _userService.SearchTotal(role, username);
             }
-
-            if (!string.IsNullOrEmpty(role))
+            else
             {
-
-                if (role != "User")
-                {
-                    List<int> userIds = roles
-                        .Where(r => r.RoleName == role)
-                        .Select(r => r.UserId)
-                        .ToList();
-                    users = users.Where(u => userIds.Contains(u.Iduser)).ToList();
-                    totalUsersCount = users.Count();
-                }
-                else
-                {
-                    List<int> userIds = roles
-                       .Where(r => r.RoleName != null)
-                       .Select(r => r.UserId)
-                       .ToList();
-                    users = users.Where(u => !userIds.Contains(u.Iduser)).ToList();
-                    totalUsersCount = users.Count();
-                }
-
+                users = _userService.GetUsers(pageSize, page);
+                totalUsersCount = _userService.GetAllUsers().Count;
             }
 
             var model = new UserIndexVM
