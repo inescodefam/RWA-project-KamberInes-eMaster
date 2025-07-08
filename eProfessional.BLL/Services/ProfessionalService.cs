@@ -99,6 +99,11 @@ namespace eProfessional.BLL.Services
             return professionalDtos;
         }
 
+        public int SearchCount(string name, string cityName)
+        {
+            return _professionalRepository.SearchCount(name, cityName);
+        }
+
         public ProfessionalDto CreateProfessional(ProfessionalBaseDto professionalDto)
         {
             var user = _userRepository.GetById(professionalDto.UserId);

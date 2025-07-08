@@ -32,11 +32,27 @@ namespace eProfessional.DAL.Repositories
 
         public List<Professional> SearchProfessionals(string? searchTerm, string? cityName, int count, int start = 0)
         {
+            var query = Search(searchTerm, cityName);
+
+            var professionals = query.Skip(start * count).Take(count).Distinct().ToList();
+
+            return professionals ?? new List<Professional>();
+        }
+
+        public int SearchCount(string? searchTerm, string? cityName)
+        {
+            var query = Search(searchTerm, cityName);
+
+            return query.Count();
+        }
+
+        private IQueryable<Professional> Search(string? searchTerm, string? cityName)
+        {
             var query = _context.Professionals.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                query = query.Where(p => p.User.FirstName.Contains(searchTerm) || p.User.LastName.Contains(searchTerm) || p.User.Username.Contains(searchTerm));
+                query = query.Where(p => p.User.Username.Contains(searchTerm));
             }
 
             if (!string.IsNullOrEmpty(cityName))
@@ -44,9 +60,7 @@ namespace eProfessional.DAL.Repositories
                 query = query.Where(p => p.CityProfessionals.Any(cp => cp.City.Name.Equals(cityName)));
             }
 
-            var professionals = query.Skip(start * count).Take(count).Distinct().ToList();
-
-            return professionals ?? new List<Professional>();
+            return query;
         }
     }
 }

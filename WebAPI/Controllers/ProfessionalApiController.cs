@@ -104,8 +104,7 @@ namespace WebAPI.Controllers
             [FromQuery] string? name,
             [FromQuery] string? cityName,
             [FromQuery] int count,
-            [FromQuery] int start,
-            bool partial = false
+            [FromQuery] int start
             )
         {
             try
@@ -127,6 +126,15 @@ namespace WebAPI.Controllers
                 _loggingService.CreateLog($"Error retrieving professionals by name '': {ex.Message}", "error");
                 return StatusCode(500, ex.Message);
             }
+        }
+
+        [HttpGet("search-count")]
+        public ActionResult<IEnumerable<ProfessionalApiDataDto>> Search(
+           [FromQuery] string? name,
+           [FromQuery] string? cityName)
+        {
+            int count = _professionalService.SearchCount(name, cityName);
+            return Ok(count);
         }
 
         // POST api/<ProfessionalsController>

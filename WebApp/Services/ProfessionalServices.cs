@@ -109,6 +109,7 @@ namespace WebApp.Services
         {
             if (pageSize < 1) pageSize = 10;
             var url = $"api/professional/search?count={pageSize}&start={page}";
+            int totalCount = 0;
 
             if (!string.IsNullOrEmpty(Name))
             {
@@ -120,7 +121,16 @@ namespace WebApp.Services
             }
 
             var response = _apiService.Fetch<List<ProfessionalApiDataDto>, List<ProfessionalDataVM>>(url);
-            var totalCount = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/all").Count();
+
+            if (!string.IsNullOrEmpty(Name) || !string.IsNullOrEmpty(cityName))
+            {
+                totalCount = SearchTotalCount(Name, cityName);
+            }
+            else
+            {
+                totalCount = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>($"api/professional/all").Count();
+
+            }
 
             if (response == null || !response.Any())
             {
@@ -138,6 +148,22 @@ namespace WebApp.Services
             professionalIndexVM.TotalCount = totalCount;
 
             return professionalIndexVM;
+        }
+
+        public int SearchTotalCount(string? username, string? cityName)
+        {
+            var url = $"api/professional/search-count";
+            if (!string.IsNullOrEmpty(username))
+            {
+                url += $"&name={username}";
+            }
+            if (!string.IsNullOrEmpty(cityName))
+            {
+                url += $"&cityName={cityName}";
+            }
+            var totalCount = _apiService.FetchPrimitive<int>(url);
+
+            return totalCount;
         }
 
         public bool UpdateProfessional(ProfessionalDataVM professionalEditVm) //ProfessisionalVM
