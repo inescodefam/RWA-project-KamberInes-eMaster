@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public IActionResult Get(int count, int start = 0)
         {
             try

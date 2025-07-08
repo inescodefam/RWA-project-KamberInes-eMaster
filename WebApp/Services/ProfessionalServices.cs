@@ -53,7 +53,7 @@ namespace WebApp.Services
         {
             try
             {
-                var response = _apiService.PostData<ProfessionalApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
+                var response = _apiService.PostData<ProfessionalBaseApiDto, ProfessionalBaseVm>("api/professional", professionalVm);
 
                 var professionals = _apiService.FetchDataList<ProfessionalApiDataDto, ProfessionalDataVM>("api/professional?count=10000&start=0");
 

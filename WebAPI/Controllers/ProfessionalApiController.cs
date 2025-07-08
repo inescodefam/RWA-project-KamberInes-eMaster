@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
 
         // POST api/<ProfessionalsController>
         [HttpPost]
-        public IActionResult Post([FromBody] ProfessionalApiDto professionalApiDataDto)
+        public IActionResult Post([FromBody] ProfessionalBaseApiDto professionalApiDataDto)
         {
             if (!ModelState.IsValid)
             {
