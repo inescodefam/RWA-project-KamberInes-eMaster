@@ -88,39 +88,22 @@
 
 
                 $.ajax({
-                    url: '@Url.Action("Search", "Professional")',
-                    type: 'GET',
-                    data: {
-                        username: username,
-                        city: cityName,
-                        pageSize,
-                        page
-                    },
-                    success: function(results) {
-                        var professionals = results.professionals;
-                        var $tbody = $('#professionalTableContainer #searchProfessionalsTable tbody');
-                        $tbody.empty();
-
-                        if (professionals && professionals.length > 0) {
-                            $('#noResultsMessage').addClass('d-none');
-
-                            $.each(professionals, function(i, p) {
-                                $tbody.append(
-                                    `<tr>
-                                        <td>${p.userName || '-'}</td>
-                                        <td>${p.cityNames.join(", ") || '-'}</td>
-                                    </tr>`
-                                );
-                            });
-                        } else {
-                            $('#noResultsMessage').removeClass('d-none');
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error('Search error:', xhr.responseText);
-                        alert('Error searching professionals. Please try again.');
-                    }
-                }); 
+                url: '@Url.Action("Search", "Professional")',
+                type: 'GET',
+                data: {
+                    username,
+                    city:cityName,
+                    pageSize,
+                    page,
+                    partial: true
+                },
+                success: function (result) {
+                    $('#professionalTableContainer').html(result);
+                },
+                error: function (xhr) {
+                    console.error("Pagination AJAX error:", xhr.responseText);
+                 }
+                 });
             });
 
             $('#professionalTableContainer').on('click', '.page-ajax', function (e) {

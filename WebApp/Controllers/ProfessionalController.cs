@@ -69,20 +69,13 @@ namespace WebApp.Controllers
         {
             var response = _professionalService.Search(username, city, pageSize, page);
 
-            if (partial)
+            return PartialView("_ProfessionalTablePartial", new ProfessionalIndexVM
             {
-
-                return PartialView("_ProfessionalTablePartial", new ProfessionalIndexVM
-                {
-                    Professionals = response.Professionals ?? new List<ProfessionalVM>(),
-                    PageSize = pageSize,
-                    Page = page,
-                    TotalCount = response.TotalCount
-                });
-
-            }
-
-            return Json(response);
+                Professionals = response.Professionals ?? new List<ProfessionalVM>(),
+                PageSize = pageSize,
+                Page = page,
+                TotalCount = response.TotalCount
+            });
         }
 
         // GET: ProfessionalApiController/AddProfessional
